@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-PCShop.Web-43fc014e-aaab-4ffa-b5aa-28ebf02721ff</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PCShop.Data\PCShop.Data.csproj" />
+    <ProjectReference Include="..\PCShop.GCommon\PCShop.GCommon.csproj" />
+    <ProjectReference Include="..\PCShop.Services.Core\PCShop.Services.Core.csproj" />
+    <ProjectReference Include="..\PCShop.Web.Infrastructure\PCShop.Web.Infrastructure.csproj" />
+    <ProjectReference Include="..\PCShop.Web.ViewModels\PCShop.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

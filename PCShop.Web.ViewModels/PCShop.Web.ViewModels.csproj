@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PCShop.Data.Models\PCShop.Data.Models.csproj" />
+    <ProjectReference Include="..\PCShop.GCommon\PCShop.GCommon.csproj" />
+    <ProjectReference Include="..\PCShop.Services.AutoMapping\PCShop.Services.AutoMapping.csproj" />
+  </ItemGroup>
+
+</Project>
