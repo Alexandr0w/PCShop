@@ -10,8 +10,8 @@ namespace PCShop.Web
         {
             WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
             
-            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            string connectionString = builder.Configuration.GetConnectionString("PCShopDbConnection") 
+                ?? throw new InvalidOperationException("Connection string 'PCShopDbConnection' not found.");
             
             builder.Services
                 .AddDbContext<PCShopDbContext>(options =>
@@ -25,6 +25,15 @@ namespace PCShop.Web
                 .AddDefaultIdentity<IdentityUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
+                    options.SignIn.RequireConfirmedEmail = false;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                    options.Password.RequiredLength = 4;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredUniqueChars = 0;
                 })
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
