@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PCShop.Data.Models;
 using static PCShop.Data.Common.EntityConstants.Product;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Data.Configuration
 {
@@ -24,7 +25,7 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(p => p.Price)
-                .HasColumnType(PriceType);
+                .HasColumnType(PriceSqlType);
 
             entity
                 .Property(p => p.ImageUrl)

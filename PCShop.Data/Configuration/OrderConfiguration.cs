@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
-using static PCShop.Data.Common.EntityConstants.Order;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Data.Configuration
 {
@@ -15,7 +15,7 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(o => o.OrderDate)
-                .HasDefaultValueSql(OrderDateDefaultValue);
+                .HasDefaultValueSql(OrderDateDefaultSqlValue);
 
             entity
                 .Property(o => o.Status)
@@ -23,7 +23,7 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(o => o.TotalPrice)
-                .HasColumnType(TotalPriceType);
+                .HasColumnType(PriceSqlType);
 
             entity
                 .HasOne(o => o.ApplicationUser)

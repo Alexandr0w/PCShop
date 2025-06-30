@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Identity.Client;
 using PCShop.Data.Models;
 using static PCShop.Data.Common.EntityConstants.ApplicationUser;
 

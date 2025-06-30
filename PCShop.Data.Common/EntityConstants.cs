@@ -28,8 +28,6 @@
             public const int DescriptionMinLength = 15;
             public const int DescriptionMaxLength = 1000;
 
-            public const string PriceType = "decimal(18,2)";
-
             public const int ImageUrlMaxLength = 2048;
         }
 
@@ -41,8 +39,6 @@
             public const int DescriptionMinLength = 15;
             public const int DescriptionMaxLength = 1000;
 
-            public const string PriceType = "decimal(18,2)";
-
             public const int ImageUrlMaxLength = 2048;
         }
 
@@ -50,12 +46,6 @@
         {
             public const int NameMinLength = 3;
             public const int NameMaxLength = 30;
-        }
-
-        public static class Order
-        {
-            public const string TotalPriceType = "decimal(18,2)";
-            public const string OrderDateDefaultValue = "GETUTCDATE()";
         }
     }
 }
