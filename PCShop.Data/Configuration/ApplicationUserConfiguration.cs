@@ -37,7 +37,6 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(au => au.IsDeleted)
-                .IsRequired()
                 .HasDefaultValue(false);
         }
     }

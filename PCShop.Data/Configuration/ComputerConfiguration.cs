@@ -24,7 +24,6 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(c => c.Price)
-                .IsRequired()
                 .HasColumnType(PriceType);
 
             entity
@@ -34,7 +33,6 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(c => c.IsDeleted)
-                .IsRequired()
                 .HasDefaultValue(false);
 
             entity

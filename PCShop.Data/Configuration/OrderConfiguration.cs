@@ -15,17 +15,14 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(o => o.OrderDate)
-                .IsRequired()
                 .HasDefaultValueSql(OrderDateDefaultValue);
 
             entity
                 .Property(o => o.Status)
-                .IsRequired()
                 .HasDefaultValue(OrderStatus.Pending);
 
             entity
                 .Property(o => o.TotalPrice)
-                .IsRequired()
                 .HasColumnType(TotalPriceType);
 
             entity
