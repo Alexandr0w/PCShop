@@ -1,6 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
+using PCShop.Services.Core;
+using PCShop.Services.Core.Interfaces;
 
 namespace PCShop.Web
 {
@@ -8,7 +10,7 @@ namespace PCShop.Web
     {
         public static void Main(string[] args)
         {
-            WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             
             string connectionString = builder.Configuration.GetConnectionString("PCShopDbConnection") 
                 ?? throw new InvalidOperationException("Connection string 'PCShopDbConnection' not found.");
@@ -37,9 +39,11 @@ namespace PCShop.Web
                 })
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
+            builder.Services.AddScoped<ISearchService, SearchService>();
+
             builder.Services.AddControllersWithViews();
 
-            WebApplication? app = builder.Build();
+            WebApplication app = builder.Build();
             
             if (app.Environment.IsDevelopment())
             {

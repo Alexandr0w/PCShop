@@ -1,22 +1,43 @@
-html {
-  font-size: 14px;
+.search-wrapper {
+    position: relative;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.search-form {
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    z-index: 1000;
+    min-width: 250px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.dropdown-menu {
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+#searchDropdown form input[type="search"] {
+    min-width: 150px; 
 }
 
-body {
-  margin-bottom: 60px;
+#searchDropdown form button {
+    white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+    #searchDropdown {
+        position: static !important;
+        transform: none !important;
+        padding: 1rem 0;
+        display: none;
+        width: 100%;
+    }
+
+        #searchDropdown form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        #searchDropdown input {
+            margin-bottom: 0.5rem;
+        }
 }
