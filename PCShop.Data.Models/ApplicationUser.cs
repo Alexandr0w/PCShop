@@ -6,11 +6,8 @@ namespace PCShop.Data.Models
     [Comment("Represents a user in the PC Shop system")]
     public class ApplicationUser : IdentityUser
     {
-        [Comment("First name of the user")]
-        public required string FirstName { get; set; }
-
-        [Comment("Last name of the user")]
-        public required string LastName { get; set; }
+        [Comment("Full name of the user")]
+        public required string FullName { get; set; }
 
         [Comment("Full address of the user")]
         public required string Address { get; set; }

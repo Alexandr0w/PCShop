@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PCShop.Data;
 
@@ -11,9 +12,11 @@ using PCShop.Data;
 namespace PCShop.Data.Migrations
 {
     [DbContext(typeof(PCShopDbContext))]
-    partial class PCShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250707175955_ApplicationUserChanges")]
+    partial class ApplicationUserChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,62 +277,6 @@ namespace PCShop.Data.Migrations
                         {
                             t.HasComment("Represents a computer in the PC Shop system");
                         });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f1f11111-aaaa-bbbb-cccc-111111111111"),
-                            Description = "CPU: AMD Ryzen 5 5600, GPU: GeForce RTX 3060TI, RAM: 32GB DDR4, Storage: 1TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_polaris_max_amd.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS POLARIS Max (AMD)",
-                            Price = 2000.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("f2f22222-aaaa-bbbb-cccc-222222222222"),
-                            Description = "CPU: Intel Core i5-13400F, GPU: GeForce RTX 3060TI, RAM: 32GB DDR4, Storage: 1TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_polaris_max_intel.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS POLARIS Max (Intel)",
-                            Price = 2100.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("f3f33333-aaaa-bbbb-cccc-333333333333"),
-                            Description = "CPU: AMD Ryzen 7 5700X3D, GPU: GeForce RTX 4060, RAM: 32GB DDR5, Storage: 2TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_spark_ultra_amd_x3d.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS SPARK Ultra (AMD X3D)",
-                            Price = 2500.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("f4f44444-aaaa-bbbb-cccc-444444444444"),
-                            Description = "CPU: Intel Core i5-14600KF, GPU: GeForce RTX 5070, RAM: 32GB DDR5, Storage: 2TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_nova_ultra_intel.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS NOVA Ultra (Intel)",
-                            Price = 3690.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("f5f55555-aaaa-bbbb-cccc-555555555555"),
-                            Description = "CPU: AMD Ryzen 7 7700, GPU: GeForce RTX 5070, RAM: 32GB DDR5, Storage: 2TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_sirius_ultra_amd_zen4_wh.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS SIRIUS Ultra (AMD Zen4)",
-                            Price = 4200.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("f6f66666-aaaa-bbbb-cccc-666666666666"),
-                            Description = "CPU: Intel Core i7-13700K, GPU: GeForce RTX 4070, RAM: 32GB DDR5, Storage: 2TB SSD NVMe...",
-                            ImageUrl = "images/computers/grigs_sirius_ultra_intel.png",
-                            IsDeleted = false,
-                            Name = "G:RIGS SIRIUS Ultra (Intel)",
-                            Price = 4500.00m
-                        });
                 });
 
             modelBuilder.Entity("PCShop.Data.Models.ComputerPart", b =>
@@ -457,68 +404,6 @@ namespace PCShop.Data.Migrations
                         {
                             t.HasComment("Represents a product in the PC Shop system");
                         });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("10101010-aaaa-bbbb-cccc-101010101010"),
-                            Description = "13th Gen 16-core processor with high performance for gaming and productivity.",
-                            ImageUrl = "/images/products/intel-i7-13700k.jpg",
-                            IsDeleted = false,
-                            Name = "Intel Core i7-13700K",
-                            Price = 489.99m,
-                            ProductTypeId = new Guid("11111111-aaaa-bbbb-cccc-111111111111")
-                        },
-                        new
-                        {
-                            Id = new Guid("20202020-aaaa-bbbb-cccc-202020202020"),
-                            Description = "Latest generation graphics card with ray tracing and DLSS support.",
-                            ImageUrl = "/images/products/rtx-4070.jpg",
-                            IsDeleted = false,
-                            Name = "NVIDIA GeForce RTX 4070",
-                            Price = 629.00m,
-                            ProductTypeId = new Guid("22222222-aaaa-bbbb-cccc-222222222222")
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-aaaa-bbbb-cccc-303030303030"),
-                            Description = "High-performance DDR4 memory kit with RGB lighting.",
-                            ImageUrl = "/images/products/corsair-vengeance-32gb.jpg",
-                            IsDeleted = false,
-                            Name = "Corsair Vengeance RGB Pro 32GB DDR4",
-                            Price = 139.99m,
-                            ProductTypeId = new Guid("44444444-aaaa-bbbb-cccc-444444444444")
-                        },
-                        new
-                        {
-                            Id = new Guid("40404040-aaaa-bbbb-cccc-404040404040"),
-                            Description = "Ultra-fast PCIe 4.0 SSD ideal for gaming and heavy applications.",
-                            ImageUrl = "/images/products/samsung-980-pro.jpg",
-                            IsDeleted = false,
-                            Name = "Samsung 980 PRO 1TB NVMe SSD",
-                            Price = 119.49m,
-                            ProductTypeId = new Guid("55555555-aaaa-bbbb-cccc-555555555555")
-                        },
-                        new
-                        {
-                            Id = new Guid("50505050-aaaa-bbbb-cccc-505050505050"),
-                            Description = "Premium Z790 chipset motherboard supporting 13th Gen Intel CPUs.",
-                            ImageUrl = "/images/products/asus-z790.jpg",
-                            IsDeleted = false,
-                            Name = "ASUS ROG STRIX Z790-E",
-                            Price = 379.00m,
-                            ProductTypeId = new Guid("33333333-aaaa-bbbb-cccc-333333333333")
-                        },
-                        new
-                        {
-                            Id = new Guid("60606060-aaaa-bbbb-cccc-606060606060"),
-                            Description = "Reliable and efficient 750W power supply unit with modular cables.",
-                            ImageUrl = "/images/products/cooler-master-750w.jpg",
-                            IsDeleted = false,
-                            Name = "Cooler Master 750W 80+ Gold PSU",
-                            Price = 109.99m,
-                            ProductTypeId = new Guid("77777777-aaaa-bbbb-cccc-777777777777")
-                        });
                 });
 
             modelBuilder.Entity("PCShop.Data.Models.ProductType", b =>
@@ -539,98 +424,6 @@ namespace PCShop.Data.Migrations
                     b.ToTable("ProductsTypes", t =>
                         {
                             t.HasComment("Product type of the PC Shop system");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-aaaa-bbbb-cccc-111111111111"),
-                            Name = "Processor"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-aaaa-bbbb-cccc-222222222222"),
-                            Name = "Video Card"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-aaaa-bbbb-cccc-333333333333"),
-                            Name = "Motherboard"
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-aaaa-bbbb-cccc-444444444444"),
-                            Name = "RAM"
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-aaaa-bbbb-cccc-555555555555"),
-                            Name = "SSD"
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-aaaa-bbbb-cccc-666666666666"),
-                            Name = "HDD"
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-aaaa-bbbb-cccc-777777777777"),
-                            Name = "Power Supply"
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-aaaa-bbbb-cccc-888888888888"),
-                            Name = "Cooling System"
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-aaaa-bbbb-cccc-999999999999"),
-                            Name = "Case Fan"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa1-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Case"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa2-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Monitor"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa3-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Keyboard"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa4-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Mouse"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa5-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Headset"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa6-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Mousepad"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa7-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Speakers"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa8-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Microphone"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaaaaaa9-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
-                            Name = "Webcam"
                         });
                 });
 
@@ -674,29 +467,6 @@ namespace PCShop.Data.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "ff2600d1-23f5-4b4e-bab7-be279a518cd8",
-                            Email = "admin@pcshop.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@PCSHOP.COM",
-                            NormalizedUserName = "ADMIN@PCSHOP.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMra+qYypRsAiWX9n92ghpucxtO6D4qnCxESFgcqJabfnUuhciz0bSvLYZoBfnlP3A==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "1e2044db-7e3a-43d7-b91d-b721c8dbdb65",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@pcshop.com",
-                            Address = "123 Admin Street",
-                            City = "Admin City",
-                            FullName = "Admin User",
-                            IsDeleted = false,
-                            PostalCode = "00000"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
