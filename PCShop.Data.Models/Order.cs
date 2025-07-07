@@ -10,7 +10,7 @@ namespace PCShop.Data.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Comment("Foreign key to the referenced AspNetUser")]
-        public required string ApplicationUserId { get; set; }
+        public Guid ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; } = null!;
 
         [Comment("The date and time when the order was placed")]

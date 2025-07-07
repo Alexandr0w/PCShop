@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace PCShop.Data
 {
-    public class PCShopDbContext : IdentityDbContext<IdentityUser>
+    public class PCShopDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public PCShopDbContext(DbContextOptions<PCShopDbContext> options)
             : base(options)

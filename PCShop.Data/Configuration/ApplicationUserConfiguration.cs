@@ -12,27 +12,26 @@ namespace PCShop.Data.Configuration
         {
             entity
                 .Property(au => au.FullName)
-                .IsRequired()
                 .HasMaxLength(FullNameMaxLength);
 
             entity
                 .Property(au => au.Address)
-                .IsRequired()
                 .HasMaxLength(AddressMaxLength);
 
             entity
                 .Property(au => au.City)
-                .IsRequired()
                 .HasMaxLength(CityMaxLength);
 
             entity
                 .Property(au => au.PostalCode)
-                .IsRequired()
                 .HasMaxLength(PostalCodeMaxLength);
 
             entity
                 .Property(au => au.IsDeleted)
                 .HasDefaultValue(false);
+
+            entity
+                .HasQueryFilter(au => au.IsDeleted == false);
 
             entity
                 .HasData(this.GenerateSeedUser());
@@ -42,7 +41,7 @@ namespace PCShop.Data.Configuration
         {
             ApplicationUser defaultUser = new ApplicationUser
             {
-                Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd", 
+                Id = Guid.Parse("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd"),
                 UserName = "admin@pcshop.com",
                 NormalizedUserName = "ADMIN@PCSHOP.COM",
                 Email = "admin@pcshop.com",
@@ -52,19 +51,14 @@ namespace PCShop.Data.Configuration
                 Address = "123 Admin Street",
                 City = "Admin City",
                 PostalCode = "00000",
-                PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(
-                    new ApplicationUser
-                    {
-                        UserName = "admin@pcshop.com",
-                        FullName = "Admin User",
-                        Address = "123 Admin Street",
-                        City = "Admin City",
-                        PostalCode = "00000"
-                    },
-                    "Admin123!")
+                SecurityStamp = Guid.NewGuid().ToString() 
             };
+
+            PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
+            defaultUser.PasswordHash = hasher.HashPassword(defaultUser, "Admin123!");
 
             return defaultUser;
         }
+
     }
 }

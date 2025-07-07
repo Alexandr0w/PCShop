@@ -15,8 +15,8 @@ namespace PCShop.Data.Migrations
         {
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PostalCode", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd", 0, "123 Admin Street", "Admin City", "ff2600d1-23f5-4b4e-bab7-be279a518cd8", "ApplicationUser", "admin@pcshop.com", true, "Admin User", false, null, "ADMIN@PCSHOP.COM", "ADMIN@PCSHOP.COM", "AQAAAAIAAYagAAAAEMra+qYypRsAiWX9n92ghpucxtO6D4qnCxESFgcqJabfnUuhciz0bSvLYZoBfnlP3A==", null, false, "00000", "1e2044db-7e3a-43d7-b91d-b721c8dbdb65", false, "admin@pcshop.com" });
+                columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PostalCode", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd"), 0, "123 Admin Street", "Admin City", "d021a7e6-ab5b-452c-8f0e-9aa363c19e48", "admin@pcshop.com", true, "Admin User", false, null, "ADMIN@PCSHOP.COM", "ADMIN@PCSHOP.COM", "AQAAAAIAAYagAAAAELeYEnzn9cElK/GbOVEO+vjZ7jb2uhHl9gepiCJBCziS0TV4gMIxPvOPOmsPMkuxXA==", null, false, "00000", "d9568473-201c-4a30-89b0-27b90726a580", false, "admin@pcshop.com" });
 
             migrationBuilder.InsertData(
                 table: "Computers",
@@ -76,7 +76,7 @@ namespace PCShop.Data.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
-                keyValue: "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd");
+                keyValue: new Guid("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd"));
 
             migrationBuilder.DeleteData(
                 table: "Computers",

@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using PCShop.Data.Models
 @using PCShop.Web
 @using PCShop.Web.ViewModels
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

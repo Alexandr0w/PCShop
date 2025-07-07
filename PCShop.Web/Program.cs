@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
@@ -25,7 +26,7 @@ namespace PCShop.Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services
-                .AddDefaultIdentity<IdentityUser>(options =>
+                .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.SignIn.RequireConfirmedEmail = false;
@@ -38,11 +39,13 @@ namespace PCShop.Web
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequiredUniqueChars = 0;
                 })
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
             builder.Services.AddScoped<ISearchService, SearchService>();
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             WebApplication app = builder.Build();
             

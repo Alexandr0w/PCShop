@@ -26,6 +26,9 @@ namespace PCShop.Data.Configuration
                 .HasColumnType(PriceSqlType);
 
             entity
+                .HasQueryFilter(o => o.ApplicationUser.IsDeleted == false);
+
+            entity
                 .HasOne(o => o.ApplicationUser)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.ApplicationUserId)
