@@ -270,7 +270,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Computers", t =>
+                    b.ToTable("Computers", null, t =>
                         {
                             t.HasComment("Represents a computer in the PC Shop system");
                         });
@@ -346,7 +346,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ComputersParts", t =>
+                    b.ToTable("ComputersParts", null, t =>
                         {
                             t.HasComment("Represents a part of a computer, linking it to a specific product");
                         });
@@ -384,7 +384,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Orders", t =>
+                    b.ToTable("Orders", null, t =>
                         {
                             t.HasComment("Represents an order placed by a user in the system");
                         });
@@ -404,7 +404,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrdersItems", t =>
+                    b.ToTable("OrdersItems", null, t =>
                         {
                             t.HasComment("Represents an item in an order, linking a product to an order");
                         });
@@ -453,7 +453,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("Products", t =>
+                    b.ToTable("Products", null, t =>
                         {
                             t.HasComment("Represents a product in the PC Shop system");
                         });
@@ -536,7 +536,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductsTypes", t =>
+                    b.ToTable("ProductsTypes", null, t =>
                         {
                             t.HasComment("Product type of the PC Shop system");
                         });

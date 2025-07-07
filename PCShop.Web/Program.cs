@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
+using PCShop.Data.Models;
 using PCShop.Services.Core;
 using PCShop.Services.Core.Interfaces;
 

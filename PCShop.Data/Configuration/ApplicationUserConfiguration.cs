@@ -42,7 +42,7 @@ namespace PCShop.Data.Configuration
         {
             ApplicationUser defaultUser = new ApplicationUser
             {
-                Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd", 
                 UserName = "admin@pcshop.com",
                 NormalizedUserName = "ADMIN@PCSHOP.COM",
                 Email = "admin@pcshop.com",

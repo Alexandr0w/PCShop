@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using System.Reflection;
 
 namespace PCShop.Data
 {
-    public class PCShopDbContext : IdentityDbContext
+    public class PCShopDbContext : IdentityDbContext<IdentityUser>
     {
         public PCShopDbContext(DbContextOptions<PCShopDbContext> options)
             : base(options)
