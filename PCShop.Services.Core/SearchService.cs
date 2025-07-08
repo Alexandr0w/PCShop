@@ -18,7 +18,7 @@ namespace PCShop.Services.Core
         {
             return await this._dbContext
                 .Products
-                .Where(x => x.Name.Contains(query))
+                .Where(p => p.Name.Contains(query))
                 .ToArrayAsync(); 
         }
     }

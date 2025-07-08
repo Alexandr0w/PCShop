@@ -3,7 +3,7 @@ using PCShop.Services.Core.Interfaces;
 
 namespace PCShop.Web.Controllers
 {
-    public class SearchController : Controller
+    public class SearchController : BaseController
     {
         private readonly ISearchService _searchService;
 

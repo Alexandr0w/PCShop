@@ -1,30 +1,37 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Web.ViewModels;
+using System.Diagnostics;
 
 namespace PCShop.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public HomeController(ILogger<HomeController> logger)
-        {
 
-        }
-
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            return View();
-        }
+            try
+            {
+                if (IsUserAuthenticated())
+                {
+                    return this.RedirectToAction(nameof(Index), "PCShop");
+                }
 
-        public IActionResult Privacy()
-        {
-            return View();
+                return this.View();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return this.RedirectToAction(nameof(Index));
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
