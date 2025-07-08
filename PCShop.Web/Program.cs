@@ -43,6 +43,7 @@ namespace PCShop.Web
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
             builder.Services.AddScoped<ISearchService, SearchService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

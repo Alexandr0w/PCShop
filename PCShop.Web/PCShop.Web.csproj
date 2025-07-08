@@ -25,4 +25,8 @@
     <ProjectReference Include="..\PCShop.Web.ViewModels\PCShop.Web.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Computer\" />
+  </ItemGroup>
+
 </Project>

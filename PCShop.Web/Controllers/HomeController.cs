@@ -16,7 +16,7 @@ namespace PCShop.Web.Controllers
             {
                 if (IsUserAuthenticated())
                 {
-                    return this.RedirectToAction(nameof(Index), "PCShop");
+                    return this.RedirectToAction(nameof(Index), "Product");
                 }
 
                 return this.View();
