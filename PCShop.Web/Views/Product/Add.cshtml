@@ -1,0 +1,63 @@
+﻿@using PCShop.Web.ViewModels.Product
+@model AddProductInputModel
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+    <h2 class="fw-bold">@ViewData["Title"]</h2>
+</div>
+<hr />
+
+<div class="row">
+    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+        <form asp-controller="Product" asp-action="Add" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-6 mb-3">
+                    <label asp-for="Name" class="form-label">Product Name</label>
+                    <input asp-for="Name" class="form-control" aria-required="true" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="col-sm-6 mb-3">
+                    <label asp-for="ProductTypeId" class="form-label">Category</label>
+                    <select asp-for="ProductTypeId" class="form-select" asp-items="@(new SelectList(Model.ProductTypes, "Id", "Name"))">
+                        <option value="">-- Select --</option>
+                    </select>
+                    <span asp-validation-for="ProductTypeId" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3" aria-required="true"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label">Price (in leva)</label>
+                <input asp-for="Price" class="form-control" aria-required="true" />
+                <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Image URL</label>
+                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL or upload below (optional)" />
+                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Upload Image</label>
+                <input type="file" name="ImageFile" class="form-control" />
+                <small class="text-muted">Accepted formats: .jpg, .png, .webp</small>
+            </div>
+
+            <div class="mb-2">
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

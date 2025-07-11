@@ -1,0 +1,61 @@
+﻿@using PCShop.Web.ViewModels.Product
+@model DetailsProductViewModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+    <hr />
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="row g-0">
+                    <div class="col-md-5 p-3 text-center bg-light rounded-start">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" class="img-fluid rounded-3" style="max-height: 300px; object-fit: contain;" alt="@Model.Title" />
+                        }
+                        else
+                        {
+                            <img src="~/images/no-image.jpg" class="img-fluid rounded-3" style="max-height: 300px; object-fit: contain;" alt="No Image Available" />
+                        }
+                    </div>
+                    <div class="col-md-7 p-4">
+                        <h4 class="card-title mb-3">@Model.Title</h4>
+                        <p class="card-text text-muted">@Model.Description</p>
+                        <hr />
+                        <p class="card-text">
+                            <strong>Price:</strong>
+                            <span class="text-success fw-bold fs-5">@Model.Price lv</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Category:</strong>
+                            <span class="text-dark fw-semibold">@Model.ProductType</span>
+                        </p>
+                        <hr />
+                        <div class="d-flex flex-wrap justify-content-between">
+                            <button type="button" class="btn btn-outline-warning flex-fill mb-2" onclick="history.back()">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+
+                            @if (Model.IsAuthor)
+                            {
+                                <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id"
+                                   class="btn btn-outline-primary me-2 flex-fill mb-2">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id"
+                                   class="btn btn-outline-danger flex-fill mb-2">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
