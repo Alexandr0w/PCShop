@@ -2,18 +2,16 @@
 {
     public class ProductIndexViewModel
     {
-        public int Id { get; set; }
+        public required string Id { get; set; } 
 
         public required string Title { get; set; } 
 
         public required string ImageUrl { get; set; }
 
-        public required string Category { get; set; } 
+        public required string ProductType { get; set; } 
 
         public bool IsAuthor { get; set; }
 
-        public bool IsSaved { get; set; }
-
-        public int SavedCount { get; set; }
+        public decimal Price { get; set; }
     }
 }
