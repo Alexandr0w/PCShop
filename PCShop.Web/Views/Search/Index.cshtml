@@ -1,30 +1,45 @@
-﻿@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-@using PCShop.Data.Models
-@model IEnumerable<Product>?
-
-<h2 class="mb-4">Search results for "<strong>@HttpContextAccessor.HttpContext?.Request.Query["query"]</strong>"</h2>
+﻿@using PCShop.Web.ViewModels.Search
+@model SearchResultsViewModel
 
 @{
-    ViewData["Title"] = @HttpContextAccessor.HttpContext?.Request.Query["query"];
+    ViewData["Title"] = $"Search for \"{Model.Query}\"";
 }
 
-@if (Model != null && Model.Any())
+<h2 class="mb-4">Search results for "<strong>@Model.Query</strong>"</h2>
+
+@if (!Model.Products.Any() && !Model.Computers.Any())
 {
-    <div class="list-group">
-        @foreach (var item in Model)
+    <div class="alert alert-warning" role="alert">
+        No results found.
+    </div>
+}
+
+@if (Model.Products.Any())
+{
+    <h4>Matching Products</h4>
+    <div class="list-group mb-4">
+        @foreach (var product in Model.Products)
         {
-            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id"
+            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id"
                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                @item.Name
-                <span class="badge bg-primary rounded-pill">@item.Price lv</span>
+                @product.Name
+                <span class="badge bg-primary rounded-pill">@product.Price €</span>
             </a>
         }
     </div>
 }
-else
+
+@if (Model.Computers.Any())
 {
-    <div class="alert alert-warning" role="alert">
-        No results found.
+    <h4>Matching Computers</h4>
+    <div class="list-group">
+        @foreach (var computer in Model.Computers)
+        {
+            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                @computer.Name
+                <span class="badge bg-success rounded-pill">@computer.Price €</span>
+            </a>
+        }
     </div>
 }

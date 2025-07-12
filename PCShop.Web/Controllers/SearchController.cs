@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
+using PCShop.Web.ViewModels.Search;
 
 namespace PCShop.Web.Controllers
 {
@@ -12,16 +14,18 @@ namespace PCShop.Web.Controllers
             this._searchService = searchService;
         }
 
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
-                return this.View(nameof(Index), null);
+                return this.View(new SearchResultsViewModel { Query = "" });
             }
 
             var results = await this._searchService.SearchAsync(query);
 
-            return this.View(nameof(Index), results);
+            return this.View(results);
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using PCShop.Data.Models;
+using PCShop.Web.ViewModels.Search;
 
 namespace PCShop.Services.Core.Interfaces
 {
     public interface ISearchService
     {
-        Task<IEnumerable<Product>> SearchAsync(string query);
+        Task<SearchResultsViewModel> SearchAsync(string query);
     }
 }
