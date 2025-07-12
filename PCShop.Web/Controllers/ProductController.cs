@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
-using static PCShop.Data.Common.EntityConstants.Product;
+using static PCShop.Data.Common.ErrorMessages;
 
 namespace PCShop.Web.Controllers
 {

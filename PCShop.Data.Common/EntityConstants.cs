@@ -40,8 +40,6 @@
             public const int DescriptionMaxLength = 1000;
 
             public const int ImageUrlMaxLength = 2048;
-
-            public const string CreateErrorMessage = "Fatal error occurred while adding a product";
         }
 
         public static class ProductType
