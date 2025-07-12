@@ -5,6 +5,10 @@
 
 <h2 class="mb-4">Search results for "<strong>@HttpContextAccessor.HttpContext?.Request.Query["query"]</strong>"</h2>
 
+@{
+    ViewData["Title"] = @HttpContextAccessor.HttpContext?.Request.Query["query"];
+}
+
 @if (Model != null && Model.Any())
 {
     <div class="list-group">

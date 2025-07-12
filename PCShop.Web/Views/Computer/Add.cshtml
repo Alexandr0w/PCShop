@@ -15,7 +15,7 @@
         <form asp-controller="Computer" asp-action="Add" method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-sm-6 mb-3">
-                    <label asp-for="Name" class="form-label">Product Name</label>
+                    <label asp-for="Name" class="form-label">Computer Name</label>
                     <input asp-for="Name" class="form-control" aria-required="true" />
                     <span asp-validation-for="Name" class="text-danger small"></span>
                 </div>
@@ -28,7 +28,7 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Price" class="form-label">Price (in leva)</label>
+                <label asp-for="Price" class="form-label">Price (in euro)</label>
                 <input asp-for="Price" class="form-control" aria-required="true" />
                 <span asp-validation-for="Price" class="text-danger small"></span>
             </div>
@@ -47,7 +47,7 @@
 
             <div class="mb-2">
                 <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded">
-                    <i class="fas fa-save"></i> Save Product
+                    <i class="fas fa-save"></i> Save Computer
                 </button>
             </div>
         </form>
