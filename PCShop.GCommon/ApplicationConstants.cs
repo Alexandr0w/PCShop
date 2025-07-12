@@ -8,5 +8,7 @@
         public const string OrderDateDefaultSqlValue = "GETUTCDATE()";
         public const string RootFolder = "wwwroot";
         public const string ImagesFolder = "images";
+        public const string ProductsFolder = "products";
+        public const string ComputersFolder = "computers";
     }
 }

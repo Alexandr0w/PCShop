@@ -1,16 +1,14 @@
-﻿namespace PCShop.Web.ViewModels.Product
+﻿namespace PCShop.Web.ViewModels.Computer
 {
-    public class DetailsProductViewModel
+    public class DetailsComputerViewModel
     {
         public required string Id { get; set; }
 
         public required string Name { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public required string ImageUrl { get; set; }
 
         public required string Description { get; set; }
-
-        public required string ProductType { get; set; }
 
         public bool IsAuthor { get; set; }
 

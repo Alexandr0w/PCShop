@@ -45,6 +45,8 @@ namespace PCShop.Data.Configuration
         {
             ApplicationUser defaultUser = new ApplicationUser
             {
+                // UserName: admin@pcshop.com
+                // Password: Admin123!
                 Id = Guid.Parse("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd"),
                 UserName = "admin@pcshop.com",
                 NormalizedUserName = "ADMIN@PCSHOP.COM",
@@ -54,15 +56,13 @@ namespace PCShop.Data.Configuration
                 FullName = "Admin User",
                 Address = "123 Admin Street",
                 City = "Admin City",
-                PostalCode = "00000",
-                SecurityStamp = Guid.NewGuid().ToString() 
+                PostalCode = "0000",
+                SecurityStamp = "cdd1077d-f80c-4f64-b3bc-e7b71fc4ef9a",
+                ConcurrencyStamp = "20156ffd-ca5b-493f-8cdb-f0e37d6ffc28",
+                PasswordHash = "AQAAAAIAAYagAAAAEN6HKPt1nIvfpyU80C1hHBdt/MBp8t8qhTJqbc55PHUBGvA9g2Y47ybCLa5zyIrOPg=="
             };
-
-            PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
-            defaultUser.PasswordHash = hasher.HashPassword(defaultUser, "Admin123!");
 
             return defaultUser;
         }
-
     }
 }

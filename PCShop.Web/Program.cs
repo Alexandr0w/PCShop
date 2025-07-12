@@ -44,6 +44,7 @@ namespace PCShop.Web
             builder.Services.AddScoped<ISearchService, SearchService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
+            builder.Services.AddScoped<IComputerService, ComputerService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

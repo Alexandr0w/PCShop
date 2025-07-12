@@ -1,33 +1,31 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
-using PCShop.Web.ViewModels.Product;
+using PCShop.Web.ViewModels.Computer;
 using static PCShop.Data.Common.ErrorMessages;
 
 namespace PCShop.Web.Controllers
 {
-    public class ProductController : BaseController
+    public class ComputerController : BaseController
     {
-        private readonly IProductService _productService;
-        private readonly IProductTypeService _productTypeService;
+        private readonly IComputerService _computerService;
 
-        public ProductController(IProductService productService, IProductTypeService productTypeService)
+        public ComputerController(IComputerService computerService)
         {
-            this._productService = productService;
-            this._productTypeService = productTypeService;
+            this._computerService = computerService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? productType)
+        public async Task<IActionResult> Index()
         {
             try
             {
                 string? userId = this.GetUserId();
 
-                IEnumerable<ProductIndexViewModel> allProducts = await this._productService.GetAllProductsAsync(userId, productType);
+                IEnumerable<ComputerIndexViewModel> allComputers = await this._computerService.GetAllComputersAsync(userId);
 
-                return this.View(allProducts);
+                return this.View(allComputers);
             }
             catch (Exception e)
             {
@@ -49,14 +47,14 @@ namespace PCShop.Web.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                DetailsProductViewModel? productDetails = await this._productService.GetProductDetailsAsync(userId, id);
+                DetailsComputerViewModel? computerDetails = await this._computerService.GetComputerDetailsAsync(userId, id);
 
-                if (productDetails == null)
+                if (computerDetails == null)
                 {
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                return this.View(productDetails);
+                return this.View(computerDetails);
             }
             catch (Exception e)
             {
@@ -67,16 +65,18 @@ namespace PCShop.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Add()
+        public IActionResult Add()
         {
             try
             {
-                AddProductInputModel addProductInputModel = new AddProductInputModel
+                AddComputerInputModel addComputerInputModel = new AddComputerInputModel
                 {
-                    ProductTypes = await this._productTypeService.GetProductTypeMenuAsync()
+                    Name = string.Empty,
+                    Description = string.Empty,
+                    ImageUrl = string.Empty
                 };
 
-                return this.View(addProductInputModel);
+                return this.View(addComputerInputModel);
             }
             catch (Exception e)
             {
@@ -87,22 +87,20 @@ namespace PCShop.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Add(AddProductInputModel inputModel, IFormFile? imageFile)
+        public async Task<IActionResult> Add(AddComputerInputModel inputModel, IFormFile? imageFile)
         {
             try
             {
                 if (!this.ModelState.IsValid)
                 {
-                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
                     return this.View(inputModel);
                 }
 
-                bool addResult = await this._productService.AddProductAsync(this.GetUserId(), inputModel, imageFile);
+                bool addResult = await this._computerService.AddComputerAsync(this.GetUserId(), inputModel, imageFile);
 
                 if (addResult == false)
                 {
                     ModelState.AddModelError(string.Empty, AddProductErrorMessage);
-                    inputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
                     return this.View(inputModel);
                 }
 

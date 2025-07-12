@@ -1,86 +1,101 @@
-﻿﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - PC Shop</title>
     <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PC Shop</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm w-100">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-bold fs-4" asp-area="" asp-controller="Home" asp-action="Index">PC Shop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarColor01">
-                    <ul class="navbar-nav me-auto">
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">
-                                Home
-                                <span class="visually-hidden">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link @((ViewContext.RouteData.Values["controller"]?.ToString() == "Home") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Separated link</a>
-                            </div>
+                            <a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Components") ? "active" : "")" href="#" id="componentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                PC Components
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="componentsDropdown">
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Processor">Processors</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Video Card">Video Cards</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Motherboard">Motherboards</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="RAM">Memory (RAM)</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="SSD">SSD</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="HDD">HDD</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Power Supply">Power Supplies</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Cooling System">Cooling Systems</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Case Fan">Case Fans</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Case">Cases</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Computer" asp-action="Index">Computers</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Peripherals") ? "active" : "")" href="#" id="peripheralsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Peripherals
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="peripheralsDropdown">
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Monitor">Monitors</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Keyboard">Keyboards</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Mouse">Mice</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Headset">Headsets</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Mousepad">Mousepads</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Speaker">Speakers</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Microphone">Microphones</a></li>
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-productType="Webcam">Webcams</a></li>
+                            </ul>
                         </li>
                     </ul>
+
                     @if (User?.Identity?.IsAuthenticated == true)
                     {
-
-                        <div class="nav-item position-relative" id="searchWrapper">
+                        <div id="searchWrapper" class="search-wrapper me-3 position-relative d-flex align-items-center">
                             <button class="btn btn-outline-light btn-sm fs-5 d-flex align-items-center search-icon" id="searchToggle" type="button" title="Search">
                                 <i class="bi bi-search"></i>
                             </button>
-                            <div id="searchDropdown" class="position-absolute top-50 translate-middle-y end-100 pe-3" style="display: none; min-width: 280px;">
-                                <form class="d-flex flex-nowrap bg-white p-2 rounded shadow" method="get" action="/Search" style="min-width: 280px;">
-                                    <input class="form-control form-control-sm me-2" type="search" name="query" placeholder="Search..." aria-label="Search" style="min-width: 160px;" />
-                                    <button class="btn btn-primary btn-sm" type="submit" style="white-space: nowrap;">Go</button>
+                            <div id="searchDropdown" class="dropdown-menu p-2" style="display: none;">
+                                <form class="search-form d-flex flex-nowrap" method="get" action="/Search">
+                                    <input class="form-control form-control-sm me-2" type="search" name="query" placeholder="Search..." aria-label="Search" required />
+                                    <button class="btn btn-primary btn-sm" type="submit">Go</button>
                                 </form>
                             </div>
                         </div>
-
                     }
-
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container my-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-center border-top">
         <div class="container">
-            <span>&copy; @DateTime.Now.Year - PC Shop</span>
+            <p class="mb-0">&copy; @DateTime.Now.Year - PC Shop. All rights reserved.</p>
+            <small class="text-muted">Built using ASP.NET Core & Bootstrap</small>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

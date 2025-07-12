@@ -1,24 +1,18 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.getElementById('searchToggle');
+﻿document.getElementById('searchToggle')?.addEventListener('click', function (e) {
+    e.preventDefault();
     const dropdown = document.getElementById('searchDropdown');
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block';
+        dropdown.querySelector('input')?.focus();
+    } else {
+        dropdown.style.display = 'none';
+    }
+});
 
-    if (toggle && dropdown) {
-        toggle.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
-
-            if (!isVisible) {
-                dropdown.querySelector('input')?.focus();
-            }
-        });
-
-        document.addEventListener('click', function (e) {
-            const isClickInside = toggle.contains(e.target) || dropdown.contains(e.target);
-            if (!isClickInside) {
-                dropdown.style.display = 'none';
-            }
-        });
+document.addEventListener('click', function (event) {
+    const dropdown = document.getElementById('searchDropdown');
+    const toggleBtn = document.getElementById('searchToggle');
+    if (!dropdown.contains(event.target) && !toggleBtn.contains(event.target)) {
+        dropdown.style.display = 'none';
     }
 });

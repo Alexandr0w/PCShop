@@ -20,7 +20,7 @@ namespace PCShop.Services.Core
             this._userManager = userManager;
         }
 
-        public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId)
+        public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType = null)
         {
             Guid? userGuid = null;
 
@@ -29,21 +29,29 @@ namespace PCShop.Services.Core
                 userGuid = parsedGuid;
             }
 
-            IEnumerable<ProductIndexViewModel> products = await this._dbContext
+            var query = this._dbContext
                 .Products
-                    .Include(p => p.ComputersParts)
-                        .ThenInclude(cp => cp.Computer)
-                    .AsNoTracking()
-                    .Select(p => new ProductIndexViewModel
-                    {
-                        Id = p.Id.ToString(),
-                        Title = p.Name,
-                        ImageUrl = p.ImageUrl,
-                        ProductType = p.ProductType.Name,
-                        Price = p.Price,
-                        IsAuthor = userGuid.HasValue && p.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
-                    })
-                    .ToArrayAsync();
+                .Include(p => p.ComputersParts)
+                    .ThenInclude(cp => cp.Computer)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(productType))
+            {
+                query = query.Where(p => p.ProductType.Name == productType);
+            }
+
+            IEnumerable<ProductIndexViewModel> products = await query
+                .Select(p => new ProductIndexViewModel
+                {
+                    Id = p.Id.ToString(),
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    ProductType = p.ProductType.Name,
+                    Price = p.Price,
+                    IsAuthor = userGuid.HasValue && p.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
+                })
+                .ToArrayAsync();
 
             return products;
         }
@@ -72,12 +80,12 @@ namespace PCShop.Services.Core
                     detailsProductVM = new DetailsProductViewModel
                     {
                         Id = product.Id.ToString(),
-                        Title = product.Name,
+                        Name = product.Name,
                         ImageUrl = product.ImageUrl,
                         Description = product.Description,
                         ProductType = product.ProductType.Name,
                         Price = product.Price,
-                        IsAuthor = product.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid)
+                        IsAuthor = userGuid.HasValue && product.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
                     };
                 }
             }
@@ -110,7 +118,7 @@ namespace PCShop.Services.Core
 
             if (imageFile != null && imageFile.Length > 0)
             {
-                string uploadsFolder = Path.Combine(RootFolder, ImagesFolder);
+                string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
                 Directory.CreateDirectory(uploadsFolder);
 
                 string uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
@@ -121,7 +129,7 @@ namespace PCShop.Services.Core
                     await imageFile.CopyToAsync(fileStream);
                 }
 
-                imageUrl = $"/{ImagesFolder}/" + uniqueFileName;
+                imageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
             }
             if (user != null && productType != null)
             {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PCShop.Data;
 
@@ -11,9 +12,11 @@ using PCShop.Data;
 namespace PCShop.Data.Migrations
 {
     [DbContext(typeof(PCShopDbContext))]
-    partial class PCShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712182559_ComputerImageUrlFix")]
+    partial class ComputerImageUrlFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +261,7 @@ namespace PCShop.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "123 Admin Street",
                             City = "Admin City",
-                            ConcurrencyStamp = "20156ffd-ca5b-493f-8cdb-f0e37d6ffc28",
+                            ConcurrencyStamp = "0d516785-0a7d-4072-9778-e26e13a61503",
                             Email = "admin@pcshop.com",
                             EmailConfirmed = true,
                             FullName = "Admin User",
@@ -266,10 +269,10 @@ namespace PCShop.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@PCSHOP.COM",
                             NormalizedUserName = "ADMIN@PCSHOP.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN6HKPt1nIvfpyU80C1hHBdt/MBp8t8qhTJqbc55PHUBGvA9g2Y47ybCLa5zyIrOPg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDrwOD89DM2ltbGCB9X/IFamXNCgtz1WrTuHk05WpUx4pROfIz9A0OJKKjpk3WGfgQ==",
                             PhoneNumberConfirmed = false,
-                            PostalCode = "0000",
-                            SecurityStamp = "cdd1077d-f80c-4f64-b3bc-e7b71fc4ef9a",
+                            PostalCode = "00000",
+                            SecurityStamp = "1d948447-fa3e-448d-b4b4-54a0b207d0ea",
                             TwoFactorEnabled = false,
                             UserName = "admin@pcshop.com"
                         });
@@ -312,7 +315,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Computers", null, t =>
+                    b.ToTable("Computers", t =>
                         {
                             t.HasComment("Represents a computer in the PC Shop system");
                         });
@@ -388,7 +391,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ComputersParts", null, t =>
+                    b.ToTable("ComputersParts", t =>
                         {
                             t.HasComment("Represents a part of a computer, linking it to a specific product");
                         });
@@ -425,7 +428,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Orders", null, t =>
+                    b.ToTable("Orders", t =>
                         {
                             t.HasComment("Represents an order placed by a user in the system");
                         });
@@ -445,7 +448,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrdersItems", null, t =>
+                    b.ToTable("OrdersItems", t =>
                         {
                             t.HasComment("Represents an item in an order, linking a product to an order");
                         });
@@ -494,7 +497,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("Products", null, t =>
+                    b.ToTable("Products", t =>
                         {
                             t.HasComment("Represents a product in the PC Shop system");
                         });
@@ -577,7 +580,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductsTypes", null, t =>
+                    b.ToTable("ProductsTypes", t =>
                         {
                             t.HasComment("Product type of the PC Shop system");
                         });
