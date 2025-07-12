@@ -12,18 +12,22 @@ namespace PCShop.Data.Configuration
         {
             entity
                 .Property(au => au.FullName)
+                .IsRequired()
                 .HasMaxLength(FullNameMaxLength);
 
             entity
                 .Property(au => au.Address)
+                .IsRequired()
                 .HasMaxLength(AddressMaxLength);
 
             entity
                 .Property(au => au.City)
+                .IsRequired()
                 .HasMaxLength(CityMaxLength);
 
             entity
                 .Property(au => au.PostalCode)
+                .IsRequired()
                 .HasMaxLength(PostalCodeMaxLength);
 
             entity
