@@ -1,4 +1,4 @@
-﻿namespace PCShop.Data.Common
+﻿namespace PCShop.GCommon
 {
     public static class ErrorMessages
     {

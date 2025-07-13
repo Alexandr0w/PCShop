@@ -47,5 +47,10 @@
             public const int NameMinLength = 3;
             public const int NameMaxLength = 30;
         }
+
+        public static class OrderItem
+        {
+            public const int QuantityDefaultValue = 1;
+        }
     }
 }

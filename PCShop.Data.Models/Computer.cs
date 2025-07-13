@@ -24,5 +24,6 @@ namespace PCShop.Data.Models
         public bool IsDeleted { get; set; }
 
         public virtual ICollection<ComputerPart> ComputersParts { get; set; } = new HashSet<ComputerPart>();
+        public virtual ICollection<OrderItem> OrdersItems { get; set; } = new HashSet<OrderItem>();
     }
 }

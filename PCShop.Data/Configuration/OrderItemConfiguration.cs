@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PCShop.Data.Models;
+using static PCShop.Data.Common.EntityConstants.OrderItem;
 
 namespace PCShop.Data.Configuration
 {
@@ -9,7 +10,7 @@ namespace PCShop.Data.Configuration
         public void Configure(EntityTypeBuilder<OrderItem> entity)
         {
             entity
-                .HasKey(oi => new { oi.OrderId, oi.ProductId });
+                .HasKey(oi => oi.Id);
 
             entity
                 .HasOne(oi => oi.Order)
@@ -24,7 +25,21 @@ namespace PCShop.Data.Configuration
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity
-                .HasQueryFilter(oi => oi.Product.IsDeleted == false);
+                .HasOne(oi => oi.Computer)
+                .WithMany(c => c.OrdersItems)
+                .HasForeignKey(oi => oi.ComputerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+                .Property(oi => oi.Quantity)
+                .IsRequired()
+                .HasDefaultValue(QuantityDefaultValue);
+
+            entity
+                .HasQueryFilter(oi => oi.Product != null && oi.Product.IsDeleted == false);
+
+            entity
+                .HasQueryFilter(oi => oi.Computer != null && oi.Computer.IsDeleted == false);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PCShop.Data;
 
@@ -11,9 +12,11 @@ using PCShop.Data;
 namespace PCShop.Data.Migrations
 {
     [DbContext(typeof(PCShopDbContext))]
-    partial class PCShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712215436_OrderItemEntityChanged")]
+    partial class OrderItemEntityChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -312,7 +315,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Computers", null, t =>
+                    b.ToTable("Computers", t =>
                         {
                             t.HasComment("Represents a computer in the PC Shop system");
                         });
@@ -388,7 +391,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ComputersParts", null, t =>
+                    b.ToTable("ComputersParts", t =>
                         {
                             t.HasComment("Represents a part of a computer, linking it to a specific product");
                         });
@@ -425,7 +428,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Orders", null, t =>
+                    b.ToTable("Orders", t =>
                         {
                             t.HasComment("Represents an order placed by a user in the system");
                         });
@@ -464,7 +467,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrdersItems", null, t =>
+                    b.ToTable("OrdersItems", t =>
                         {
                             t.HasComment("Represents an item in an order, linking a product to an order");
                         });
@@ -513,7 +516,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("Products", null, t =>
+                    b.ToTable("Products", t =>
                         {
                             t.HasComment("Represents a product in the PC Shop system");
                         });
@@ -596,7 +599,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductsTypes", null, t =>
+                    b.ToTable("ProductsTypes", t =>
                         {
                             t.HasComment("Product type of the PC Shop system");
                         });
