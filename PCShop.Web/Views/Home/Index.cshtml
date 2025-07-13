@@ -1,5 +1,7 @@
 ﻿@{
+
     ViewData["Title"] = "Home Page";
+
 }
 
 <div class="container mt-5 shadow rounded-4 p-5 bg-light">
@@ -7,10 +9,18 @@
         <div class="col-md-8">
             <h1 class="display-4 fw-bold text-primary">Welcome to PC Shop</h1>
             <p class="lead text-muted">Discover the best PC components, configurations, and peripherals.</p>
-
-            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg mt-3 shadow-sm">
-                Start Browsing Products
-            </a>
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg mt-3 shadow-sm">
+                    Start Browsing Products
+                </a>
+            }
+            else
+            {
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg mt-3 shadow-sm">
+                    Start Browsing Products
+                </a>
+            }
         </div>
     </div>
 </div>

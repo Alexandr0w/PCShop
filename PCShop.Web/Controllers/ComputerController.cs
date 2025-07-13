@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Computer;
-using static PCShop.Data.Common.ErrorMessages;
+using static PCShop.GCommon.ErrorMessages;
 
 namespace PCShop.Web.Controllers
 {
@@ -41,11 +41,6 @@ namespace PCShop.Web.Controllers
             try
             {
                 string? userId = this.GetUserId();
-
-                if (userId == null)
-                {
-                    return this.RedirectToAction(nameof(Index));
-                }
 
                 DetailsComputerViewModel? computerDetails = await this._computerService.GetComputerDetailsAsync(userId, id);
 

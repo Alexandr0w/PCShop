@@ -34,21 +34,28 @@
                     <h5 class="card-title">@computer.Name</h5>
                     <p class="card-text"><strong>Price:</strong> @computer.Price €</p>
 
-                    <div class="d-flex justify-content-between mt-auto">
-                        <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-50 me-2">
-                            <i class="fas fa-info-circle"></i> Details
-                        </a>
-                        @if (User?.Identity?.IsAuthenticated == true)
-                        {
-                            <form asp-controller="Product" asp-action="AddToCart" method="post" class="w-50">
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="d-flex justify-content-between mt-auto">
+                            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-50 me-2">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                            <form asp-controller="Order" asp-action="AddComputer" method="post" class="w-50">
                                 <input type="hidden" name="productId" value="@computer.Id" />
                                 <button type="submit" class="btn btn-outline-success w-100">
                                     <i class="fas fa-shopping-cart"></i> Add to cart
                                 </button>
                             </form>
-                        }
-
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex justify-content-center mt-auto">
+                            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-75">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
