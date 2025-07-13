@@ -72,8 +72,7 @@ namespace PCShop.Services.Core
                         Name = computer.Name,
                         Description = computer.Description,
                         ImageUrl = computer.ImageUrl,
-                        Price = computer.Price,
-                        IsAuthor = userGuid.HasValue && computer.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
+                        Price = computer.Price
                     };
                 }
             }
