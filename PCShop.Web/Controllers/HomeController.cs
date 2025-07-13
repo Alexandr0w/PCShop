@@ -8,30 +8,25 @@ namespace PCShop.Web.Controllers
     public class HomeController : BaseController
     {
 
-        [HttpGet]
         [AllowAnonymous]
         public IActionResult Index()
         {
-            try
-            {
-                if (IsUserAuthenticated())
-                {
-                    return this.RedirectToAction(nameof(Index), "Product");
-                }
-
-                return this.View();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return this.RedirectToAction(nameof(Index));
-            }
+            return this.View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode)
         {
-            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            switch (statusCode)
+            {
+                case 401:
+                case 403:
+                    return this.View("UnauthorizedError");
+                case 404:
+                    return this.View("NotFoundError");
+                default:
+                    return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
     }
 }

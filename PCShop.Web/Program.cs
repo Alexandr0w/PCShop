@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Services.Core;
-using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Infrastructure.Extensions;
 
 namespace PCShop.Web
@@ -59,6 +58,9 @@ namespace PCShop.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            // Added custom Error pages
+            app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
