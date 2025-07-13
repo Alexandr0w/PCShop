@@ -12,8 +12,6 @@
 
         public required string ProductType { get; set; }
 
-        public bool IsAuthor { get; set; }
-
         public decimal Price { get; set; }
     }
 }
