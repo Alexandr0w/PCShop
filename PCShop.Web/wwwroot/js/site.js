@@ -16,3 +16,10 @@ document.addEventListener('click', function (event) {
         dropdown.style.display = 'none';
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const badge = document.getElementById('cartCount');
+    if (badge) {
+        setTimeout(() => badge.classList.add('show'), 100); 
+    }
+});

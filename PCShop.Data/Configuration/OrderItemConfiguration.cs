@@ -35,11 +35,10 @@ namespace PCShop.Data.Configuration
                 .IsRequired()
                 .HasDefaultValue(QuantityDefaultValue);
 
-            entity
-                .HasQueryFilter(oi => oi.Product != null && oi.Product.IsDeleted == false);
+            entity.HasQueryFilter(oi =>
+                (oi.Product != null && !oi.Product.IsDeleted) ||
+                (oi.Computer != null && !oi.Computer.IsDeleted));
 
-            entity
-                .HasQueryFilter(oi => oi.Computer != null && oi.Computer.IsDeleted == false);
         }
     }
 }

@@ -20,40 +20,116 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
-
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return this.Unauthorized();
-            }
+            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
 
             IEnumerable<OrderItemViewModel> cartItems = await this._orderService.GetCartItemsAsync(userId);
             return this.View(cartItems);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
-            return this.RedirectToAction(nameof(Index), "Home");
+            return this.RedirectToAction(nameof(Index), "Product");
         }
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(Guid productId, int quantity = 1)
+    public async Task<IActionResult> AddProduct(AddToCartFormModel model)
     {
         try
         {
             string? userId = this.GetUserId();
-
-            if (string.IsNullOrWhiteSpace(userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return this.Unauthorized();
             }
 
-            await this._orderService.AddProductToCartAsync(userId, productId, quantity);
+            if (string.IsNullOrEmpty(model.ProductId) && string.IsNullOrEmpty(model.ComputerId))
+            {
+                ModelState.AddModelError(string.Empty, "Product or Computer ID is required");
+                return this.RedirectToAction(nameof(Index), "Product");
+            }
+
+            if (model.Quantity <= 0)
+            {
+                ModelState.AddModelError("Quantity", "Quantity must be greater than 0");
+                return this.RedirectToAction(nameof(Index), "Product");
+            }
+
+            await this._orderService.AddProductToCartAsync(model, userId);
+
+            TempData["SuccessMessage"] = "Product added to cart successfully!";
+
             return this.RedirectToAction(nameof(Index));
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+            TempData["ErrorMessage"] = "Failed to add product to cart. Please try again.";
+            return this.RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Remove(string id)
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            await this._orderService.RemoveItemAsync(id, userId);
+
+            TempData["SuccessMessage"] = "Item removed from cart successfully!";
+
+            return this.RedirectToAction(nameof(Index));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            TempData["ErrorMessage"] = "Failed to remove item from cart.";
+            return this.RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Clear()
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            await this._orderService.ClearCartAsync(userId);
+
+            TempData["SuccessMessage"] = "Cart cleared successfully!";
+
+            return this.RedirectToAction(nameof(Index));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            TempData["ErrorMessage"] = "Failed to clear cart.";
+            return this.RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Finalize()
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            await this._orderService.FinalizeOrderAsync(userId);
+
+            TempData["SuccessMessage"] = "Order finalized successfully!";
+
+            return this.RedirectToAction(nameof(Index), "Home");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            TempData["ErrorMessage"] = "Failed to finalize order.";
             return this.RedirectToAction(nameof(Index));
         }
     }

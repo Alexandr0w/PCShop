@@ -66,14 +66,19 @@
 
                     @if (User?.Identity?.IsAuthenticated == true)
                     {
-                        <div class="d-flex justify-content-between mt-auto">
-                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary w-50 me-2">
+                        <div class="d-flex justify-content-between align-items-center mt-auto gap-2">
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary flex-grow-1">
                                 <i class="fas fa-info-circle"></i> Details
                             </a>
-                            <form asp-controller="Order" asp-action="AddProduct" method="post" class="w-50">
-                                <input type="hidden" name="productId" value="@product.Id" />
-                                <button type="submit" class="btn btn-outline-success w-100">
-                                    <i class="fas fa-shopping-cart"></i> Add to cart
+
+                            <form asp-controller="Order" asp-action="AddProduct" method="post" class="d-flex align-items-center gap-2" style="width: 140px;">
+                                <input type="hidden" name="ProductId" value="@product.Id" />
+                                <input type="hidden" name="Name" value="@product.Name" />
+                                <input type="hidden" name="ImageUrl" value="@product.ImageUrl" />
+                                <input type="hidden" name="Price" value="@product.Price" />
+                                <input type="number" name="Quantity" value="1" min="1" max="100" class="form-control form-control-sm" style="width: 60px;" />
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="fas fa-shopping-cart"></i>
                                 </button>
                             </form>
                         </div>
