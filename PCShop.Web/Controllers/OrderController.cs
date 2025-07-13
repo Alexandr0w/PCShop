@@ -27,6 +27,7 @@ public class OrderController : BaseController
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.Message);
             return this.RedirectToAction(nameof(Index), "Product");
         }
     }
