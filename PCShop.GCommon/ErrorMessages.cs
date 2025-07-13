@@ -4,5 +4,8 @@
     {
         public const string AddProductErrorMessage = "Fatal error occurred while adding a product!";
         public const string AddComputerErrorMessage = "Fatal error occurred while adding a computer!";
+        public const string EditProductErrorMessage = "Fatal error occurred while updating the product!";
+        public const string NotModifyMessage = "Unable to modify the product.";
+        public const string DeleteErrorMessage = "An error occurred while deleting the product.";
     }
 }

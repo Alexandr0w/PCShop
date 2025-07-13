@@ -29,11 +29,12 @@ namespace PCShop.Services.Core
                 userGuid = parsedGuid;
             }
 
-            var query = this._dbContext
+            IQueryable<Product> query = this._dbContext
                 .Products
                 .Include(p => p.ComputersParts)
                     .ThenInclude(cp => cp.Computer)
                 .AsNoTracking()
+                .Where(p => p.IsDeleted == false)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(productType))
@@ -48,8 +49,7 @@ namespace PCShop.Services.Core
                     Name = p.Name,
                     ImageUrl = p.ImageUrl,
                     ProductType = p.ProductType.Name,
-                    Price = p.Price,
-                    IsAuthor = userGuid.HasValue && p.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
+                    Price = p.Price
                 })
                 .ToArrayAsync();
 
@@ -73,6 +73,7 @@ namespace PCShop.Services.Core
                     .Products
                     .Include(p => p.ProductType)
                     .AsNoTracking()
+                    .Where(p => p.IsDeleted == false)
                     .FirstOrDefaultAsync(p => p.Id.ToString() == productId && !p.IsDeleted);
 
                 if (product != null)
@@ -84,8 +85,7 @@ namespace PCShop.Services.Core
                         ImageUrl = product.ImageUrl,
                         Description = product.Description,
                         ProductType = product.ProductType.Name,
-                        Price = product.Price,
-                        IsAuthor = userGuid.HasValue && product.ComputersParts.Any(cp => cp.Computer != null && cp.Computer.Id == userGuid.Value)
+                        Price = product.Price
                     };
                 }
             }
@@ -93,7 +93,7 @@ namespace PCShop.Services.Core
             return detailsProductVM;
         }
 
-        public async Task<bool> AddProductAsync(string? userId, AddProductInputModel inputModel, IFormFile? imageFile)
+        public async Task<bool> AddProductAsync(string? userId, ProductFormInputModel inputModel, IFormFile? imageFile)
         {
             bool isAdded = false;
 
@@ -107,6 +107,7 @@ namespace PCShop.Services.Core
 
             ProductType? productType = await this._dbContext
                 .ProductsTypes
+                .AsNoTracking()
                 .FirstOrDefaultAsync(pt => pt.Id == Guid.Parse(inputModel.ProductTypeId.ToString()));
 
             if (user == null || productType == null)
@@ -114,23 +115,8 @@ namespace PCShop.Services.Core
                 return false;
             }
 
-            string imageUrl = inputModel.ImageUrl ?? string.Empty; 
+            string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
-                Directory.CreateDirectory(uploadsFolder);
-
-                string uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
-
-                imageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
-            }
             if (user != null && productType != null)
             {
                 Product newProduct = new Product
@@ -150,6 +136,153 @@ namespace PCShop.Services.Core
             }
 
             return isAdded;
+        }
+
+        public async Task<ProductFormInputModel?> GetProductForEditingAsync(string productId)
+        {
+            ProductFormInputModel? editModel = null;
+
+            Product? productToEdit = await this._dbContext
+                .Products
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.Id == Guid.Parse(productId));
+
+            if (productToEdit != null)
+            {
+                editModel = new ProductFormInputModel
+                {
+                    Id = productToEdit.Id.ToString(),
+                    Name = productToEdit.Name,
+                    Description = productToEdit.Description,
+                    Price = productToEdit.Price,
+                    ImageUrl = productToEdit.ImageUrl,
+                    ProductTypeId = productToEdit.ProductTypeId.ToString(),
+                    ProductTypes = await this._dbContext
+                        .ProductsTypes
+                        .Select(pc => new ProductTypeViewModel
+                        {
+                            Id = pc.Id.ToString(),
+                            Name = pc.Name
+                        })
+                        .ToArrayAsync()
+                };
+            }
+
+            return editModel;
+        }
+
+        public async Task<bool> PersistUpdatedProductAsync(string userId, ProductFormInputModel inputModel, IFormFile? imageFile)
+        {
+            bool isPersisted = false;
+
+            ApplicationUser? user = await this._userManager
+                .FindByIdAsync(userId);
+
+            Product? updatedProduct = await this._dbContext
+                .Products
+                .FindAsync(Guid.Parse(inputModel.Id));
+
+            ProductType? productType = await this._dbContext
+                .ProductsTypes
+                .FindAsync(Guid.Parse(inputModel.ProductTypeId));
+
+            string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
+
+            if (user != null && updatedProduct != null && productType != null)
+            {
+                updatedProduct.Name = inputModel.Name;
+                updatedProduct.Description = inputModel.Description;
+                updatedProduct.Price = inputModel.Price;
+                updatedProduct.ImageUrl = imageUrl;
+                updatedProduct.ProductTypeId = productType.Id;
+
+                await this._dbContext.SaveChangesAsync();
+                isPersisted = true;
+            }
+
+            return isPersisted;
+        }
+
+        public async Task<DeleteProductViewModel?> GetProductForDeletingAsync(string? userId, string? id)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!Guid.TryParse(id, out Guid productGuid))
+            {
+                return null;
+            }
+
+            DeleteProductViewModel? deleteModel = null;
+
+            Product? deleteProductModel = await this._dbContext
+                .Products
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.Id == productGuid);
+
+            if (deleteProductModel != null)
+            {
+                deleteModel = new DeleteProductViewModel
+                {
+                    Id = deleteProductModel.Id.ToString(),
+                    Name = deleteProductModel.Name,
+                    ImageUrl = deleteProductModel.ImageUrl
+                };
+            }
+
+            return deleteModel;
+        }
+
+        public async Task<bool> SoftDeleteProductAsync(string userId, DeleteProductViewModel inputModel)
+        {
+            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            {
+                return false;
+            }
+
+            bool isSuccessDeleted = false;
+
+            ApplicationUser? user = await this._userManager
+                .FindByIdAsync(userId);
+
+            Product? product = await this._dbContext
+                .Products
+                .FindAsync(productId);
+
+            if (user != null && product != null)
+            {
+                product.IsDeleted = true;
+                isSuccessDeleted = true;
+
+                await this._dbContext.SaveChangesAsync();
+            }
+
+            return isSuccessDeleted;
+        }
+
+        public async Task<string> UploadImageAsync(ProductFormInputModel inputModel, IFormFile? imageFile)
+        {
+            string imageUrl = inputModel.ImageUrl ?? string.Empty;
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
+                Directory.CreateDirectory(uploadsFolder);
+
+                string uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(fileStream);
+                }
+
+                imageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
+            }
+
+            return imageUrl;
         }
     }
 }
