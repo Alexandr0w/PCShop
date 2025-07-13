@@ -1,5 +1,4 @@
-﻿using PCShop.Data.Models;
-using PCShop.Web.ViewModels.Search;
+﻿using PCShop.Web.ViewModels.Search;
 
 namespace PCShop.Services.Core.Interfaces
 {

@@ -5,6 +5,7 @@ using PCShop.Web.ViewModels.Search;
 
 namespace PCShop.Web.Controllers
 {
+    [Authorize]
     public class SearchController : BaseController
     {
         private readonly ISearchService _searchService;
@@ -15,17 +16,24 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Index(string query)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            try
             {
-                return this.View(new SearchResultsViewModel { Query = "" });
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    return this.View(new SearchResultsViewModel { Query = "" });
+                }
+
+                SearchResultsViewModel results = await this._searchService.SearchAsync(query);
+
+                return this.View(results);
             }
-
-            var results = await this._searchService.SearchAsync(query);
-
-            return this.View(results);
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
         }
     }
 }
