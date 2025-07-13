@@ -4,6 +4,7 @@ using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Services.Core;
 using PCShop.Services.Core.Interfaces;
+using PCShop.Web.Infrastructure.Extensions;
 
 namespace PCShop.Web
 {
@@ -41,10 +42,8 @@ namespace PCShop.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
-            builder.Services.AddScoped<ISearchService, SearchService>();
-            builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
-            builder.Services.AddScoped<IComputerService, ComputerService>();
+            // Loading all services with extension method
+            builder.Services.AddUserDefinedServices(typeof(ProductService).Assembly);
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
