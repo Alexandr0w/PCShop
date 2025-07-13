@@ -58,7 +58,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("10101010-aaaa-bbbb-cccc-101010101010"),
                     Name = "Intel Core i7-13700K",
                     Description = "13th Gen 16-core processor with high performance for gaming and productivity.",
-                    Price = 489.99m,
+                    Price = 255.66m,
                     ImageUrl = "/images/products/intel-i7-13700k.jpg",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("11111111-aaaa-bbbb-cccc-111111111111")
@@ -68,7 +68,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("20202020-aaaa-bbbb-cccc-202020202020"),
                     Name = "NVIDIA GeForce RTX 4070",
                     Description = "Latest generation graphics card with ray tracing and DLSS support.",
-                    Price = 629.00m,
+                    Price = 766.00m,
                     ImageUrl = "/images/products/rtx-4070.png",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("22222222-aaaa-bbbb-cccc-222222222222")
@@ -78,7 +78,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("30303030-aaaa-bbbb-cccc-303030303030"),
                     Name = "Corsair Vengeance RGB Pro 32GB DDR4",
                     Description = "High-performance DDR4 memory kit with RGB lighting.",
-                    Price = 139.99m,
+                    Price = 178.45m,
                     ImageUrl = "/images/products/corsair-vengeance-32gb.png",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("44444444-aaaa-bbbb-cccc-444444444444")
@@ -88,7 +88,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("40404040-aaaa-bbbb-cccc-404040404040"),
                     Name = "Samsung 980 PRO 1TB NVMe SSD",
                     Description = "Ultra-fast PCIe 4.0 SSD ideal for gaming and heavy applications.",
-                    Price = 119.49m,
+                    Price = 101.75m,
                     ImageUrl = "/images/products/samsung-980-pro.png",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("55555555-aaaa-bbbb-cccc-555555555555")
@@ -98,7 +98,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("50505050-aaaa-bbbb-cccc-505050505050"),
                     Name = "ASUS ROG STRIX Z790-E",
                     Description = "Premium Z790 chipset motherboard supporting 13th Gen Intel CPUs.",
-                    Price = 379.00m,
+                    Price = 204.53m,
                     ImageUrl = "/images/products/asus-z790.png",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("33333333-aaaa-bbbb-cccc-333333333333")
@@ -108,7 +108,7 @@ namespace PCShop.Data.Configuration
                     Id = Guid.Parse("60606060-aaaa-bbbb-cccc-606060606060"),
                     Name = "Cooler Master 750W 80+ Gold PSU",
                     Description = "Reliable and efficient 750W power supply unit with modular cables.",
-                    Price = 109.99m,
+                    Price = 108.84m,
                     ImageUrl = "/images/products/cooler-master-750w.png",
                     IsDeleted = false,
                     ProductTypeId = Guid.Parse("77777777-aaaa-bbbb-cccc-777777777777")
