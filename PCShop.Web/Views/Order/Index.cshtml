@@ -1,0 +1,64 @@
+﻿@using PCShop.Web.ViewModels.Order
+@model IEnumerable<OrderItemViewModel>
+
+@{
+    ViewData["Title"] = "Your Order";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Your cart is currently empty.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        <img src="@item.ImageUrl" alt="@item.Name" style="max-height: 50px;" class="img-thumbnail" />
+                    </td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price €</td>
+                    <td>@(item.Price * item.Quantity) €</td>
+                    <td>
+                        <form asp-controller="Order" asp-action="RemoveItem" method="post" class="d-inline">
+                            <input type="hidden" name="itemId" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between mt-3">
+        <form asp-controller="Order" asp-action="Clear" method="post">
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle"></i> Clear Cart
+            </button>
+        </form>
+
+        <form asp-controller="Order" asp-action="Checkout" method="post">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-credit-card"></i> Checkout
+            </button>
+        </form>
+    </div>
+}
