@@ -3,8 +3,10 @@ using static PCShop.Data.Common.EntityConstants.Computer;
 
 namespace PCShop.Web.ViewModels.Computer
 {
-    public class AddComputerInputModel
+    public class ComputerFormInputModel
     {
+        public string Id { get; set; } = string.Empty;
+
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string Name { get; set; } = null!;

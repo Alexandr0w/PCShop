@@ -1,0 +1,75 @@
+﻿@using PCShop.Web.ViewModels.Computer
+@model ComputerFormInputModel
+
+@{
+    ViewData["Title"] = "Edit Computer";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">@ViewData["Title"]</h2>
+    </div>
+    <hr />
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <form asp-controller="Computer" asp-action="Edit" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm border-0 rounded-4 bg-light">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3 text-center">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-thumbnail rounded mb-2" style="max-height: 200px; object-fit: contain;" />
+                        <div class="text-muted small">Current Image</div>
+                    }
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label">Computer Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label">Price (in euro)</label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ImageUrl" class="form-label">New Image URL (optional)</label>
+                    <input asp-for="ImageUrl" class="form-control" placeholder="Leave blank to keep current" />
+                    <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Or Upload New Image</label>
+                    <input type="file" name="ImageFile" class="form-control" />
+                    <small class="text-muted">Accepted formats: .jpg, .jpeg, .png, .webp</small>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+                        <i class="fas fa-arrow-left"></i> Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-primary fw-semibold">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

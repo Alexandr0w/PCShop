@@ -23,7 +23,37 @@
                     </div>
                     <div class="col-md-7 p-4">
                         <h4 class="card-title mb-3">@Model.Name</h4>
-                        <p class="card-text text-muted">@Model.Description</p>
+                        <ul class="list-group list-group-flush mb-3">
+                            @foreach (string part in Model.Description.Split(" // "))
+                            {
+                                string[] keyValue = part.Split(":", 2);
+                                if (keyValue.Length == 2)
+                                {
+                                    string label = keyValue[0].Trim();
+                                    string value = keyValue[1].Trim();
+                                    string icon = label switch
+                                    {
+                                        "CPU" => "cpu-fill",
+                                        "GPU" => "gpu-card",
+                                        "RAM" => "memory",
+                                        "Storage" => "hdd-fill",
+                                        "Motherboard" => "motherboard-fill",
+                                        "Case" => "pc",
+                                        "Cooling" => "fan",
+                                        "Power Supply" => "plug-fill",
+                                        _ => "gear-fill"
+                                    };
+
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 ps-0">
+                                        <div>
+                                            <i class="bi bi-@icon text-primary me-2"></i>
+                                            <strong>@label:</strong>
+                                        </div>
+                                        <span class="text-muted">@value</span>
+                                    </li>
+                                }
+                            }
+                        </ul>
                         <hr />
                         <p class="card-text">
                             <strong>Price:</strong>
@@ -36,11 +66,11 @@
                             </button>
                             @if (User.Identity is { IsAuthenticated: true }) // TODO: Add Admin Only
                             {
-                                <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id"
+                                <a asp-controller="Computer" asp-action="Edit" asp-route-id="@Model.Id"
                                    class="btn btn-outline-primary me-2 flex-fill mb-2">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <a asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id"
+                                <a asp-controller="Computer" asp-action="Delete" asp-route-id="@Model.Id"
                                    class="btn btn-outline-danger flex-fill mb-2">
                                     <i class="fas fa-trash"></i> Delete
                                 </a>
