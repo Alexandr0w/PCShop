@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Services.Core;
+using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Extensions;
 
 namespace PCShop.Web
@@ -44,7 +45,13 @@ namespace PCShop.Web
             // Loading all services with extension method
             builder.Services.AddUserDefinedServices(typeof(ProductService).Assembly);
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<CartCountFilter>();
+
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.AddService<CartCountFilter>();
+            });
+
             builder.Services.AddRazorPages();
 
             WebApplication app = builder.Build();
