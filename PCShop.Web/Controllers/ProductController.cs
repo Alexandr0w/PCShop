@@ -157,6 +157,7 @@ namespace PCShop.Web.Controllers
                 }
 
                 string? userId = this.GetUserId();
+
                 if (string.IsNullOrEmpty(userId))
                 {
                     return this.Unauthorized();
@@ -230,8 +231,8 @@ namespace PCShop.Web.Controllers
 
                 if (deleteResult == false)
                 {
-                    ModelState.AddModelError(string.Empty, DeleteErrorMessage);
-                    this._logger.LogError(DeleteErrorMessage);
+                    ModelState.AddModelError(string.Empty, DeleteProductErrorMessage);
+                    this._logger.LogError(DeleteProductErrorMessage);
 
                     return this.View(inputModel);
                 }

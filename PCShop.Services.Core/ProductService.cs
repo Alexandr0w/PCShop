@@ -6,6 +6,7 @@ using PCShop.Data.Models;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 using static PCShop.GCommon.ApplicationConstants;
+using static PCShop.Services.Common.ExceptionMessages;
 
 namespace PCShop.Services.Core
 {
@@ -22,11 +23,9 @@ namespace PCShop.Services.Core
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType = null)
         {
-            Guid? userGuid = null;
-
-            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid parsedGuid))
+            if (string.IsNullOrEmpty(userId))
             {
-                userGuid = parsedGuid;
+                throw new ArgumentException(UserIdNullOrEmpty);
             }
 
             IQueryable<Product> query = this._dbContext
@@ -60,11 +59,14 @@ namespace PCShop.Services.Core
         {
             DetailsProductViewModel? detailsProductVM = null;
 
-            Guid? userGuid = null;
-
-            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid parsedGuid))
+            if (string.IsNullOrEmpty(userId))
             {
-                userGuid = parsedGuid;
+                throw new ArgumentException(UserIdNullOrEmpty);
+            }
+
+            if (string.IsNullOrEmpty(productId))
+            {
+                throw new ArgumentException(ProductIdNullOrEmpty);
             }
 
             if (productId != null)
@@ -73,7 +75,6 @@ namespace PCShop.Services.Core
                     .Products
                     .Include(p => p.ProductType)
                     .AsNoTracking()
-                    .Where(p => p.IsDeleted == false)
                     .FirstOrDefaultAsync(p => p.Id.ToString() == productId && !p.IsDeleted);
 
                 if (product != null)
@@ -99,7 +100,7 @@ namespace PCShop.Services.Core
 
             if (string.IsNullOrEmpty(userId))
             {
-                return false;
+                throw new ArgumentException(UserIdNullOrEmpty);
             }
 
             ApplicationUser? user = await this._userManager
@@ -142,6 +143,11 @@ namespace PCShop.Services.Core
         {
             ProductFormInputModel? editModel = null;
 
+            if (string.IsNullOrEmpty(productId))
+            {
+                throw new ArgumentException(ProductIdNullOrEmpty);
+            }
+
             Product? productToEdit = await this._dbContext
                 .Products
                 .AsNoTracking()
@@ -175,6 +181,11 @@ namespace PCShop.Services.Core
         {
             bool isPersisted = false;
 
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException(UserIdNullOrEmpty);
+            }
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
@@ -203,16 +214,21 @@ namespace PCShop.Services.Core
             return isPersisted;
         }
 
-        public async Task<DeleteProductViewModel?> GetProductForDeletingAsync(string? userId, string? id)
+        public async Task<DeleteProductViewModel?> GetProductForDeletingAsync(string? userId, string? productId)
         {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(userId))
             {
-                return null;
+                throw new ArgumentException(UserIdNullOrEmpty);
             }
 
-            if (!Guid.TryParse(id, out Guid productGuid))
+            if (string.IsNullOrEmpty(productId))
             {
-                return null;
+                throw new ArgumentException(ProductIdNullOrEmpty);
+            }
+
+            if (!Guid.TryParse(productId, out Guid productGuid))
+            {
+                throw new FormatException(InvalidProductIdFormat);
             }
 
             DeleteProductViewModel? deleteModel = null;
@@ -237,12 +253,17 @@ namespace PCShop.Services.Core
 
         public async Task<bool> SoftDeleteProductAsync(string userId, DeleteProductViewModel inputModel)
         {
-            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            bool isSuccessDeleted = false;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                return false;
+                throw new ArgumentException(UserIdNullOrEmpty);
             }
 
-            bool isSuccessDeleted = false;
+            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            {
+                throw new FormatException(InvalidProductIdFormat);
+            }
 
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
