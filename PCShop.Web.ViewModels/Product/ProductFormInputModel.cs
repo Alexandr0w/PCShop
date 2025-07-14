@@ -22,6 +22,7 @@ namespace PCShop.Web.ViewModels.Product
         [MaxLength(ImageUrlMaxLength)]
         public string? ImageUrl { get; set; }
 
+        [Required]
         public string ProductTypeId { get; set; } = null!;
 
         public IEnumerable<ProductTypeViewModel>? ProductTypes { get; set; }

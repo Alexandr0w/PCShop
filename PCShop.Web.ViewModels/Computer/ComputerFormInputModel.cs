@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using static PCShop.Data.Common.EntityConstants.Computer;
+using static PCShop.GCommon.ErrorMessages;
 
 namespace PCShop.Web.ViewModels.Computer
 {
@@ -19,6 +20,7 @@ namespace PCShop.Web.ViewModels.Computer
         [Range(0.1, int.MaxValue)]
         public decimal Price { get; set; }
 
+        [MaxLength(ImageUrlMaxLength)]
         public string? ImageUrl { get; set; }
     }
 }
