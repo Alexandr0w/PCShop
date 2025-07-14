@@ -227,13 +227,26 @@ namespace PCShop.Services.Core
 
             if (imageFile != null && imageFile.Length > 0)
             {
+                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+                string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    throw new InvalidOperationException(InvalidFileType);
+                }
+
+                if (!imageFile.ContentType.StartsWith("image/"))
+                {
+                    throw new InvalidOperationException(InvalidContentType);
+                }
+
                 string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ComputersFolder);
                 Directory.CreateDirectory(uploadsFolder);
 
-                string uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                string uniqueFileName = Guid.NewGuid() + fileExtension;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await imageFile.CopyToAsync(fileStream);
                 }

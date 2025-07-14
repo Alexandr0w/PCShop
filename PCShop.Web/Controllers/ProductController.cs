@@ -12,7 +12,7 @@ namespace PCShop.Web.Controllers
         private readonly IProductTypeService _productTypeService;
         private readonly ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService, 
+        public ProductController(IProductService productService,
                                  IProductTypeService productTypeService,
                                  ILogger<ProductController> logger)
         {

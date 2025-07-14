@@ -88,18 +88,18 @@ namespace PCShop.Services.Core
                 throw new ArgumentException(UserIdNullOrEmpty);
             }
 
+            if (!Guid.TryParse(inputModel.ProductTypeId, out Guid productTypeId))
+            {
+                throw new FormatException(InvalidProductTypeIdFormat);
+            }
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
             ProductType? productType = await this._dbContext
                 .ProductsTypes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(pt => pt.Id == Guid.Parse(inputModel.ProductTypeId.ToString()));
-
-            if (user == null || productType == null)
-            {
-                return false;
-            }
+                .FirstOrDefaultAsync(pt => pt.Id == productTypeId);
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
@@ -111,8 +111,7 @@ namespace PCShop.Services.Core
                     Description = inputModel.Description,
                     Price = inputModel.Price,
                     ImageUrl = imageUrl,
-                    ProductTypeId = productType.Id,
-                    ProductType = productType
+                    ProductTypeId = productType.Id
                 };
 
                 await this._dbContext.Products.AddAsync(newProduct);
@@ -274,10 +273,23 @@ namespace PCShop.Services.Core
 
             if (imageFile != null && imageFile.Length > 0)
             {
+                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+                string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    throw new InvalidOperationException(InvalidFileType);
+                }
+
+                if (!imageFile.ContentType.StartsWith("image/"))
+                {
+                    throw new InvalidOperationException(InvalidContentType);
+                }
+
                 string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
                 Directory.CreateDirectory(uploadsFolder);
 
-                string uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                string uniqueFileName = Guid.NewGuid() + fileExtension;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
