@@ -63,7 +63,8 @@ public class OrderService : IOrderService
             await this._dbContext.SaveChangesAsync();
         }
 
-        OrderItem? existingItem = order.OrdersItems
+        OrderItem? existingItem = order
+            .OrdersItems
             .FirstOrDefault(i =>
                 (productId.HasValue && i.ProductId == productId) ||
                 (computerId.HasValue && i.ComputerId == computerId));
@@ -122,6 +123,17 @@ public class OrderService : IOrderService
             };
         });
     }
+
+    public async Task<int> GetCartCountAsync(string userId)
+    {
+        Order? order = await this._dbContext
+            .Orders
+            .Include(o => o.OrdersItems)
+            .FirstOrDefaultAsync(o => o.ApplicationUserId.ToString() == userId && o.Status == OrderStatus.Pending);
+
+        return order?.OrdersItems.Sum(i => i.Quantity) ?? 0;
+    }
+
 
     public async Task RemoveItemAsync(string itemId, string userId)
     {

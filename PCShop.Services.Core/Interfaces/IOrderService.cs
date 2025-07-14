@@ -8,6 +8,8 @@ namespace PCShop.Services.Core.Interfaces
 
         Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId);
 
+        Task<int> GetCartCountAsync(string userId);
+
         Task RemoveItemAsync(string itemId, string userId);
 
         Task ClearCartAsync(string userId);
