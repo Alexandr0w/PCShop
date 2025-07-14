@@ -12,5 +12,9 @@
 
         public const string ProductIdNullOrEmpty = "Product ID cannot be null or empty.";
         public const string InvalidProductIdFormat = "Invalid Product ID format.";
+        public const string InvalidProductTypeIdFormat = "Invalid ProductType ID format.";
+
+        public const string InvalidFileType = "Invalid file type. Only image files are allowed.";
+        public const string InvalidContentType = "Invalid content type.";
     }
 }
