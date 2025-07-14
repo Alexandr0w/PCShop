@@ -6,6 +6,7 @@ namespace PCShop.Web.ViewModels.Product
     public class ProductFormInputModel
     {
         public string Id { get; set; } = string.Empty;
+
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]
         public string Name { get; set; } = null!;
