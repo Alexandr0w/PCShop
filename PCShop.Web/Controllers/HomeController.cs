@@ -7,7 +7,6 @@ namespace PCShop.Web.Controllers
 {
     public class HomeController : BaseController
     {
-
         [AllowAnonymous]
         public IActionResult Index()
         {

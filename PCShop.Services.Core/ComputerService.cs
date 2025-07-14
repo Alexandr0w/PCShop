@@ -23,11 +23,6 @@ namespace PCShop.Services.Core
 
         public async Task<IEnumerable<ComputerIndexViewModel>> GetAllComputersAsync(string? userId)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
             IEnumerable<ComputerIndexViewModel> computers = await this._dbContext
                 .Computers
                 .Include(c => c.ComputersParts)
@@ -49,16 +44,6 @@ namespace PCShop.Services.Core
         public async Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId)
         {
             DetailsComputerViewModel? computerDetails = null;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
-            if (string.IsNullOrEmpty(computerId))
-            {
-                throw new ArgumentException(ComputerIdNullOrEmpty);
-            }
 
             if (computerId != null)
             {

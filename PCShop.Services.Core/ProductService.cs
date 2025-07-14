@@ -23,11 +23,6 @@ namespace PCShop.Services.Core
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType = null)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
             IQueryable<Product> query = this._dbContext
                 .Products
                 .Include(p => p.ComputersParts)
@@ -58,16 +53,6 @@ namespace PCShop.Services.Core
         public async Task<DetailsProductViewModel?> GetProductDetailsAsync(string? userId, string productId)
         {
             DetailsProductViewModel? detailsProductVM = null;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
-            if (string.IsNullOrEmpty(productId))
-            {
-                throw new ArgumentException(ProductIdNullOrEmpty);
-            }
 
             if (productId != null)
             {
