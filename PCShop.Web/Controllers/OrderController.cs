@@ -3,15 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Controllers;
 using PCShop.Web.ViewModels.Order;
+using static PCShop.GCommon.ErrorMessages;
 
 [Authorize]
 public class OrderController : BaseController
 {
     private readonly IOrderService _orderService;
+    private readonly ILogger<OrderController> _logger;
 
-    public OrderController(IOrderService orderService)
+    public OrderController(IOrderService orderService, ILogger<OrderController> logger)
     {
         this._orderService = orderService;
+        this._logger = logger;
     }
 
     [HttpGet]
@@ -20,14 +23,18 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
-            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
 
             IEnumerable<OrderItemViewModel> cartItems = await this._orderService.GetCartItemsAsync(userId);
             return this.View(cartItems);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            this._logger.LogError(e.Message);
             return this.RedirectToAction(nameof(Index), "Product");
         }
     }
@@ -38,6 +45,7 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
+
             if (string.IsNullOrEmpty(userId))
             {
                 return this.Unauthorized();
@@ -45,13 +53,17 @@ public class OrderController : BaseController
 
             if (string.IsNullOrEmpty(model.ProductId) && string.IsNullOrEmpty(model.ComputerId))
             {
-                ModelState.AddModelError(string.Empty, "Product or Computer ID is required");
+                ModelState.AddModelError(string.Empty, RequiredIdMessage);
+                this._logger.LogError(RequiredIdMessage);
+
                 return this.RedirectToAction(nameof(Index), "Product");
             }
 
             if (model.Quantity <= 0)
             {
-                ModelState.AddModelError("Quantity", "Quantity must be greater than 0");
+                ModelState.AddModelError("Quantity", QuantityMustBeMessage);
+                this._logger.LogError(QuantityMustBeMessage);
+
                 return this.RedirectToAction(nameof(Index), "Product");
             }
 
@@ -63,8 +75,9 @@ public class OrderController : BaseController
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            this._logger.LogError(e.Message);
             TempData["ErrorMessage"] = "Failed to add product to cart. Please try again.";
+
             return this.RedirectToAction(nameof(Index));
         }
     }
@@ -75,7 +88,11 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
-            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
 
             await this._orderService.RemoveItemAsync(id, userId);
 
@@ -85,8 +102,9 @@ public class OrderController : BaseController
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            this._logger.LogError(e.Message);
             TempData["ErrorMessage"] = "Failed to remove item from cart.";
+
             return this.RedirectToAction(nameof(Index));
         }
     }
@@ -97,7 +115,11 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
-            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
 
             await this._orderService.ClearCartAsync(userId);
 
@@ -107,8 +129,9 @@ public class OrderController : BaseController
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            this._logger.LogError(e.Message);
             TempData["ErrorMessage"] = "Failed to clear cart.";
+
             return this.RedirectToAction(nameof(Index));
         }
     }
@@ -119,7 +142,11 @@ public class OrderController : BaseController
         try
         {
             string? userId = this.GetUserId();
-            if (string.IsNullOrEmpty(userId)) return this.Unauthorized();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
 
             await this._orderService.FinalizeOrderAsync(userId);
 
@@ -129,8 +156,9 @@ public class OrderController : BaseController
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            this._logger.LogError(e.Message);
             TempData["ErrorMessage"] = "Failed to finalize order.";
+
             return this.RedirectToAction(nameof(Index));
         }
     }

@@ -167,6 +167,7 @@ public class OrderService : IOrderService
         {
             order.Status = OrderStatus.Completed;
             order.OrderDate = DateTime.UtcNow;
+
             await this._dbContext.SaveChangesAsync();
         }
     }

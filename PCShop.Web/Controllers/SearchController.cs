@@ -9,10 +9,12 @@ namespace PCShop.Web.Controllers
     public class SearchController : BaseController
     {
         private readonly ISearchService _searchService;
+        private readonly ILogger<SearchController> _logger;
 
-        public SearchController(ISearchService searchService)
+        public SearchController(ISearchService searchService, ILogger<SearchController> logger)
         {
             this._searchService = searchService;
+            this._logger = logger;
         }
 
         [HttpGet]
@@ -31,7 +33,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }

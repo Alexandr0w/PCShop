@@ -9,10 +9,12 @@ namespace PCShop.Web.Controllers
     public class ComputerController : BaseController
     {
         private readonly IComputerService _computerService;
+        private readonly ILogger<ComputerController> _logger;
 
-        public ComputerController(IComputerService computerService)
+        public ComputerController(IComputerService computerService, ILogger<ComputerController> logger)
         {
             this._computerService = computerService;
+            this._logger = logger;
         }
 
         [HttpGet]
@@ -29,7 +31,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }
@@ -53,7 +55,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -75,7 +77,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -96,6 +98,8 @@ namespace PCShop.Web.Controllers
                 if (addResult == false)
                 {
                     ModelState.AddModelError(string.Empty, AddProductErrorMessage);
+                    this._logger.LogError(AddProductErrorMessage);
+
                     return this.View(inputModel);
                 }
 
@@ -103,7 +107,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }

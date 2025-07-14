@@ -10,11 +10,15 @@ namespace PCShop.Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly IProductTypeService _productTypeService;
+        private readonly ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService, IProductTypeService productTypeService)
+        public ProductController(IProductService productService, 
+                                 IProductTypeService productTypeService,
+                                 ILogger<ProductController> logger)
         {
             this._productService = productService;
             this._productTypeService = productTypeService;
+            this._logger = logger;
         }
 
         [HttpGet]
@@ -31,7 +35,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }
@@ -55,7 +59,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -75,7 +79,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -97,6 +101,8 @@ namespace PCShop.Web.Controllers
                 if (addResult == false)
                 {
                     ModelState.AddModelError(string.Empty, AddProductErrorMessage);
+                    this._logger.LogError(AddProductErrorMessage);
+
                     inputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
                     return this.View(inputModel);
                 }
@@ -105,7 +111,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -133,7 +139,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -161,6 +167,8 @@ namespace PCShop.Web.Controllers
                 if (editResult == false)
                 {
                     this.ModelState.AddModelError(string.Empty, EditProductErrorMessage);
+                    this._logger.LogError(EditProductErrorMessage);
+
                     return this.View(inputModel);
                 }
 
@@ -168,7 +176,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -180,16 +188,19 @@ namespace PCShop.Web.Controllers
             try
             {
                 string? userId = this.GetUserId();
+
                 DeleteProductViewModel? deleteProductInputModel = await this._productService.GetProductForDeletingAsync(userId, id);
+
                 if (deleteProductInputModel == null)
                 {
                     return this.RedirectToAction(nameof(Index));
                 }
+
                 return this.View(deleteProductInputModel);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -201,6 +212,7 @@ namespace PCShop.Web.Controllers
             try
             {
                 string? userId = this.GetUserId();
+
                 if (string.IsNullOrEmpty(userId))
                 {
                     return this.Unauthorized();
@@ -209,6 +221,8 @@ namespace PCShop.Web.Controllers
                 if (!ModelState.IsValid)
                 {
                     ModelState.AddModelError(string.Empty, NotModifyMessage);
+                    this._logger.LogError(NotModifyMessage);
+
                     return this.View(inputModel);
                 }
 
@@ -217,6 +231,8 @@ namespace PCShop.Web.Controllers
                 if (deleteResult == false)
                 {
                     ModelState.AddModelError(string.Empty, DeleteErrorMessage);
+                    this._logger.LogError(DeleteErrorMessage);
+
                     return this.View(inputModel);
                 }
 
@@ -224,7 +240,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                this._logger.LogError(e.Message);
                 return this.RedirectToAction(nameof(Index));
             }
         }
