@@ -21,15 +21,14 @@ namespace PCShop.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] ComputerListViewModel model)
         {
             try
             {
                 string? userId = this.GetUserId();
 
-                IEnumerable<ComputerIndexViewModel> allComputers = await this._computerService.GetAllComputersAsync(userId);
-
-                return this.View(allComputers);
+                await this._computerService.PopulateComputerQueryModelAsync(model, userId);
+                return this.View(model);
             }
             catch (Exception e)
             {

@@ -1,12 +1,12 @@
 ﻿@using PCShop.Web.ViewModels.Computer
-@model IEnumerable<ComputerIndexViewModel>
+@model ComputerListViewModel
 
 @{
     ViewData["Title"] = "All Computers";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3" style="margin-top: 20px;">
-    <h2>All Computers</h2>
+<div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+    <h2>@ViewData["Title"]</h2>
     @if (User?.Identity?.IsAuthenticated == true)
     {
         <a asp-controller="Computer" asp-action="Add" class="btn btn-primary">
@@ -14,54 +14,130 @@
         </a>
     }
 </div>
+
 <hr />
 
+<!-- Filters -->
+<form method="get" asp-controller="Computer" asp-action="Index" class="row mb-4">
+    <div class="col-md-3">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search computers..." />
+    </div>
+    <div class="col-md-3">
+        <select name="SortOption" class="form-select">
+            <option value="default" selected="@(Model.SortOption == null || Model.SortOption == "default")">Newest</option>
+            <option value="name_asc" selected="@(Model.SortOption == "name_asc")">Name A-Z</option>
+            <option value="name_desc" selected="@(Model.SortOption == "name_desc")">Name Z-A</option>
+            <option value="price_asc" selected="@(Model.SortOption == "price_asc")">Price: Low to High</option>
+            <option value="price_desc" selected="@(Model.SortOption == "price_desc")">Price: High to Low</option>
+        </select>
+    </div>
+    <div class="col-md-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+    <div class="col-md-3 d-grid gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Reset Filters</a>
+    </div>
+</form>
+
 <div class="row text-center">
-    @foreach (var computer in Model)
+    @if (!Model.Computers.Any())
     {
-        <div class="col-md-3 mb-4">
-            <div class="card h-100" style="width: 100%;">
-                @if (!string.IsNullOrEmpty(computer.ImageUrl))
-                {
-                    <img src="@computer.ImageUrl" class="card-img-top" style="max-height: 150px; object-fit: contain;" alt="@computer.Name">
-                }
-                else
-                {
-                    <img src="~/images/no-image.jpg" class="card-img-top" style="max-height: 150px; object-fit: contain;" alt="No Image Available">
-                }
-
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">@computer.Name</h5>
-                    <p class="card-text"><strong>Price:</strong> @computer.Price €</p>
-
-                    @if (User?.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="d-flex justify-content-between mt-auto">
-                            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-50 me-2">
-                                <i class="fas fa-info-circle"></i> Details
-                            </a>
-                            <form asp-controller="Order" asp-action="AddProduct" method="post" class="d-flex align-items-center gap-2" style="width: 140px;">
-                                <input type="hidden" name="ComputerId" value="@computer.Id" />
-                                <input type="hidden" name="Name" value="@computer.Name" />
-                                <input type="hidden" name="ImageUrl" value="@computer.ImageUrl" />
-                                <input type="hidden" name="Price" value="@computer.Price" />
-                                <input type="number" name="Quantity" value="1" min="1" max="100" class="form-control form-control-sm" style="width: 60px;" />
-                                <button type="submit" class="btn btn-outline-success">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </form>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="d-flex justify-content-center mt-auto">
-                            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-75">
-                                <i class="fas fa-info-circle"></i> Details
-                            </a>
-                        </div>
-                    }
-                </div>
-            </div>
+        <div class="col-12 mt-4">
+            <h4 class="text-muted">No computers found.</h4>
         </div>
     }
+    else
+    {
+        foreach (var computer in Model.Computers)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="@(!string.IsNullOrEmpty(computer.ImageUrl) ? computer.ImageUrl : "~/images/no-image.jpg")"
+                         class="card-img-top" style="max-height: 150px; object-fit: contain;" alt="@computer.Name" />
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@computer.Name</h5>
+                        <p class="card-text"><strong>Price:</strong> @computer.Price €</p>
+
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="d-flex justify-content-between mt-auto">
+                                <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-50 me-2">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                                <form asp-controller="Order" asp-action="AddProduct" method="post" class="d-flex align-items-center gap-2" style="width: 140px;">
+                                    <input type="hidden" name="ComputerId" value="@computer.Id" />
+                                    <input type="hidden" name="Name" value="@computer.Name" />
+                                    <input type="hidden" name="ImageUrl" value="@computer.ImageUrl" />
+                                    <input type="hidden" name="Price" value="@computer.Price" />
+                                    <input type="number" name="Quantity" value="1" min="1" max="100" class="form-control form-control-sm" style="width: 60px;" />
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-center mt-auto">
+                                <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id" class="btn btn-outline-primary w-75">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>
+
+<!-- Pagination -->
+@if (Model.TotalComputers > Model.ComputersPerPage)
+{
+    int totalPages = (int)Math.Ceiling((double)Model.TotalComputers / Model.ComputersPerPage);
+    int currentPage = Model.CurrentPage;
+
+    <nav aria-label="Computer pagination">
+        <ul class="pagination justify-content-center mt-4">
+
+            <!-- Previous -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-CurrentPage="@(currentPage - 1)"
+                   asp-route-SearchTerm="@Model.SearchTerm"
+                   asp-route-SortOption="@(Model.SortOption ?? "default")"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Numbered pages -->
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                bool isActive = (i == currentPage);
+                <li class="page-item @(isActive ? "active" : "")">
+                    <a class="page-link"
+                       asp-route-CurrentPage="@i"
+                       asp-route-SearchTerm="@Model.SearchTerm"
+                       asp-route-SortOption="@(Model.SortOption ?? "default")">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-route-CurrentPage="@(currentPage + 1)"
+                   asp-route-SearchTerm="@Model.SearchTerm"
+                   asp-route-SortOption="@(Model.SortOption ?? "default")"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+}
+

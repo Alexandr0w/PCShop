@@ -7,6 +7,8 @@ namespace PCShop.Services.Core.Interfaces
     {
         Task<IEnumerable<ComputerIndexViewModel>> GetAllComputersAsync(string? userId);
 
+        Task PopulateComputerQueryModelAsync(ComputerListViewModel model, string? userId);
+
         Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId);
 
         Task<bool> AddComputerAsync(string? userId, ComputerFormInputModel inputModel, IFormFile? imageFile);

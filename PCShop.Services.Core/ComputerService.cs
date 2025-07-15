@@ -28,13 +28,49 @@ public class ComputerService : IComputerService
             {
                 Id = c.Id.ToString(),
                 Name = c.Name,
-                Description = c.Description,
                 Price = c.Price,
                 ImageUrl = c.ImageUrl
             })
             .ToArrayAsync();
 
         return computers;
+    }
+
+    public async Task PopulateComputerQueryModelAsync(ComputerListViewModel model, string? userId)
+    {
+        IQueryable<Computer> query = this._computerRepository
+            .GetAllAttached()
+            .Where(c => !c.IsDeleted)
+            .AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(model.SearchTerm))
+        {
+            string term = model.SearchTerm.ToLower();
+            query = query.Where(c => c.Name.ToLower().Contains(term));
+        }
+
+        query = model.SortOption switch
+        {
+            "name_asc" => query.OrderBy(c => c.Name),
+            "name_desc" => query.OrderByDescending(c => c.Name),
+            "price_asc" => query.OrderBy(c => c.Price),
+            "price_desc" => query.OrderByDescending(c => c.Price),
+            _ => query.OrderByDescending(c => c.Id)
+        };
+
+        model.TotalComputers = await query.CountAsync();
+
+        model.Computers = await query
+            .Skip((model.CurrentPage - 1) * model.ComputersPerPage)
+            .Take(model.ComputersPerPage)
+            .Select(c => new ComputerIndexViewModel
+            {
+                Id = c.Id.ToString(),
+                Name = c.Name,
+                Price = c.Price,
+                ImageUrl = c.ImageUrl
+            })
+            .ToArrayAsync();
     }
 
     public async Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId)
