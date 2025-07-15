@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PCShop.Data;
 using PCShop.Data.Models;
+using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 using static PCShop.GCommon.ApplicationConstants;
@@ -12,31 +12,32 @@ namespace PCShop.Services.Core
 {
     public class ProductService : IProductService
     {
-        private readonly PCShopDbContext _dbContext;
+        private readonly IProductRepository _productRepository;
+        private readonly IProductTypeRepository _productTypeRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProductService(PCShopDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public ProductService(
+            IProductRepository productRepository,
+            IProductTypeRepository productTypeRepository,
+            UserManager<ApplicationUser> userManager)
         {
-            this._dbContext = dbContext;
+            this._productRepository = productRepository;
+            this._productTypeRepository = productTypeRepository;
             this._userManager = userManager;
         }
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType = null)
         {
-            IQueryable<Product> query = this._dbContext
-                .Products
-                .Include(p => p.ComputersParts)
-                    .ThenInclude(cp => cp.Computer)
-                .AsNoTracking()
-                .Where(p => p.IsDeleted == false)
-                .AsQueryable();
+            IQueryable<Product> productsQuery = this._productRepository
+                .GetAllAttached()
+                .Where(p => !p.IsDeleted);
 
             if (!string.IsNullOrEmpty(productType))
             {
-                query = query.Where(p => p.ProductType.Name == productType);
+                productsQuery = productsQuery.Where(p => p.ProductType.Name == productType);
             }
 
-            IEnumerable<ProductIndexViewModel> products = await query
+            IEnumerable<ProductIndexViewModel> products = await productsQuery
                 .Select(p => new ProductIndexViewModel
                 {
                     Id = p.Id.ToString(),
@@ -54,26 +55,24 @@ namespace PCShop.Services.Core
         {
             DetailsProductViewModel? detailsProductVM = null;
 
-            if (productId != null)
-            {
-                Product? product = await this._dbContext
-                    .Products
-                    .Include(p => p.ProductType)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(p => p.Id.ToString() == productId && !p.IsDeleted);
+            bool isIdValidGuid = Guid.TryParse(productId, out Guid productIdGuid);
 
-                if (product != null)
-                {
-                    detailsProductVM = new DetailsProductViewModel
+            if (isIdValidGuid)
+            {
+                detailsProductVM = await this._productRepository
+                    .GetAllAttached()
+                    .AsNoTracking()
+                    .Where(p => p.Id == productIdGuid)
+                    .Select(p => new DetailsProductViewModel()
                     {
-                        Id = product.Id.ToString(),
-                        Name = product.Name,
-                        ImageUrl = product.ImageUrl,
-                        Description = product.Description,
-                        ProductType = product.ProductType.Name,
-                        Price = product.Price
-                    };
-                }
+                        Id = p.Id.ToString(),
+                        Name = p.Name,
+                        Description = p.Description,
+                        ProductType = p.ProductType.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price
+                    })
+                    .SingleOrDefaultAsync();
             }
 
             return detailsProductVM;
@@ -81,8 +80,6 @@ namespace PCShop.Services.Core
 
         public async Task<bool> AddProductAsync(string? userId, ProductFormInputModel inputModel, IFormFile? imageFile)
         {
-            bool isAdded = false;
-
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmpty);
@@ -93,19 +90,19 @@ namespace PCShop.Services.Core
                 throw new FormatException(InvalidProductTypeIdFormat);
             }
 
+            bool isAdded = false;
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
-            ProductType? productType = await this._dbContext
-                .ProductsTypes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(pt => pt.Id == productTypeId);
+            ProductType? productType = await this._productTypeRepository
+                .GetByIdAsync(productTypeId);
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
             if (user != null && productType != null)
             {
-                Product newProduct = new Product
+                Product product = new Product
                 {
                     Name = inputModel.Name,
                     Description = inputModel.Description,
@@ -114,28 +111,32 @@ namespace PCShop.Services.Core
                     ProductTypeId = productType.Id
                 };
 
-                await this._dbContext.Products.AddAsync(newProduct);
-                await this._dbContext.SaveChangesAsync();
+                await this._productRepository.AddAsync(product);
 
                 isAdded = true;
             }
-
             return isAdded;
         }
 
-        public async Task<ProductFormInputModel?> GetProductForEditingAsync(string productId)
+        public async Task<ProductFormInputModel?> GetProductForEditingAsync(string? productId)
         {
-            ProductFormInputModel? editModel = null;
-
             if (string.IsNullOrEmpty(productId))
             {
                 throw new ArgumentException(ProductIdNullOrEmpty);
             }
 
-            Product? productToEdit = await this._dbContext
-                .Products
-                .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id == Guid.Parse(productId));
+            if (!Guid.TryParse(productId, out Guid productGuid))
+            {
+                throw new FormatException(ProductIdNullOrEmpty);
+            }
+
+            ProductFormInputModel? editModel = null;
+            
+            Product? productToEdit = await this._productRepository
+                .GetByIdAsync(productGuid);
+
+            IEnumerable<ProductType> productTypes = await this._productTypeRepository
+                .GetAllAsync();
 
             if (productToEdit != null)
             {
@@ -147,14 +148,12 @@ namespace PCShop.Services.Core
                     Price = productToEdit.Price,
                     ImageUrl = productToEdit.ImageUrl,
                     ProductTypeId = productToEdit.ProductTypeId.ToString(),
-                    ProductTypes = await this._dbContext
-                        .ProductsTypes
-                        .Select(pc => new ProductTypeViewModel
-                        {
-                            Id = pc.Id.ToString(),
-                            Name = pc.Name
-                        })
-                        .ToArrayAsync()
+                    ProductTypes = productTypes
+                    .Select(pt => new ProductTypeViewModel
+                    {
+                        Id = pt.Id.ToString(),
+                        Name = pt.Name
+                    })
                 };
             }
 
@@ -163,23 +162,31 @@ namespace PCShop.Services.Core
 
         public async Task<bool> PersistUpdatedProductAsync(string userId, ProductFormInputModel inputModel, IFormFile? imageFile)
         {
-            bool isPersisted = false;
-
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmpty);
             }
 
+            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            {
+                throw new FormatException(InvalidProductIdFormat);
+            }
+
+            if (!Guid.TryParse(inputModel.ProductTypeId, out Guid productTypeId))
+            {
+                throw new FormatException(InvalidProductTypeIdFormat);
+            }
+
+            bool isPersisted = false;
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
-            Product? updatedProduct = await this._dbContext
-                .Products
-                .FindAsync(Guid.Parse(inputModel.Id));
+            Product? updatedProduct = await this._productRepository
+                .GetByIdAsync(productId);
 
-            ProductType? productType = await this._dbContext
-                .ProductsTypes
-                .FindAsync(Guid.Parse(inputModel.ProductTypeId));
+            ProductType? productType = await this._productTypeRepository
+                .GetByIdAsync(productTypeId);
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
@@ -191,7 +198,8 @@ namespace PCShop.Services.Core
                 updatedProduct.ImageUrl = imageUrl;
                 updatedProduct.ProductTypeId = productType.Id;
 
-                await this._dbContext.SaveChangesAsync();
+                await this._productRepository.UpdateAsync(updatedProduct);
+                
                 isPersisted = true;
             }
 
@@ -205,11 +213,6 @@ namespace PCShop.Services.Core
                 throw new ArgumentException(UserIdNullOrEmpty);
             }
 
-            if (string.IsNullOrEmpty(productId))
-            {
-                throw new ArgumentException(ProductIdNullOrEmpty);
-            }
-
             if (!Guid.TryParse(productId, out Guid productGuid))
             {
                 throw new FormatException(InvalidProductIdFormat);
@@ -217,18 +220,16 @@ namespace PCShop.Services.Core
 
             DeleteProductViewModel? deleteModel = null;
 
-            Product? deleteProductModel = await this._dbContext
-                .Products
-                .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id == productGuid);
+            Product? productToDelete = await this._productRepository
+                .GetByIdAsync(productGuid);
 
-            if (deleteProductModel != null)
+            if (productToDelete != null)
             {
                 deleteModel = new DeleteProductViewModel
                 {
-                    Id = deleteProductModel.Id.ToString(),
-                    Name = deleteProductModel.Name,
-                    ImageUrl = deleteProductModel.ImageUrl
+                    Id = productToDelete.Id.ToString(),
+                    Name = productToDelete.Name,
+                    ImageUrl = productToDelete.ImageUrl
                 };
             }
 
@@ -237,8 +238,6 @@ namespace PCShop.Services.Core
 
         public async Task<bool> SoftDeleteProductAsync(string userId, DeleteProductViewModel inputModel)
         {
-            bool isSuccessDeleted = false;
-
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmpty);
@@ -249,19 +248,19 @@ namespace PCShop.Services.Core
                 throw new FormatException(InvalidProductIdFormat);
             }
 
+            bool isSuccessDeleted = false;
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
-            Product? product = await this._dbContext
-                .Products
-                .FindAsync(productId);
+            Product? product = await this._productRepository
+                .GetByIdAsync(productId);
 
             if (user != null && product != null)
             {
-                product.IsDeleted = true;
-                isSuccessDeleted = true;
+                await this._productRepository.DeleteAsync(product);
 
-                await this._dbContext.SaveChangesAsync();
+                isSuccessDeleted = true;
             }
 
             return isSuccessDeleted;
@@ -292,10 +291,8 @@ namespace PCShop.Services.Core
                 string uniqueFileName = Guid.NewGuid() + fileExtension;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
+                using FileStream fileStream = new FileStream(filePath, FileMode.Create);
+                await imageFile.CopyToAsync(fileStream);
 
                 imageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
             }

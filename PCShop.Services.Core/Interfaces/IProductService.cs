@@ -10,7 +10,7 @@ namespace PCShop.Services.Core.Interfaces
 
         Task<bool> AddProductAsync(string? userId, ProductFormInputModel inputModel, IFormFile? imageFile);
 
-        Task<ProductFormInputModel?> GetProductForEditingAsync(string productId);
+        Task<ProductFormInputModel?> GetProductForEditingAsync(string? productId);
         Task<bool> PersistUpdatedProductAsync(string userId, ProductFormInputModel inputModel, IFormFile? imageFile);
 
         Task<DeleteProductViewModel?> GetProductForDeletingAsync(string? userId, string? productId);
