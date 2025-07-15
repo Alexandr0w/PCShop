@@ -51,6 +51,56 @@ namespace PCShop.Services.Core
             return products;
         }
 
+        public async Task PopulateProductQueryModelAsync(ProductListViewModel model, string? userId)
+        {
+            IQueryable<Product> productsQuery = this._productRepository
+                .GetAllAttached()
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductType)
+                .AsNoTracking();
+
+            model.AllProductTypes = await productsQuery
+                .Select(p => p.ProductType.Name)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToArrayAsync();
+
+            if (!string.IsNullOrWhiteSpace(model.ProductType))
+            {
+                productsQuery = productsQuery.Where(p => p.ProductType.Name == model.ProductType);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
+            {
+                string search = model.SearchTerm.ToLower();
+                productsQuery = productsQuery.Where(p => p.Name.ToLower().Contains(search));
+            }
+
+            model.TotalProducts = await productsQuery.CountAsync();
+
+            productsQuery = model.SortOption switch
+            {
+                "name_asc" => productsQuery.OrderBy(p => p.Name),
+                "name_desc" => productsQuery.OrderByDescending(p => p.Name),
+                "price_asc" => productsQuery.OrderBy(p => p.Price),
+                "price_desc" => productsQuery.OrderByDescending(p => p.Price),
+                _ => productsQuery.OrderByDescending(p => p.Id)
+            };
+
+            model.Products = await productsQuery
+                .Skip((model.CurrentPage - 1) * model.ProductsPerPage)
+                .Take(model.ProductsPerPage)
+                .Select(p => new ProductIndexViewModel
+                {
+                    Id = p.Id.ToString(),
+                    Name = p.Name,
+                    Price = p.Price,
+                    ProductType = p.ProductType.Name,
+                    ImageUrl = p.ImageUrl
+                })
+                .ToArrayAsync();
+        }
+
         public async Task<DetailsProductViewModel?> GetProductDetailsAsync(string? userId, string productId)
         {
             DetailsProductViewModel? detailsProductVM = null;

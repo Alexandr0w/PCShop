@@ -12,9 +12,10 @@ namespace PCShop.Web.Controllers
         private readonly IProductTypeService _productTypeService;
         private readonly ILogger<ProductController> _logger;
 
-        public ProductController(IProductService productService,
-                                 IProductTypeService productTypeService,
-                                 ILogger<ProductController> logger)
+        public ProductController(
+            IProductService productService,
+            IProductTypeService productTypeService,
+            ILogger<ProductController> logger)
         {
             this._productService = productService;
             this._productTypeService = productTypeService;
@@ -23,15 +24,14 @@ namespace PCShop.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? productType)
+        public async Task<IActionResult> Index([FromQuery] ProductListViewModel queryModel)
         {
             try
             {
                 string? userId = this.GetUserId();
 
-                IEnumerable<ProductIndexViewModel> allProducts = await this._productService.GetAllProductsAsync(userId, productType);
-
-                return this.View(allProducts);
+                await this._productService.PopulateProductQueryModelAsync(queryModel, userId);
+                return this.View(queryModel);
             }
             catch (Exception e)
             {

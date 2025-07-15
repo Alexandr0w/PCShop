@@ -29,6 +29,11 @@
             public const int DescriptionMaxLength = 1000;
 
             public const int ImageUrlMaxLength = 2048;
+
+            public const int CurrentPageNumber = 1;
+            public const int MaxComputersPerPage = 8;
+
+            public const string DefaultSortOption = "default";
         }
 
         public static class Product
@@ -40,6 +45,11 @@
             public const int DescriptionMaxLength = 1000;
 
             public const int ImageUrlMaxLength = 2048;
+
+            public const int CurrentPageNumber = 1;
+            public const int MaxProductsPerPage = 12;
+
+            public const string DefaultSortOption = "default";
         }
 
         public static class ProductType
