@@ -8,7 +8,6 @@ namespace PCShop.Web.Infrastructure.Extensions
     {
         private static readonly string ProjectInterfacePrefix = "I";
         private static readonly string ServiceTypeSuffix = "Service";
-
         private static readonly string RepositoryTypeSuffix = "Repository";
 
         public static IServiceCollection AddUserDefinedServices(this IServiceCollection serviceCollection, Assembly serviceAssembly)
@@ -36,20 +35,19 @@ namespace PCShop.Web.Infrastructure.Extensions
             return serviceCollection;
         }
 
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection,
-            Assembly repositoryAssembly)
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Assembly repositoryAssembly)
         {
             Type[] repositoryClasses = repositoryAssembly
                 .GetTypes()
-                .Where(t => t.Name.EndsWith(RepositoryTypeSuffix) &&
-                            !t.IsInterface &&
-                            !t.IsAbstract)
+                .Where(t => t.Name.EndsWith(RepositoryTypeSuffix) && !t.IsInterface && !t.IsAbstract)
                 .ToArray();
+
             foreach (Type repositoryClass in repositoryClasses)
             {
                 Type? repositoryInterface = repositoryClass
                     .GetInterfaces()
                     .FirstOrDefault(i => i.Name == $"{ProjectInterfacePrefix}{repositoryClass.Name}");
+
                 if (repositoryInterface == null)
                 {
                     // Better solution, because it will throw an exception during application start-up
