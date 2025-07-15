@@ -1,186 +1,166 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PCShop.Data;
-using PCShop.Data.Models;
+﻿using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
+using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Order;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.Services.Common.ExceptionMessages;
 
-public class OrderService : IOrderService
+namespace PCShop.Services.Core
 {
-    private readonly PCShopDbContext _dbContext;
-
-    public OrderService(PCShopDbContext dbContext)
+    public class OrderService : IOrderService
     {
-        this._dbContext = dbContext;
-    }
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
 
-    public async Task AddProductToCartAsync(AddToCartFormModel model, string userId)
-    {
-        Guid? productId = null;
-        Guid? computerId = null;
-
-        if (!string.IsNullOrEmpty(model.ProductId) && Guid.TryParse(model.ProductId, out Guid parsedProductId))
+        public OrderService(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
         {
-            productId = parsedProductId;
+            this._orderRepository = orderRepository;
+            this._orderItemRepository = orderItemRepository;
         }
 
-        if (!string.IsNullOrEmpty(model.ComputerId) && Guid.TryParse(model.ComputerId, out Guid parsedComputerId))
+        public async Task AddProductToCartAsync(AddToCartFormModel model, string userId)
         {
-            computerId = parsedComputerId;
-        }
+            Guid? productId = null;
+            Guid? computerId = null;
 
-        if (productId == null && computerId == null)
-        {
-            throw new ArgumentException(InvalidIdMessage);
-        }
-
-        if (model.Quantity <= 0)
-        {
-            throw new ArgumentException(QuantityMustBeGreater);
-        }
-
-        Guid userGuid = Guid.Parse(userId);
-
-        Order? order = await this._dbContext
-            .Orders
-            .Include(o => o.OrdersItems)
-            .FirstOrDefaultAsync(o => o.ApplicationUserId == userGuid && o.Status == OrderStatus.Pending);
-
-        if (order == null)
-        {
-            order = new Order
+            if (!string.IsNullOrEmpty(model.ProductId) && Guid.TryParse(model.ProductId, out Guid parsedProductId))
             {
-                Id = Guid.NewGuid(),
-                ApplicationUserId = userGuid,
-                OrderDate = DateTime.UtcNow,
-                Status = OrderStatus.Pending,
-                OrdersItems = new List<OrderItem>()
-            };
+                productId = parsedProductId;
+            }
 
-            await this._dbContext.Orders.AddAsync(order);
-            await this._dbContext.SaveChangesAsync();
-        }
+            if (!string.IsNullOrEmpty(model.ComputerId) && Guid.TryParse(model.ComputerId, out Guid parsedComputerId))
+            {
+                computerId = parsedComputerId;
+            }
 
-        OrderItem? existingItem = order
-            .OrdersItems
-            .FirstOrDefault(i =>
+            if (productId == null && computerId == null)
+            {
+                throw new ArgumentException(InvalidIdMessage);
+            }
+
+            if (model.Quantity <= 0)
+            {
+                throw new ArgumentException(QuantityMustBeGreater);
+            }
+
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
+            if (order == null)
+            {
+                order = new Order
+                {
+                    Id = Guid.NewGuid(),
+                    ApplicationUserId = Guid.Parse(userId),
+                    OrderDate = DateTime.UtcNow,
+                    Status = OrderStatus.Pending,
+                    OrdersItems = new List<OrderItem>()
+                };
+
+                await this._orderRepository.AddAsync(order);
+            }
+
+            OrderItem? existingItem = order.OrdersItems.FirstOrDefault(i =>
                 (productId.HasValue && i.ProductId == productId) ||
                 (computerId.HasValue && i.ComputerId == computerId));
 
-        if (existingItem != null)
-        {
-            existingItem.Quantity += model.Quantity;
-            this._dbContext.OrdersItems.Update(existingItem);
-        }
-        else
-        {
-            OrderItem newItem = new OrderItem
+            if (existingItem != null)
             {
-                Id = Guid.NewGuid(),
-                OrderId = order.Id,
-                ProductId = productId,
-                ComputerId = computerId,
-                Quantity = model.Quantity
-            };
-
-            await this._dbContext.OrdersItems.AddAsync(newItem);
-        }
-
-        await this._dbContext.SaveChangesAsync();
-    }
-
-    public async Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId)
-    {
-        Order? order = await this._dbContext
-            .Orders
-            .Include(o => o.OrdersItems)
-                .ThenInclude(i => i.Product)
-            .Include(o => o.OrdersItems)
-                .ThenInclude(i => i.Computer)
-            .FirstOrDefaultAsync(o => o.ApplicationUserId == Guid.Parse(userId) && o.Status == OrderStatus.Pending);
-
-        if (order == null) return Enumerable.Empty<OrderItemViewModel>();
-
-        return order.OrdersItems.Select(i =>
-        {
-            bool isProduct = i.ProductId != null;
-            string? name = isProduct ? i.Product?.Name : i.Computer?.Name;
-            string? imageUrl = isProduct ? i.Product?.ImageUrl : i.Computer?.ImageUrl;
-            decimal price = isProduct ? i.Product?.Price ?? 0 : i.Computer?.Price ?? 0;
-
-            return new OrderItemViewModel
+                existingItem.Quantity += model.Quantity;
+                await this._orderItemRepository.UpdateAsync(existingItem);
+            }
+            else
             {
-                Id = i.Id.ToString(),
-                Name = name ?? "Unknown",
-                ImageUrl = imageUrl ?? $"/{ImagesFolder}/{NoImageUrl}",
-                Price = price,
-                Quantity = i.Quantity,
-                OrderId = order.Id.ToString(),
-                ProductId = i.ProductId?.ToString(),
-                ComputerId = i.ComputerId?.ToString()
-            };
-        });
-    }
+                OrderItem newItem = new OrderItem
+                {
+                    Id = Guid.NewGuid(),
+                    OrderId = order.Id,
+                    ProductId = productId,
+                    ComputerId = computerId,
+                    Quantity = model.Quantity
+                };
 
-    public async Task<int> GetCartCountAsync(string userId)
-    {
-        Order? order = await this._dbContext
-            .Orders
-            .Include(o => o.OrdersItems)
-            .FirstOrDefaultAsync(o => o.ApplicationUserId.ToString() == userId && o.Status == OrderStatus.Pending);
-
-        return order?.OrdersItems.Sum(i => i.Quantity) ?? 0;
-    }
-
-
-    public async Task RemoveItemAsync(string itemId, string userId)
-    {
-        if (!Guid.TryParse(itemId, out Guid id)) return;
-
-        Order? order = await this._dbContext
-            .Orders
-            .Include(o => o.OrdersItems)
-            .FirstOrDefaultAsync(o => o.ApplicationUserId == Guid.Parse(userId) && o.Status == OrderStatus.Pending);
-
-        if (order == null) return;
-
-        OrderItem? item = order.OrdersItems.FirstOrDefault(i => i.Id == id);
-
-        if (item != null)
-        {
-            this._dbContext.OrdersItems.Remove(item);
-            await this._dbContext.SaveChangesAsync();
+                await this._orderItemRepository.AddAsync(newItem);
+            }
         }
-    }
 
-    public async Task ClearCartAsync(string userId)
-    {
-        Order? order = await this._dbContext
-            .Orders
-            .Include(o => o.OrdersItems)
-            .FirstOrDefaultAsync(o => o.ApplicationUserId == Guid.Parse(userId) && o.Status == OrderStatus.Pending);
-
-        if (order != null)
+        public async Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId)
         {
-            this._dbContext.OrdersItems.RemoveRange(order.OrdersItems);
-            await this._dbContext.SaveChangesAsync();
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
+            if (order == null) return Enumerable.Empty<OrderItemViewModel>();
+
+            return order.OrdersItems.Select(i =>
+            {
+                bool isProduct = i.ProductId != null;
+                string? name = isProduct ? i.Product?.Name : i.Computer?.Name;
+                string? imageUrl = isProduct ? i.Product?.ImageUrl : i.Computer?.ImageUrl;
+                decimal price = isProduct ? i.Product?.Price ?? 0 : i.Computer?.Price ?? 0;
+
+                return new OrderItemViewModel
+                {
+                    Id = i.Id.ToString(),
+                    Name = name ?? "Unknown",
+                    ImageUrl = imageUrl ?? $"/{ImagesFolder}/{NoImageUrl}",
+                    Price = price,
+                    Quantity = i.Quantity,
+                    OrderId = order.Id.ToString(),
+                    ProductId = i.ProductId?.ToString(),
+                    ComputerId = i.ComputerId?.ToString()
+                };
+            });
         }
-    }
 
-    public async Task FinalizeOrderAsync(string userId)
-    {
-        Order? order = await this._dbContext
-            .Orders
-            .FirstOrDefaultAsync(o => o.ApplicationUserId == Guid.Parse(userId) && o.Status == OrderStatus.Pending);
-
-        if (order != null)
+        public async Task<int> GetCartCountAsync(string userId)
         {
-            order.Status = OrderStatus.Completed;
-            order.OrderDate = DateTime.UtcNow;
+            Order? order = await this._orderRepository.GetPendingOrderAsync(userId);
+            return order?.OrdersItems.Sum(i => i.Quantity) ?? 0;
+        }
 
-            await this._dbContext.SaveChangesAsync();
+        public async Task RemoveItemAsync(string itemId, string userId)
+        {
+            if (!Guid.TryParse(itemId, out Guid id)) return;
+
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
+            if (order == null) return;
+
+            OrderItem? item = order.OrdersItems.FirstOrDefault(i => i.Id == id);
+
+            if (item != null)
+            {
+                await this._orderItemRepository.HardDeleteAsync(item);
+            }
+        }
+
+        public async Task ClearCartAsync(string userId)
+        {
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
+            if (order != null && order.OrdersItems.Any())
+            {
+                foreach (OrderItem item in order.OrdersItems.ToList())
+                {
+                    await this._orderItemRepository.HardDeleteAsync(item);
+                }
+            }
+        }
+
+        public async Task FinalizeOrderAsync(string userId)
+        {
+            Order? order = await this._orderRepository
+                .GetPendingOrderAsync(userId);
+
+            if (order != null)
+            {
+                order.Status = OrderStatus.Completed;
+                order.OrderDate = DateTime.UtcNow;
+                await this._orderRepository.UpdateAsync(order);
+            }
         }
     }
 }
