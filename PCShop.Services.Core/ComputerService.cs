@@ -1,260 +1,249 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PCShop.Data;
 using PCShop.Data.Models;
+using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Computer;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.Services.Common.ExceptionMessages;
 
-namespace PCShop.Services.Core
+public class ComputerService : IComputerService
 {
-    public class ComputerService : IComputerService
+    private readonly IComputerRepository _computerRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public ComputerService(IComputerRepository computerRepository, UserManager<ApplicationUser> userManager)
     {
-        private readonly PCShopDbContext _dbContext;
-        private readonly UserManager<ApplicationUser> _userManager;
+        this._computerRepository = computerRepository;
+        this._userManager = userManager;
+    }
 
-        public ComputerService(PCShopDbContext dbContext, UserManager<ApplicationUser> userManager)
-        {
-            this._dbContext = dbContext;
-            this._userManager = userManager;
-        }
+    public async Task<IEnumerable<ComputerIndexViewModel>> GetAllComputersAsync(string? userId)
+    {
+        IEnumerable<ComputerIndexViewModel> computers = await this._computerRepository
+            .GetAllAttached()
+            .AsNoTracking()
+            .Select(c => new ComputerIndexViewModel
+            {
+                Id = c.Id.ToString(),
+                Name = c.Name,
+                Description = c.Description,
+                Price = c.Price,
+                ImageUrl = c.ImageUrl
+            })
+            .ToArrayAsync();
 
-        public async Task<IEnumerable<ComputerIndexViewModel>> GetAllComputersAsync(string? userId)
+        return computers;
+    }
+
+    public async Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId)
+    {
+        DetailsComputerViewModel? detailsComputerVM = null;
+
+        bool isIdValidGuid = Guid.TryParse(computerId, out Guid computerIdGuid);
+
+        if (isIdValidGuid)
         {
-            IEnumerable<ComputerIndexViewModel> computers = await this._dbContext
-                .Computers
-                .Include(c => c.ComputersParts)
+            detailsComputerVM = await this._computerRepository
+                .GetAllAttached()
                 .AsNoTracking()
-                .Where(p => p.IsDeleted == false)
-                .Select(c => new ComputerIndexViewModel
+                .Where(c => c.Id == computerIdGuid)
+                .Select(c => new DetailsComputerViewModel()
                 {
                     Id = c.Id.ToString(),
                     Name = c.Name,
                     Description = c.Description,
-                    Price = c.Price,
-                    ImageUrl = c.ImageUrl
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price
                 })
-                .ToArrayAsync();
-
-            return computers;
+                .SingleOrDefaultAsync();
         }
 
-        public async Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId)
+        return detailsComputerVM;
+    }
+
+    public async Task<bool> AddComputerAsync(string? userId, ComputerFormInputModel inputModel, IFormFile? imageFile)
+    {
+        if (string.IsNullOrEmpty(userId))
         {
-            DetailsComputerViewModel? computerDetails = null;
-
-            if (computerId != null)
-            {
-                Computer? computer = await this._dbContext
-                    .Computers
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(c => c.Id.ToString() == computerId && !c.IsDeleted);
-
-                if (computer != null)
-                {
-                    computerDetails = new DetailsComputerViewModel
-                    {
-                        Id = computer.Id.ToString(),
-                        Name = computer.Name,
-                        Description = computer.Description,
-                        ImageUrl = computer.ImageUrl,
-                        Price = computer.Price
-                    };
-                }
-            }
-
-            return computerDetails;
+            throw new ArgumentException(UserIdNullOrEmpty);
         }
 
-        public async Task<bool> AddComputerAsync(string? userId, ComputerFormInputModel inputModel, IFormFile? imageFile)
+        bool isAdded = false;
+
+        ApplicationUser? user = await this._userManager
+            .FindByIdAsync(userId);
+
+        string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
+
+        if (user != null)
         {
-            bool isAdded = false;
-
-            if (string.IsNullOrEmpty(userId))
+            Computer computer = new Computer
             {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
+                Name = inputModel.Name,
+                Description = inputModel.Description,
+                Price = inputModel.Price,
+                ImageUrl = imageUrl
+            };
 
-            ApplicationUser? user = await this._userManager
-                .FindByIdAsync(userId);
-
-            string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
-
-            if (user != null)
-            {
-                Computer newComputer = new Computer
-                {
-                    Name = inputModel.Name,
-                    Description = inputModel.Description,
-                    Price = inputModel.Price,
-                    ImageUrl = imageUrl
-                };
-
-                await this._dbContext.AddAsync(newComputer);
-                await this._dbContext.SaveChangesAsync();
-
-                isAdded = true;
-            }
-
-            return isAdded;
+            await this._computerRepository.AddAsync(computer);
+            
+            isAdded = true;
         }
+        return isAdded;
+    }
 
-        public async Task<ComputerFormInputModel?> GetComputerForEditingAsync(string computerId)
+    public async Task<ComputerFormInputModel?> GetComputerForEditingAsync(string computerId)
+    {
+        if (!Guid.TryParse(computerId, out Guid computerIdGuid))
         {
-            ComputerFormInputModel? editModel = null;
-
-            Computer? computerToEdit = await this._dbContext
-                .Computers
-                .AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Id == Guid.Parse(computerId));
-
-            if (computerToEdit != null)
-            {
-                editModel = new ComputerFormInputModel
-                {
-                    Id = computerToEdit.Id.ToString(),
-                    Name = computerToEdit.Name,
-                    Description = computerToEdit.Description,
-                    Price = computerToEdit.Price,
-                    ImageUrl = computerToEdit.ImageUrl
-                };
-            }
-
-            return editModel;
+            throw new FormatException(InvalidComputerIdFormat);
         }
+        
+        ComputerFormInputModel? editModel = null;
 
-        public async Task<bool> PersistUpdatedComputerAsync(string userId, ComputerFormInputModel inputModel, IFormFile? imageFile)
+        Computer? computerToEdit = await this._computerRepository
+            .GetByIdAsync(computerIdGuid);
+
+        if (computerToEdit != null)
         {
-            bool isPersisted = false;
-
-            ApplicationUser? user = await this._userManager
-                .FindByIdAsync(userId);
-
-            Computer? updatedComputer = await this._dbContext 
-                .Computers
-                .FindAsync(Guid.Parse(inputModel.Id));
-
-            string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
-
-            if (user != null && updatedComputer != null)
+            editModel = new ComputerFormInputModel
             {
-                updatedComputer.Name = inputModel.Name;
-                updatedComputer.Description = inputModel.Description;
-                updatedComputer.Price = inputModel.Price;
-                updatedComputer.ImageUrl = imageUrl;
-
-                await this._dbContext.SaveChangesAsync();
-                isPersisted = true;
-            }
-
-            return isPersisted;
+                Id = computerToEdit.Id.ToString(),
+                Name = computerToEdit.Name,
+                Description = computerToEdit.Description,
+                Price = computerToEdit.Price,
+                ImageUrl = computerToEdit.ImageUrl
+            };
         }
 
-        public async Task<DeleteComputerViewModel?> GetComputerForDeletingAsync(string? userId, string? computerId)
+        return editModel;
+    }
+
+    public async Task<bool> PersistUpdatedComputerAsync(string userId, ComputerFormInputModel inputModel, IFormFile? imageFile)
+    {
+        if (string.IsNullOrEmpty(userId))
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
-            if (string.IsNullOrEmpty(computerId))
-            {
-                throw new ArgumentException(ComputerIdNullOrEmpty);
-            }
-
-            if (!Guid.TryParse(computerId, out Guid computerGuid))
-            {
-                throw new FormatException(InvalidComputerIdFormat);
-            }
-
-            DeleteComputerViewModel? deleteModel = null;
-
-            Computer? deleteComputerModel = await this._dbContext
-                .Computers
-                .AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Id == computerGuid);
-
-            if (deleteComputerModel != null)
-            {
-                deleteModel = new DeleteComputerViewModel
-                {
-                    Id = deleteComputerModel.Id.ToString(),
-                    Name = deleteComputerModel.Name,
-                    ImageUrl = deleteComputerModel.ImageUrl
-                };
-            }
-
-            return deleteModel;
+            throw new ArgumentException(UserIdNullOrEmpty);
         }
 
-        public async Task<bool> SoftDeleteComputerAsync(string userId, DeleteComputerViewModel inputModel)
+        if (!Guid.TryParse(inputModel.Id, out Guid computerId))
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentException(UserIdNullOrEmpty);
-            }
-
-            if (!Guid.TryParse(inputModel.Id, out Guid computerId))
-            {
-                throw new FormatException(InvalidComputerIdFormat);
-            }
-
-            bool isSuccessDeleted = false;
-
-            ApplicationUser? user = await this._userManager
-                .FindByIdAsync(userId);
-
-            Computer? computer = await this._dbContext
-                .Computers
-                .FindAsync(computerId);
-
-            if (user != null && computer != null)
-            {
-                computer.IsDeleted = true;
-                isSuccessDeleted = true;
-
-                await this._dbContext.SaveChangesAsync();
-            }
-
-            return isSuccessDeleted;
+            throw new FormatException(InvalidComputerIdFormat);
         }
 
-        public async Task<string> UploadImageAsync(ComputerFormInputModel inputModel, IFormFile? imageFile)
+        bool isPersisted = false;
+
+        ApplicationUser? user = await this._userManager
+            .FindByIdAsync(userId);
+
+        Computer? updatedComputer = await this._computerRepository
+            .GetByIdAsync(computerId);
+
+        string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
+
+        if (user != null && updatedComputer != null)
         {
-            string imageUrl = inputModel.ImageUrl ?? string.Empty;
+            updatedComputer.Name = inputModel.Name;
+            updatedComputer.Description = inputModel.Description;
+            updatedComputer.Price = inputModel.Price;
+            updatedComputer.ImageUrl = imageUrl;
 
-            if (imageFile != null && imageFile.Length > 0)
+            await this._computerRepository.UpdateAsync(updatedComputer);
+
+            isPersisted = true;
+        }
+
+        return isPersisted;
+    }
+
+    public async Task<DeleteComputerViewModel?> GetComputerForDeletingAsync(string? userId, string? computerId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException(UserIdNullOrEmpty);
+        }
+
+        if (!Guid.TryParse(computerId, out Guid computerIdGuid))
+        {
+            throw new FormatException(InvalidComputerIdFormat);
+        }
+
+        DeleteComputerViewModel? deleteModel = null;
+
+        Computer? computerToDelete = await this._computerRepository
+            .GetByIdAsync(computerIdGuid);
+
+        if (computerToDelete != null)
+        {
+            deleteModel = new DeleteComputerViewModel
             {
-                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
-                string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+                Id = computerToDelete.Id.ToString(),
+                Name = computerToDelete.Name,
+                ImageUrl = computerToDelete.ImageUrl
+            };
+        }
 
-                if (!allowedExtensions.Contains(fileExtension))
-                {
-                    throw new InvalidOperationException(InvalidFileType);
-                }
+        return deleteModel;
+    }
 
-                if (!imageFile.ContentType.StartsWith("image/"))
-                {
-                    throw new InvalidOperationException(InvalidContentType);
-                }
+    public async Task<bool> SoftDeleteComputerAsync(string userId, DeleteComputerViewModel inputModel)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException(UserIdNullOrEmpty);
+        }
 
-                string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ComputersFolder);
-                Directory.CreateDirectory(uploadsFolder);
+        if (!Guid.TryParse(inputModel.Id, out Guid computerId))
+        {
+            throw new FormatException(InvalidComputerIdFormat);
+        }
 
-                string uniqueFileName = Guid.NewGuid() + fileExtension;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+        bool isSuccessDeleted = false;
 
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
+        ApplicationUser? user = await this._userManager
+            .FindByIdAsync(userId);
 
-                imageUrl = $"/{ImagesFolder}/{ComputersFolder}/" + uniqueFileName;
+        Computer? computer = await this._computerRepository
+            .GetByIdAsync(computerId);
+
+        if (user != null && computer != null)
+        {      
+            await this._computerRepository.DeleteAsync(computer);
+
+            isSuccessDeleted = true;
+        }
+
+        return isSuccessDeleted;
+    }
+
+    public async Task<string> UploadImageAsync(ComputerFormInputModel inputModel, IFormFile? imageFile)
+    {
+        string imageUrl = inputModel.ImageUrl ?? string.Empty;
+
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+            string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(fileExtension)) throw new InvalidOperationException(InvalidFileType);
+            if (!imageFile.ContentType.StartsWith("image/")) throw new InvalidOperationException(InvalidContentType);
+
+            string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ComputersFolder);
+            Directory.CreateDirectory(uploadsFolder);
+
+            string uniqueFileName = Guid.NewGuid() + fileExtension;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (FileStream fileStream = new(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
             }
 
-            return imageUrl;
+            imageUrl = $"/{ImagesFolder}/{ComputersFolder}/" + uniqueFileName;
         }
+
+        return imageUrl;
     }
 }
