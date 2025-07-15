@@ -153,14 +153,26 @@ namespace PCShop.Services.Core
         public async Task FinalizeOrderAsync(string userId)
         {
             Order? order = await this._orderRepository
-                .GetPendingOrderAsync(userId);
+                .GetPendingOrderWithItemsAsync(userId); 
 
             if (order != null)
             {
                 order.Status = OrderStatus.Completed;
                 order.OrderDate = DateTime.UtcNow;
+
+                decimal totalPrice = 0m;
+
+                foreach (OrderItem item in order.OrdersItems)
+                {
+                    decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
+                    totalPrice += unitPrice * item.Quantity;
+                }
+
+                order.TotalPrice = totalPrice;
+
                 await this._orderRepository.UpdateAsync(order);
             }
         }
+
     }
 }
