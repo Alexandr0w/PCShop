@@ -10,5 +10,6 @@
         public const string ImagesFolder = "images";
         public const string ProductsFolder = "products";
         public const string ComputersFolder = "computers";
+        public const string IsDeletedPropertyName = "IsDeleted";
     }
 }

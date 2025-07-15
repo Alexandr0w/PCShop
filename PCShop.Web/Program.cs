@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
-using PCShop.Services.Core;
+using PCShop.Data.Repository;
+using PCShop.Data.Repository.Interfaces;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Extensions;
 
@@ -42,8 +44,9 @@ namespace PCShop.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
-            // Loading all services with extension method
-            builder.Services.AddUserDefinedServices(typeof(ProductService).Assembly);
+            // Loading all services and repositories with extension method
+            builder.Services.AddRepositories(typeof(IProductRepository).Assembly);
+            builder.Services.AddUserDefinedServices(typeof(IProductService).Assembly);
 
             builder.Services.AddScoped<CartCountFilter>();
 
