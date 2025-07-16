@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
-using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Computer;
+using System.Globalization;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.Services.Common.ServiceConstants;
 
 public class ComputerService : IComputerService
 {
@@ -55,7 +56,9 @@ public class ComputerService : IComputerService
             "name_desc" => query.OrderByDescending(c => c.Name),
             "price_asc" => query.OrderBy(c => c.Price),
             "price_desc" => query.OrderByDescending(c => c.Price),
-            _ => query.OrderByDescending(c => c.Id)
+            "oldest" => query.OrderBy(p => p.CreatedOn),
+            "default" or null or "" => query.OrderByDescending(c => c.CreatedOn),
+            _ => query.OrderByDescending(c => c.CreatedOn)
         };
 
         model.TotalComputers = await query.CountAsync();
@@ -91,7 +94,8 @@ public class ComputerService : IComputerService
                     Name = c.Name,
                     Description = c.Description,
                     ImageUrl = c.ImageUrl,
-                    Price = c.Price
+                    Price = c.Price,
+                    CreatedOn = c.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture)
                 })
                 .SingleOrDefaultAsync();
         }
@@ -108,18 +112,23 @@ public class ComputerService : IComputerService
 
         bool isAdded = false;
 
+        bool isCreatedOnValid = DateTime
+                .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
+
         ApplicationUser? user = await this._userManager
             .FindByIdAsync(userId);
 
         string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-        if (user != null)
+        if (user != null && isCreatedOnValid)
         {
             Computer computer = new Computer
             {
                 Name = inputModel.Name,
                 Description = inputModel.Description,
                 Price = inputModel.Price,
+                CreatedOn = createdOn,
                 ImageUrl = imageUrl
             };
 
@@ -150,6 +159,7 @@ public class ComputerService : IComputerService
                 Name = computerToEdit.Name,
                 Description = computerToEdit.Description,
                 Price = computerToEdit.Price,
+                CreatedOn = computerToEdit.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
                 ImageUrl = computerToEdit.ImageUrl
             };
         }
@@ -171,6 +181,10 @@ public class ComputerService : IComputerService
 
         bool isPersisted = false;
 
+        bool isCreatedOnValid = DateTime
+                .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
+
         ApplicationUser? user = await this._userManager
             .FindByIdAsync(userId);
 
@@ -179,11 +193,12 @@ public class ComputerService : IComputerService
 
         string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-        if (user != null && updatedComputer != null)
+        if (user != null && updatedComputer != null && isCreatedOnValid)
         {
             updatedComputer.Name = inputModel.Name;
             updatedComputer.Description = inputModel.Description;
             updatedComputer.Price = inputModel.Price;
+            updatedComputer.CreatedOn = createdOn;
             updatedComputer.ImageUrl = imageUrl;
 
             await this._computerRepository.UpdateAsync(updatedComputer);

@@ -45,6 +45,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="CreatedOn" class="form-label">Created On</label>
+                    <input asp-for="CreatedOn" class="form-control" />
+                    <span asp-validation-for="CreatedOn" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="ImageUrl" class="form-label">New Image URL (optional)</label>
                     <input asp-for="ImageUrl" class="form-control" placeholder="Leave blank to keep current" />
                     <span asp-validation-for="ImageUrl" class="text-danger small"></span>

@@ -19,6 +19,10 @@ namespace PCShop.Web.ViewModels.Computer
         [Range(0.1, int.MaxValue)]
         public decimal Price { get; set; }
 
+        [Required]
+        [StringLength(CreatedOnLength, MinimumLength = CreatedOnLength)]
+        public string CreatedOn { get; set; } = null!;
+
         [MaxLength(ImageUrlMaxLength)]
         public string? ImageUrl { get; set; }
     }

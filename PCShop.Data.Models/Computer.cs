@@ -17,6 +17,9 @@ namespace PCShop.Data.Models
         [Comment("Price of the computer in decimal format")]
         public decimal Price { get; set; }
 
+        [Comment("Date and time when the computer was created")]
+        public DateTime CreatedOn { get; set; }
+
         [Comment("Image URL for the computer")]
         public required string ImageUrl { get; set; }
 

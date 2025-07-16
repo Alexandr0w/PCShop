@@ -1,8 +1,10 @@
 ﻿@using PCShop.Web.ViewModels.Computer
+@using static PCShop.GCommon.ApplicationConstants
 @model ComputerFormInputModel
 
 @{
     ViewData["Title"] = "Add Computer";
+    string today = DateTime.Now.ToString(AppDateFormat);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
@@ -31,6 +33,13 @@
                 <label asp-for="Price" class="form-label">Price (in euro)</label>
                 <input asp-for="Price" class="form-control" aria-required="true" />
                 <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CreatedOn" class="form-label">CreatedOn</label>
+                <input asp-for="CreatedOn" class="form-control" type="date" aria-required="true"
+                       value="@(string.IsNullOrEmpty(Model.CreatedOn) ? today : Model.CreatedOn)" />
+                <span asp-validation-for="CreatedOn" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
