@@ -26,6 +26,7 @@
     <ProjectReference Include="..\PCShop.Data.Common\PCShop.Data.Common.csproj" />
     <ProjectReference Include="..\PCShop.Data.Models\PCShop.Data.Models.csproj" />
     <ProjectReference Include="..\PCShop.GCommon\PCShop.GCommon.csproj" />
+    <ProjectReference Include="..\PCShop.Web.ViewModels\PCShop.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>
