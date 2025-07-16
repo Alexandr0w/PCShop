@@ -2,9 +2,10 @@
 using PCShop.Data.Models.Enum;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
+using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Order;
 using static PCShop.GCommon.ApplicationConstants;
-using static PCShop.Services.Common.ExceptionMessages;
+using static PCShop.GCommon.ExceptionMessages;
 
 namespace PCShop.Services.Core
 {
@@ -41,7 +42,7 @@ namespace PCShop.Services.Core
 
             if (model.Quantity <= 0)
             {
-                throw new ArgumentException(QuantityMustBeGreater);
+                throw new ArgumentException(QuantityMustBeGreaterMessage);
             }
 
             Order? order = await this._orderRepository

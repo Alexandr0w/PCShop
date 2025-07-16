@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
+using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Computer;
-using static PCShop.GCommon.ApplicationConstants;
-using static PCShop.Services.Common.ExceptionMessages;
+using static PCShop.GCommon.ExceptionMessages;
 
 public class ComputerService : IComputerService
 {
@@ -103,7 +103,7 @@ public class ComputerService : IComputerService
     {
         if (string.IsNullOrEmpty(userId))
         {
-            throw new ArgumentException(UserIdNullOrEmpty);
+            throw new ArgumentException(UserIdNullOrEmptyMessage);
         }
 
         bool isAdded = false;
@@ -134,7 +134,7 @@ public class ComputerService : IComputerService
     {
         if (!Guid.TryParse(computerId, out Guid computerIdGuid))
         {
-            throw new FormatException(InvalidComputerIdFormat);
+            throw new FormatException(InvalidComputerIdFormatMessage);
         }
         
         ComputerFormInputModel? editModel = null;
@@ -161,12 +161,12 @@ public class ComputerService : IComputerService
     {
         if (string.IsNullOrEmpty(userId))
         {
-            throw new ArgumentException(UserIdNullOrEmpty);
+            throw new ArgumentException(UserIdNullOrEmptyMessage);
         }
 
         if (!Guid.TryParse(inputModel.Id, out Guid computerId))
         {
-            throw new FormatException(InvalidComputerIdFormat);
+            throw new FormatException(InvalidComputerIdFormatMessage);
         }
 
         bool isPersisted = false;
@@ -198,12 +198,12 @@ public class ComputerService : IComputerService
     {
         if (string.IsNullOrEmpty(userId))
         {
-            throw new ArgumentException(UserIdNullOrEmpty);
+            throw new ArgumentException(UserIdNullOrEmptyMessage);
         }
 
         if (!Guid.TryParse(computerId, out Guid computerIdGuid))
         {
-            throw new FormatException(InvalidComputerIdFormat);
+            throw new FormatException(InvalidComputerIdFormatMessage);
         }
 
         DeleteComputerViewModel? deleteModel = null;
@@ -228,12 +228,12 @@ public class ComputerService : IComputerService
     {
         if (string.IsNullOrEmpty(userId))
         {
-            throw new ArgumentException(UserIdNullOrEmpty);
+            throw new ArgumentException(UserIdNullOrEmptyMessage);
         }
 
         if (!Guid.TryParse(inputModel.Id, out Guid computerId))
         {
-            throw new FormatException(InvalidComputerIdFormat);
+            throw new FormatException(InvalidComputerIdFormatMessage);
         }
 
         bool isSuccessDeleted = false;
@@ -263,8 +263,8 @@ public class ComputerService : IComputerService
             string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
             string fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
 
-            if (!allowedExtensions.Contains(fileExtension)) throw new InvalidOperationException(InvalidFileType);
-            if (!imageFile.ContentType.StartsWith("image/")) throw new InvalidOperationException(InvalidContentType);
+            if (!allowedExtensions.Contains(fileExtension)) throw new InvalidOperationException(InvalidFileTypeMessage);
+            if (!imageFile.ContentType.StartsWith("image/")) throw new InvalidOperationException(InvalidContentTypeMessage);
 
             string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ComputersFolder);
             Directory.CreateDirectory(uploadsFolder);

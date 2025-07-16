@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
+using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Product;
-using static PCShop.GCommon.ApplicationConstants;
-using static PCShop.Services.Common.ExceptionMessages;
+using static PCShop.GCommon.ExceptionMessages;
 
 namespace PCShop.Services.Core
 {
@@ -132,12 +132,12 @@ namespace PCShop.Services.Core
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException(UserIdNullOrEmpty);
+                throw new ArgumentException(UserIdNullOrEmptyMessage);
             }
 
             if (!Guid.TryParse(inputModel.ProductTypeId, out Guid productTypeId))
             {
-                throw new FormatException(InvalidProductTypeIdFormat);
+                throw new FormatException(InvalidProductTypeIdFormatMessage);
             }
 
             bool isAdded = false;
@@ -172,12 +172,12 @@ namespace PCShop.Services.Core
         {
             if (string.IsNullOrEmpty(productId))
             {
-                throw new ArgumentException(ProductIdNullOrEmpty);
+                throw new ArgumentException(ProductIdNullOrEmptyMessage);
             }
 
             if (!Guid.TryParse(productId, out Guid productGuid))
             {
-                throw new FormatException(ProductIdNullOrEmpty);
+                throw new FormatException(ProductIdNullOrEmptyMessage);
             }
 
             ProductFormInputModel? editModel = null;
@@ -214,17 +214,17 @@ namespace PCShop.Services.Core
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException(UserIdNullOrEmpty);
+                throw new ArgumentException(UserIdNullOrEmptyMessage);
             }
 
             if (!Guid.TryParse(inputModel.Id, out Guid productId))
             {
-                throw new FormatException(InvalidProductIdFormat);
+                throw new FormatException(InvalidProductIdFormatMessage);
             }
 
             if (!Guid.TryParse(inputModel.ProductTypeId, out Guid productTypeId))
             {
-                throw new FormatException(InvalidProductTypeIdFormat);
+                throw new FormatException(InvalidProductTypeIdFormatMessage);
             }
 
             bool isPersisted = false;
@@ -260,12 +260,12 @@ namespace PCShop.Services.Core
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException(UserIdNullOrEmpty);
+                throw new ArgumentException(UserIdNullOrEmptyMessage);
             }
 
             if (!Guid.TryParse(productId, out Guid productGuid))
             {
-                throw new FormatException(InvalidProductIdFormat);
+                throw new FormatException(InvalidProductIdFormatMessage);
             }
 
             DeleteProductViewModel? deleteModel = null;
@@ -290,12 +290,12 @@ namespace PCShop.Services.Core
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentException(UserIdNullOrEmpty);
+                throw new ArgumentException(UserIdNullOrEmptyMessage);
             }
 
             if (!Guid.TryParse(inputModel.Id, out Guid productId))
             {
-                throw new FormatException(InvalidProductIdFormat);
+                throw new FormatException(InvalidProductIdFormatMessage);
             }
 
             bool isSuccessDeleted = false;
@@ -327,12 +327,12 @@ namespace PCShop.Services.Core
 
                 if (!allowedExtensions.Contains(fileExtension))
                 {
-                    throw new InvalidOperationException(InvalidFileType);
+                    throw new InvalidOperationException(InvalidFileTypeMessage);
                 }
 
                 if (!imageFile.ContentType.StartsWith("image/"))
                 {
-                    throw new InvalidOperationException(InvalidContentType);
+                    throw new InvalidOperationException(InvalidContentTypeMessage);
                 }
 
                 string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
