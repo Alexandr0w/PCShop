@@ -39,6 +39,7 @@
     <div class="col-md-3">
         <select name="SortOption" class="form-select">
             <option value="default" selected="@(string.IsNullOrEmpty(Model.SortOption) || Model.SortOption == "default")">Newest</option>
+            <option value="oldest" selected="@(Model.SortOption == "oldest")">Oldest</option>
             <option value="name_asc" selected="@(Model.SortOption == "name_asc")">Name A-Z</option>
             <option value="name_desc" selected="@(Model.SortOption == "name_desc")">Name Z-A</option>
             <option value="price_asc" selected="@(Model.SortOption == "price_asc")">Price: Low to High</option>

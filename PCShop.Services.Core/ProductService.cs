@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
-using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Product;
+using System.Globalization;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core
 {
@@ -84,7 +85,9 @@ namespace PCShop.Services.Core
                 "name_desc" => productsQuery.OrderByDescending(p => p.Name),
                 "price_asc" => productsQuery.OrderBy(p => p.Price),
                 "price_desc" => productsQuery.OrderByDescending(p => p.Price),
-                _ => productsQuery.OrderByDescending(p => p.Id)
+                "oldest" => productsQuery.OrderBy(p => p.CreatedOn),
+                "default" or null or "" => productsQuery.OrderByDescending(p => p.CreatedOn),
+                _ => productsQuery.OrderByDescending(p => p.CreatedOn)
             };
 
             model.Products = await productsQuery
@@ -120,7 +123,8 @@ namespace PCShop.Services.Core
                         Description = p.Description,
                         ProductType = p.ProductType.Name,
                         ImageUrl = p.ImageUrl,
-                        Price = p.Price
+                        Price = p.Price,
+                        CreatedOn = p.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture)
                     })
                     .SingleOrDefaultAsync();
             }
@@ -142,6 +146,10 @@ namespace PCShop.Services.Core
 
             bool isAdded = false;
 
+            bool isCreatedOnValid = DateTime
+                .TryParseExact(inputModel.CreatedOn, CreatedOnFormat, 
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
@@ -150,13 +158,14 @@ namespace PCShop.Services.Core
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-            if (user != null && productType != null)
+            if (user != null && productType != null && isCreatedOnValid)
             {
                 Product product = new Product
                 {
                     Name = inputModel.Name,
                     Description = inputModel.Description,
                     Price = inputModel.Price,
+                    CreatedOn = createdOn,
                     ImageUrl = imageUrl,
                     ProductTypeId = productType.Id
                 };
@@ -196,14 +205,10 @@ namespace PCShop.Services.Core
                     Name = productToEdit.Name,
                     Description = productToEdit.Description,
                     Price = productToEdit.Price,
+                    CreatedOn = productToEdit.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
                     ImageUrl = productToEdit.ImageUrl,
                     ProductTypeId = productToEdit.ProductTypeId.ToString(),
-                    ProductTypes = productTypes
-                    .Select(pt => new ProductTypeViewModel
-                    {
-                        Id = pt.Id.ToString(),
-                        Name = pt.Name
-                    })
+                    ProductTypes = await this._productTypeRepository.GetAllProductTypeViewModelsAsync()
                 };
             }
 
@@ -229,6 +234,10 @@ namespace PCShop.Services.Core
 
             bool isPersisted = false;
 
+            bool isCreatedOnValid = DateTime
+                .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
@@ -240,11 +249,12 @@ namespace PCShop.Services.Core
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-            if (user != null && updatedProduct != null && productType != null)
+            if (user != null && updatedProduct != null && productType != null && isCreatedOnValid)
             {
                 updatedProduct.Name = inputModel.Name;
                 updatedProduct.Description = inputModel.Description;
                 updatedProduct.Price = inputModel.Price;
+                updatedProduct.CreatedOn = createdOn;
                 updatedProduct.ImageUrl = imageUrl;
                 updatedProduct.ProductTypeId = productType.Id;
 
