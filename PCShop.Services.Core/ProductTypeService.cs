@@ -1,32 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PCShop.Data;
+﻿using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 
-namespace PCShop.Services.Core
+public class ProductTypeService : IProductTypeService
 {
-    public class ProductTypeService : IProductTypeService
+    private readonly IProductTypeRepository _productTypeRepository;
+
+    public ProductTypeService(IProductTypeRepository productTypeRepository)
     {
-        private readonly PCShopDbContext _dbContext;
+        this._productTypeRepository = productTypeRepository;
+    }
 
-        public ProductTypeService(PCShopDbContext dbContext)
-        {
-            this._dbContext = dbContext;
-        }
-
-        public async Task<IEnumerable<ProductTypeViewModel>> GetProductTypeMenuAsync()
-        {
-            IEnumerable<ProductTypeViewModel> productTypes = await this._dbContext
-                .ProductsTypes
-                .AsNoTracking()
-                .Select(pt => new ProductTypeViewModel
-                {
-                    Id = pt.Id.ToString(), 
-                    Name = pt.Name
-                })
-                .ToArrayAsync();
-
-            return productTypes;
-        }
+    public async Task<IEnumerable<ProductTypeViewModel>> GetProductTypeMenuAsync()
+    {
+        return await this._productTypeRepository
+            .GetAllProductTypeViewModelsAsync();
     }
 }
