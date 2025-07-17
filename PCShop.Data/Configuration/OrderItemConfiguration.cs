@@ -13,6 +13,11 @@ namespace PCShop.Data.Configuration
                 .HasKey(oi => oi.Id);
 
             entity
+                .Property(oi => oi.Quantity)
+                .IsRequired()
+                .HasDefaultValue(QuantityDefaultValue);
+
+            entity
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrdersItems)
                 .HasForeignKey(oi => oi.OrderId)
@@ -29,11 +34,6 @@ namespace PCShop.Data.Configuration
                 .WithMany(c => c.OrdersItems)
                 .HasForeignKey(oi => oi.ComputerId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity
-                .Property(oi => oi.Quantity)
-                .IsRequired()
-                .HasDefaultValue(QuantityDefaultValue);
 
             entity.HasQueryFilter(oi =>
                 (oi.Product != null && !oi.Product.IsDeleted) ||

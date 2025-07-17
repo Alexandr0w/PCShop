@@ -22,6 +22,18 @@ namespace PCShop.Data.Models
         [Comment("The total price of the order, including all items and taxes")]
         public decimal TotalPrice { get; set; }
 
+        [Comment("Additional customer comment for the order")]
+        public string? Comment { get; set; }
+
+        [Comment("Delivery method for the order")]
+        public DeliveryMethod DeliveryMethod { get; set; }
+
+        [Comment("Total delivery fee based on delivery method")]
+        public decimal DeliveryFee { get; set; }
+
+        [Comment("Final delivery address composed of city, postal code, and address")]
+        public string? DeliveryAddress { get; set; }
+
         public virtual ICollection<OrderItem> OrdersItems { get; set; } = new HashSet<OrderItem>();
     }
 }

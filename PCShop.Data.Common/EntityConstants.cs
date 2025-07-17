@@ -32,6 +32,9 @@
 
             public const int ImageUrlMaxLength = 2048;
 
+            public const double PriceMinValue = 0.1;
+            public const double PriceMaxValue = double.MaxValue;
+
             public const int CurrentPageNumber = 1;
             public const int MaxComputersPerPage = 8;
 
@@ -50,6 +53,9 @@
 
             public const int ImageUrlMaxLength = 2048;
 
+            public const double PriceMinValue = 0.1;
+            public const double PriceMaxValue = double.MaxValue;
+
             public const int CurrentPageNumber = 1;
             public const int MaxProductsPerPage = 12;
 
@@ -65,6 +71,18 @@
         public static class OrderItem
         {
             public const int QuantityDefaultValue = 1;
+        }
+
+        public static class Order
+        {
+            public const int CommentMinLength = 4;
+            public const int CommentMaxLength = 500;
+
+            public const int DeliveryMethodMinLength = 5;
+            public const int DeliveryMethodMaxLength = 50;
+
+            public const int DeliveryAddressMinLength = 5;
+            public const int DeliveryAddressMaxLength = 300;
         }
     }
 }

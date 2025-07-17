@@ -22,7 +22,6 @@ namespace PCShop.Data.Repository
                 .FirstOrDefaultAsync(o => o.ApplicationUserId.ToString().ToLower() == userId.ToLower() && o.Status == OrderStatus.Pending);
         }
 
-
         public async Task<Order?> GetPendingOrderAsync(string userId)
         {
             return await this._DbSet

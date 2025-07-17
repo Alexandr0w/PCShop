@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
+using static PCShop.Data.Common.EntityConstants.Order;
 using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Data.Configuration
@@ -19,11 +20,31 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(o => o.Status)
-                .HasDefaultValue(OrderStatus.Pending);
+                .HasDefaultValue(OrderStatus.Pending)
+                .HasConversion<int>(); // Save enum like int in DB
 
             entity
                 .Property(o => o.TotalPrice)
                 .HasColumnType(PriceSqlType);
+
+            entity
+                .Property(o => o.Comment)
+                .IsRequired(false)
+                .HasMaxLength(CommentMaxLength);
+
+            entity
+                .Property(o => o.DeliveryMethod)
+                .IsRequired()
+                .HasConversion<int>(); // Save enum like int in DB
+
+            entity
+                .Property(o => o.DeliveryFee)
+                .HasColumnType(PriceSqlType);
+
+            entity
+                .Property(o => o.DeliveryAddress)
+                .IsRequired(false)
+                .HasMaxLength(DeliveryAddressMaxLength);
 
             entity
                 .HasQueryFilter(o => o.ApplicationUser.IsDeleted == false);
