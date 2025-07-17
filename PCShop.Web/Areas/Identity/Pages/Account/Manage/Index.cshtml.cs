@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PCShop.Data.Models;
+using static PCShop.Data.Common.EntityConstants.ApplicationUser;
 
 namespace PCShop.Web.Areas.Identity.Pages.Account.Manage
 {
@@ -37,18 +38,22 @@ namespace PCShop.Web.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
 
             [Required]
+            [StringLength(FullNameMaxLength, MinimumLength = FullNameMinLength)]
             [Display(Name = "Full Name")]
             public string FullName { get; set; }
 
             [Required]
+            [StringLength(AddressMaxLength, MinimumLength = AddressMinLength)]
             [Display(Name = "Address")]
             public string Address { get; set; }
 
             [Required]
+            [StringLength(CityMaxLength, MinimumLength = CityMinLength)]
             [Display(Name = "City")]
             public string City { get; set; }
 
             [Required]
+            [StringLength(PostalCodeMaxLength, MinimumLength = PostalCodeMinLength)]
             [Display(Name = "Postal Code")]
             public string PostalCode { get; set; }
         }
