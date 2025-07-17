@@ -16,7 +16,7 @@ namespace PCShop.Web.ViewModels.Product
         public string Description { get; set; } = null!;
 
         [Required]
-        [Range(0.1, int.MaxValue)]
+        [Range(PriceMinValue, PriceMaxValue)]
         public decimal Price { get; set; }
 
 
