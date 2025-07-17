@@ -1,0 +1,114 @@
+﻿@using PCShop.Web.ViewModels.Order
+@using PCShop.Data.Models.Enum
+@using static PCShop.Services.Common.ServiceConstants
+@model OrderConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Confirm Order";
+
+    decimal deliveryFee = Model.DeliveryMethod switch
+    {
+        DeliveryMethod.Econt => EcontFee,
+        DeliveryMethod.Speedy => SpeedyFee,
+        DeliveryMethod.ToAddress => ToAddressFee,
+        _ => 0m
+    };
+
+    decimal totalWithDelivery = Model.TotalProductsPrice + deliveryFee;
+}
+
+<h2 class="mt-4 mb-3">@ViewData["Title"]</h2>
+<hr />
+
+<form asp-action="Confirm" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="FullName" class="form-label">Full Name</label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="City" class="form-label">City</label>
+        <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Address" class="form-label">Address</label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="PostalCode" class="form-label">Postal Code</label>
+        <input asp-for="PostalCode" class="form-control" />
+        <span asp-validation-for="PostalCode" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="DeliveryMethod" class="form-label">Delivery Method</label>
+        <select asp-for="DeliveryMethod" asp-items="Html.GetEnumSelectList<DeliveryMethod>()" class="form-select" id="deliveryMethod"></select>
+        <span asp-validation-for="DeliveryMethod" class="text-danger small"></span>
+
+        <div class="mt-2">
+            <small class="text-muted">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Econt:</strong> @EcontFee.ToString("F2") €</li>
+                    <li><strong>Speedy:</strong> @SpeedyFee.ToString("F2") €</li>
+                    <li><strong>To Address:</strong> @ToAddressFee.ToString("F2") €</li>
+                </ul>
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="Comment" class="form-label">Comment (optional)</label>
+        <textarea asp-for="Comment" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Comment" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-12 mt-3">
+        <h5>Products Total: <span id="productsTotal">@Model.TotalProductsPrice.ToString("F2")</span> €</h5>
+        <h5>Delivery Fee: <span id="deliveryFee">@deliveryFee.ToString("F2")</span> €</h5>
+        <h4>Total: <span id="totalWithDelivery">@totalWithDelivery.ToString("F2")</span> €</h4>
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-success w-100 py-2">
+            <i class="fas fa-check"></i> Finalize Order
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deliverySelect = document.getElementById('deliveryMethod');
+            const deliveryFeeSpan = document.getElementById('deliveryFee');
+            const totalPriceSpan = document.getElementById('totalWithDelivery');
+            const productsTotal = parseFloat('@Model.TotalProductsPrice');
+
+            const deliveryFees = {
+                1: @EcontFee,     // Econt
+                2: @SpeedyFee,    // Speedy
+                3: @ToAddressFee  // ToAddress
+            };
+
+            deliverySelect.addEventListener('change', function () {
+                const selectedMethod = parseInt(this.value);
+                const deliveryFee = deliveryFees[selectedMethod] || 0;
+                const total = productsTotal + deliveryFee;
+
+                deliveryFeeSpan.textContent = deliveryFee.toFixed(2);
+                totalPriceSpan.textContent = total.toFixed(2);
+            });
+        });
+    </script>
+}

@@ -4,17 +4,19 @@ namespace PCShop.Services.Core.Interfaces
 {
     public interface IOrderService
     {
-        Task AddProductToCartAsync(AddToCartFormModel model, string userId);
-
+        Task<bool> AddProductToCartAsync(AddToCartFormModel model, string userId);
         Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId);
-
         Task<int> GetCartCountAsync(string userId);
 
-        Task RemoveItemAsync(string itemId, string userId);
+        Task<bool> RemoveItemAsync(string itemId, string userId);
+        Task<bool> ClearCartAsync(string userId);
+        Task<bool> FinalizeOrderAsync(string userId);
 
-        Task ClearCartAsync(string userId);
+        Task<OrderConfirmationViewModel?> GetOrderConfirmationDataAsync(string userId);
+        Task<bool> FinalizeOrderWithDetailsAsync(string userId, OrderConfirmationViewModel model);
+        Task<bool> IsUserProfileCompleteAsync(string userId);
+        Task<decimal> GetTotalCartPriceAsync(string userId);
 
-        Task FinalizeOrderAsync(string userId);
     }
 }
 

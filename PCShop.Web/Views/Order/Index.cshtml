@@ -1,5 +1,6 @@
 ﻿@using PCShop.Web.ViewModels.Order
 @model IEnumerable<OrderItemViewModel>
+
 @{
     ViewData["Title"] = "Shopping Cart";
     decimal totalPrice = Model.Sum(i => i.Price * i.Quantity);
@@ -75,10 +76,10 @@ else
 
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h4 class="fw-bold">Total: @totalPrice.ToString("F2") €</h4>
-        <form asp-action="Finalize" method="post">
+        <form asp-action="Confirm" method="post">
             <button type="submit" class="btn btn-success btn-lg"
-                    onclick="return confirm('Are you sure you want to finalize this order?')">
-                <i class="fas fa-check-circle"></i> Finalize Order
+                    onclick="return confirm('Are you sure you want to confirm this order?')">
+                <i class="fas fa-check-circle"></i> Confirm Order
             </button>
         </form>
     </div>

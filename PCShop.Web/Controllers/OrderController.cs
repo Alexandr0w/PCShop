@@ -162,4 +162,89 @@ public class OrderController : BaseController
             return this.RedirectToAction(nameof(Index));
         }
     }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Confirm()
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
+
+            bool isProfileComplete = await this._orderService.IsUserProfileCompleteAsync(userId);
+
+            if (!isProfileComplete)
+            {
+                TempData["ErrorMessage"] = "Please complete your profile before placing an order.";
+                return this.RedirectToAction("EditProfile", "Account");
+            }
+
+            OrderConfirmationViewModel? model = await this._orderService.GetOrderConfirmationDataAsync(userId);
+
+            if (model == null)
+            {
+                TempData["ErrorMessage"] = "No pending order found or cart is empty.";
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            this.ModelState.Clear();
+
+            return this.View(model);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, "Failed to load order confirmation form.");
+            TempData["ErrorMessage"] = "Unable to load confirmation form.";
+            return this.RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Confirm(OrderConfirmationViewModel model)
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return this.Unauthorized();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.TotalProductsPrice = await this._orderService.GetTotalCartPriceAsync(userId);
+                return this.View(model);
+            }
+
+            bool isFinalized = await this._orderService.FinalizeOrderWithDetailsAsync(userId, model);
+
+            if (isFinalized)
+            {
+                TempData["SuccessMessage"] = "Order finalized successfully!";
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to finalize order. Please try again.";
+
+                decimal totalPrice = await this._orderService.GetTotalCartPriceAsync(userId);
+                model.TotalProductsPrice = totalPrice;
+
+                return this.View(model);
+            }
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, "Error finalizing order");
+            TempData["ErrorMessage"] = "An error occurred while finalizing your order.";
+
+            return this.RedirectToAction(nameof(Index));
+        }
+    }
 }
