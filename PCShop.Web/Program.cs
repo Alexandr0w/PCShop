@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
@@ -52,6 +53,7 @@ namespace PCShop.Web
             builder.Services.AddControllersWithViews(options =>
             {
                 options.Filters.AddService<CartCountFilter>();
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
             builder.Services.AddRazorPages();
