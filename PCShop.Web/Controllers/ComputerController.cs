@@ -49,7 +49,7 @@ namespace PCShop.Web.Controllers
 
                 if (computerDetails == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 return this.View(computerDetails);
@@ -128,7 +128,7 @@ namespace PCShop.Web.Controllers
 
                 if (editComputerInputModel == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 return this.View(editComputerInputModel);
@@ -189,7 +189,7 @@ namespace PCShop.Web.Controllers
 
                 if (deleteComputerInputModel == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 return this.View(deleteComputerInputModel);

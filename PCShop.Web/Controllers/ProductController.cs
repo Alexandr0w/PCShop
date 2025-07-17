@@ -52,7 +52,7 @@ namespace PCShop.Web.Controllers
 
                 if (productDetails == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 return this.View(productDetails);
@@ -131,7 +131,7 @@ namespace PCShop.Web.Controllers
 
                 if (editProductInputModel == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 editProductInputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
@@ -194,7 +194,7 @@ namespace PCShop.Web.Controllers
 
                 if (deleteProductInputModel == null)
                 {
-                    return this.RedirectToAction(nameof(Index));
+                    return this.NotFound();
                 }
 
                 return this.View(deleteProductInputModel);
