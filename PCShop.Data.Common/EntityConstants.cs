@@ -32,8 +32,8 @@
 
             public const int ImageUrlMaxLength = 2048;
 
-            public const double PriceMinValue = 0.1;
-            public const double PriceMaxValue = double.MaxValue;
+            public const double PriceMinValue = 1;
+            public const double PriceMaxValue = 10000;
 
             public const int CurrentPageNumber = 1;
             public const int MaxComputersPerPage = 8;
@@ -53,8 +53,8 @@
 
             public const int ImageUrlMaxLength = 2048;
 
-            public const double PriceMinValue = 0.1;
-            public const double PriceMaxValue = double.MaxValue;
+            public const double PriceMinValue = 1;
+            public const double PriceMaxValue = 10000;
 
             public const int CurrentPageNumber = 1;
             public const int MaxProductsPerPage = 12;
