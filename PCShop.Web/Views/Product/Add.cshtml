@@ -50,16 +50,11 @@
                 <span asp-validation-for="CreatedOn" class="text-danger small"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label">Image URL</label>
-                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL (optional) or upload below" />
-                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
-            </div>
-
             <div class="mb-4">
-                <label class="form-label">Upload Image</label>
-                <input type="file" name="imageFile" class="form-control" />
-                <small class="text-muted">Accepted formats: .jpg, .png, .webp</small>
+                <label asp-for="ImageFile" class="form-label"></label>
+                <input asp-for="ImageFile" type="file" class="form-control" />
+                <small class="text-muted">Accepted formats: .jpg, .jpeg, .png, .webp</small>
+                <span asp-validation-for="ImageFile" class="text-danger small"></span>
             </div>
 
             <div class="mb-2">

@@ -17,7 +17,7 @@
                 <input type="hidden" asp-for="Id" />
 
                 <div class="mb-3 text-center">
-                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
                     {
                         <img src="@Model.ImageUrl" alt="@Model.Name" class="img-thumbnail rounded mb-2" style="max-height: 200px; object-fit: contain;" />
                         <div class="text-muted small">Current Image</div>
@@ -58,16 +58,13 @@
                     <span asp-validation-for="CreatedOn" class="text-danger small"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="ImageUrl" class="form-label">New Image URL (optional)</label>
-                    <input asp-for="ImageUrl" class="form-control" placeholder="Leave blank to keep current" />
-                    <span asp-validation-for="ImageUrl" class="text-danger small"></span>
-                </div>
+                <input type="hidden" asp-for="ImageUrl" />
 
                 <div class="mb-4">
-                    <label class="form-label">Or Upload New Image</label>
-                    <input type="file" name="imageFile" class="form-control" />
+                    <label asp-for="ImageFile" class="form-label">Upload New Image (optional)</label>
+                    <input asp-for="ImageFile" type="file" class="form-control" />
                     <small class="text-muted">Accepted formats: .jpg, .jpeg, .png, .webp</small>
+                    <span asp-validation-for="ImageFile" class="text-danger small"></span>
                 </div>
 
                 <div class="d-flex justify-content-between">

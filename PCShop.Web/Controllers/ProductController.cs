@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.GCommon.MessageConstants.ProductMessages;
 
 namespace PCShop.Web.Controllers
 {
@@ -33,9 +35,9 @@ namespace PCShop.Web.Controllers
                 await this._productService.PopulateProductQueryModelAsync(queryModel, userId);
                 return this.View(queryModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.IndexError, ex.Message));
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }
@@ -57,9 +59,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(productDetails);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.DetailsError, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -77,41 +79,66 @@ namespace PCShop.Web.Controllers
 
                 return this.View(addProductInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.AddPage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Add(ProductFormInputModel inputModel, IFormFile? imageFile)
+        public async Task<IActionResult> Add(ProductFormInputModel inputModel)
         {
             try
             {
+                string? userId = this.GetUserId();
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return this.Unauthorized();
+                }
+
                 if (!this.ModelState.IsValid)
                 {
                     inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
+
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
+
                     return this.View(inputModel);
                 }
 
-                bool addResult = await this._productService.AddProductAsync(this.GetUserId(), inputModel, imageFile);
+                bool addResult = await this._productService.AddProductAsync(userId, inputModel, inputModel.ImageFile);
 
                 if (addResult == false)
                 {
-                    ModelState.AddModelError(string.Empty, AddProductErrorMessage);
-                    this._logger.LogError(AddProductErrorMessage);
+                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
 
-                    inputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
+                    ModelState.AddModelError(string.Empty, string.Format(Product.AddError, inputModel.Name));
+                    this._logger.LogError(string.Format(Product.AddError, inputModel.Name));
+
                     return this.View(inputModel);
                 }
 
+                TempData["SuccessMessage"] = AddedSuccessfully;
+
                 return this.RedirectToAction(nameof(Index));
             }
-            catch (Exception e)
+            catch (InvalidOperationException ex)
             {
-                this._logger.LogError(e.Message);
+                inputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
+
+                ModelState.AddModelError(nameof(inputModel.ImageFile), ex.Message);
+                this._logger.LogError(ex, InvalidFileTypeMessage);
+
+                return this.View(inputModel);
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(Product.AddError, ex.Message));
+                TempData["ErrorMessage"] = AddFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -134,28 +161,22 @@ namespace PCShop.Web.Controllers
                     return this.NotFound();
                 }
 
-                editProductInputModel.ProductTypes = await _productTypeService.GetProductTypeMenuAsync();
+                editProductInputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
                 return this.View(editProductInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.EditPage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Edit(ProductFormInputModel inputModel, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(ProductFormInputModel inputModel)
         {
             try
             {
-                if (!this.ModelState.IsValid)
-                {
-                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
-                    return this.View(inputModel);
-                }
-
                 string? userId = this.GetUserId();
 
                 if (string.IsNullOrEmpty(userId))
@@ -163,21 +184,55 @@ namespace PCShop.Web.Controllers
                     return this.Unauthorized();
                 }
 
-                bool editResult = await this._productService.PersistUpdatedProductAsync(userId, inputModel, imageFile);
-
-                if (editResult == false)
+                if (!ModelState.IsValid)
                 {
-                    this.ModelState.AddModelError(string.Empty, EditProductErrorMessage);
-                    this._logger.LogError(EditProductErrorMessage);
+                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
+
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
 
                     return this.View(inputModel);
                 }
 
+                try
+                {
+                    if (inputModel.ImageFile != null && inputModel.ImageFile.Length > 0)
+                    {
+                        string uploadedUrl = await this._productService.UploadImageAsync(inputModel, inputModel.ImageFile);
+                        inputModel.ImageUrl = uploadedUrl;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
+
+                    ModelState.AddModelError(nameof(inputModel.ImageFile), ex.Message);
+                    this._logger.LogError(ex, ex.Message);
+
+                    return this.View(inputModel);
+                }
+
+                bool editResult = await this._productService.PersistUpdatedProductAsync(userId, inputModel, null);
+
+                if (editResult == false)
+                {
+                    inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
+
+                    ModelState.AddModelError(string.Empty, string.Format(Product.EditError, inputModel.Name));
+                    this._logger.LogError(string.Format(Product.EditError, inputModel.Name));
+
+                    return this.View(inputModel);
+                }
+
+                TempData["SuccessMessage"] = UpdatedSuccessfully;
+
                 return this.RedirectToAction(nameof(Details), new { id = inputModel.Id });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(Product.EditError, ex.Message));
+                TempData["ErrorMessage"] = UpdateFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -199,9 +254,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(deleteProductInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.DeletePage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -221,8 +276,8 @@ namespace PCShop.Web.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    ModelState.AddModelError(string.Empty, NotModifyMessage);
-                    this._logger.LogError(NotModifyMessage);
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
 
                     return this.View(inputModel);
                 }
@@ -231,17 +286,21 @@ namespace PCShop.Web.Controllers
 
                 if (deleteResult == false)
                 {
-                    ModelState.AddModelError(string.Empty, DeleteProductErrorMessage);
-                    this._logger.LogError(DeleteProductErrorMessage);
+                    ModelState.AddModelError(string.Empty, string.Format(Product.DeleteError, inputModel.Name));
+                    this._logger.LogError(string.Format(Product.DeleteError, inputModel.Name));
 
                     return this.View(inputModel);
                 }
 
+                TempData["SuccessMessage"] = DeletedSuccessfully;
+
                 return this.RedirectToAction(nameof(Index));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(Product.DeleteError, ex.Message));
+                TempData["ErrorMessage"] = DeleteFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
