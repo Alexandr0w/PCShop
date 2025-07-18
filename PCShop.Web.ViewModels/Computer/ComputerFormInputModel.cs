@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using static PCShop.Data.Common.EntityConstants.Computer;
 
 namespace PCShop.Web.ViewModels.Computer
@@ -25,5 +26,8 @@ namespace PCShop.Web.ViewModels.Computer
 
         [MaxLength(ImageUrlMaxLength)]
         public string? ImageUrl { get; set; }
+
+        [Display(Name = "Upload Image")]
+        public IFormFile? ImageFile { get; set; }
     }
 }

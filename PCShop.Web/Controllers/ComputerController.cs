@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PCShop.Services.Core;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Computer;
-using PCShop.Web.ViewModels.Product;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.GCommon.MessageConstants.ComputerMessages;
 
 namespace PCShop.Web.Controllers
 {
@@ -30,9 +30,9 @@ namespace PCShop.Web.Controllers
                 await this._computerService.PopulateComputerQueryModelAsync(model, userId);
                 return this.View(model);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.IndexError, ex.Message));
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }
@@ -54,9 +54,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(computerDetails);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.DetailsError, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -76,9 +76,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(addComputerInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.AddPage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -89,26 +89,47 @@ namespace PCShop.Web.Controllers
         {
             try
             {
+                string? userId = this.GetUserId();
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return this.Unauthorized();
+                }
+
                 if (!this.ModelState.IsValid)
                 {
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
+
                     return this.View(inputModel);
                 }
 
-                bool addResult = await this._computerService.AddComputerAsync(this.GetUserId(), inputModel, imageFile);
+                bool addResult = await this._computerService.AddComputerAsync(userId, inputModel, imageFile);
 
                 if (addResult == false)
                 {
-                    ModelState.AddModelError(string.Empty, AddProductErrorMessage);
-                    this._logger.LogError(AddProductErrorMessage);
+                    ModelState.AddModelError(string.Empty, string.Format(Computer.AddError, inputModel.Name));
+                    this._logger.LogError(string.Format(Computer.AddError, inputModel.Name));
 
                     return this.View(inputModel);
                 }
 
+                TempData["SuccessMessage"] = AddedSuccessfully;
+
                 return this.RedirectToAction(nameof(Index));
             }
-            catch (Exception e)
+            catch (InvalidOperationException ex)
             {
-                this._logger.LogError(e.Message);
+                ModelState.AddModelError(nameof(inputModel.ImageFile), ex.Message);
+                this._logger.LogError(ex, InvalidFileTypeMessage);
+
+                return this.View(inputModel);
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(Computer.AddError, ex.Message));
+                TempData["ErrorMessage"] = AddFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -133,24 +154,19 @@ namespace PCShop.Web.Controllers
 
                 return this.View(editComputerInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.EditPage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Edit(ComputerFormInputModel inputModel, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(ComputerFormInputModel inputModel)
         {
             try
             {
-                if (!this.ModelState.IsValid)
-                {
-                    return this.View(inputModel);
-                }
-
                 string? userId = this.GetUserId();
 
                 if (string.IsNullOrEmpty(userId))
@@ -158,21 +174,49 @@ namespace PCShop.Web.Controllers
                     return this.Unauthorized();
                 }
 
-                bool editResult = await this._computerService.PersistUpdatedComputerAsync(userId, inputModel, imageFile);
-
-                if (editResult == false)
+                if (!this.ModelState.IsValid)
                 {
-                    this.ModelState.AddModelError(string.Empty, EditComputerErrorMessage);
-                    this._logger.LogError(EditComputerErrorMessage);
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
 
                     return this.View(inputModel);
                 }
 
+                try
+                {
+                    if (inputModel.ImageFile != null && inputModel.ImageFile.Length > 0)
+                    {
+                        string imageUrl = await this._computerService.UploadImageAsync(inputModel, inputModel.ImageFile);
+                        inputModel.ImageUrl = imageUrl;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError(nameof(inputModel.ImageFile), ex.Message);
+                    this._logger.LogError(ex, ex.Message);
+
+                    return this.View(inputModel);
+                }
+
+                bool editResult = await this._computerService.PersistUpdatedComputerAsync(userId, inputModel, null);
+
+                if (editResult == false)
+                {
+                    ModelState.AddModelError(string.Empty, string.Format(Computer.EditError, inputModel.Name));
+                    this._logger.LogError(string.Format(Computer.EditError, inputModel.Name));
+
+                    return this.View(inputModel);
+                }
+
+                TempData["SuccessMessage"] = UpdatedSuccessfully;
+
                 return this.RedirectToAction(nameof(Details), new { id = inputModel.Id });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(Computer.EditError, ex.Message));
+                TempData["ErrorMessage"] = UpdateFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -194,9 +238,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(deleteComputerInputModel);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(LoadPage.DeletePage, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -216,8 +260,8 @@ namespace PCShop.Web.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    ModelState.AddModelError(string.Empty, NotModifyMessage);
-                    this._logger.LogError(NotModifyMessage);
+                    ModelState.AddModelError(string.Empty, Common.ModificationNotAllowed);
+                    this._logger.LogError(Common.ModificationNotAllowed);
 
                     return this.View(inputModel);
                 }
@@ -226,17 +270,21 @@ namespace PCShop.Web.Controllers
 
                 if (deleteResult == false)
                 {
-                    ModelState.AddModelError(string.Empty, DeleteComputerErrorMessage);
-                    this._logger.LogError(DeleteComputerErrorMessage);
+                    ModelState.AddModelError(string.Empty, string.Format(Computer.DeleteError, inputModel.Name));
+                    this._logger.LogError(string.Format(Computer.DeleteError, inputModel.Name));
 
                     return this.View(inputModel);
                 }
 
+                TempData["SuccessMessage"] = DeletedSuccessfully;
+
                 return this.RedirectToAction(nameof(Index));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(Computer.DeleteError, ex.Message));
+                TempData["ErrorMessage"] = DeleteFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
