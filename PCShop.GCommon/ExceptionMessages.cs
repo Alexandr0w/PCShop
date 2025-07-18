@@ -19,6 +19,9 @@
 
         public const string InvalidFileTypeMessage = "Invalid file type. Only image files are allowed.";
         public const string InvalidContentTypeMessage = "Invalid content type.";
+        public const string ImageNotFoundMessage = "Please provide a valid image file or image URL.";
+        public const string InvalidImageUrlFormatMessage = "Invalid image URL format.";
+        public const string InvalidOrUnsafeImageUrlMessage = "Invalid or unsafe image URL.";
 
         public const string UnknownDeliveryMethodMessage = "Unknown delivery method.";
     }
