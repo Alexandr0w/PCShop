@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
-using System.Globalization;
 using static PCShop.GCommon.ExceptionMessages;
 using static PCShop.Services.Common.ServiceConstants;
 
@@ -25,31 +25,6 @@ namespace PCShop.Services.Core
             this._productRepository = productRepository;
             this._productTypeRepository = productTypeRepository;
             this._userManager = userManager;
-        }
-
-        public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType = null)
-        {
-            IQueryable<Product> productsQuery = this._productRepository
-                .GetAllAttached()
-                .Where(p => !p.IsDeleted);
-
-            if (!string.IsNullOrEmpty(productType))
-            {
-                productsQuery = productsQuery.Where(p => p.ProductType.Name == productType);
-            }
-
-            IEnumerable<ProductIndexViewModel> products = await productsQuery
-                .Select(p => new ProductIndexViewModel
-                {
-                    Id = p.Id.ToString(),
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    ProductType = p.ProductType.Name,
-                    Price = p.Price
-                })
-                .ToArrayAsync();
-
-            return products;
         }
 
         public async Task PopulateProductQueryModelAsync(ProductListViewModel model, string? userId)
@@ -328,7 +303,7 @@ namespace PCShop.Services.Core
 
         public async Task<string> UploadImageAsync(ProductFormInputModel inputModel, IFormFile? imageFile)
         {
-            string imageUrl = inputModel.ImageUrl ?? string.Empty;
+            string existingImageUrl = inputModel.ImageUrl ?? string.Empty;
 
             if (imageFile != null && imageFile.Length > 0)
             {
@@ -345,19 +320,34 @@ namespace PCShop.Services.Core
                     throw new InvalidOperationException(InvalidContentTypeMessage);
                 }
 
+                // Delete old image if it exists 
+                if (!string.IsNullOrWhiteSpace(existingImageUrl) && existingImageUrl.StartsWith($"/{ImagesFolder}/{ProductsFolder}/"))
+                {
+                    string oldImagePath = Path.Combine(RootFolder, existingImageUrl.TrimStart('/'));
+                    if (File.Exists(oldImagePath))
+                    {
+                        File.Delete(oldImagePath);
+                    }
+                }
+
                 string uploadsFolder = Path.Combine(RootFolder, ImagesFolder, ProductsFolder);
                 Directory.CreateDirectory(uploadsFolder);
 
                 string uniqueFileName = Guid.NewGuid() + fileExtension;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using FileStream fileStream = new FileStream(filePath, FileMode.Create);
+                using FileStream fileStream = new(filePath, FileMode.Create);
                 await imageFile.CopyToAsync(fileStream);
 
-                imageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
+                existingImageUrl = $"/{ImagesFolder}/{ProductsFolder}/" + uniqueFileName;
             }
 
-            return imageUrl;
+            if (string.IsNullOrWhiteSpace(existingImageUrl))
+            {
+                throw new InvalidOperationException(ImageNotFoundMessage);
+            }
+
+            return existingImageUrl;
         }
     }
 }

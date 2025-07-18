@@ -5,8 +5,6 @@ namespace PCShop.Services.Core.Interfaces
 {
     public interface IComputerService
     {
-        Task<IEnumerable<ComputerIndexViewModel>> GetAllComputersAsync(string? userId);
-
         Task PopulateComputerQueryModelAsync(ComputerListViewModel model, string? userId);
 
         Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId);

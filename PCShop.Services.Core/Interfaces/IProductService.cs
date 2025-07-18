@@ -5,8 +5,6 @@ namespace PCShop.Services.Core.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync(string? userId, string? productType);
-
         Task PopulateProductQueryModelAsync(ProductListViewModel queryModel, string? userId);
 
         Task<DetailsProductViewModel?> GetProductDetailsAsync(string? userId, string productId);
