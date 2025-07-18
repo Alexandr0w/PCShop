@@ -1,4 +1,5 @@
-﻿document.getElementById('searchToggle')?.addEventListener('click', function (e) {
+﻿// This script handles the search dropdown toggle
+document.getElementById('searchToggle')?.addEventListener('click', function (e) {
     e.preventDefault();
     const dropdown = document.getElementById('searchDropdown');
     if (dropdown.style.display === 'none' || dropdown.style.display === '') {
@@ -9,6 +10,7 @@
     }
 });
 
+// Close the dropdown if clicked outside
 document.addEventListener('click', function (event) {
     const dropdown = document.getElementById('searchDropdown');
     const toggleBtn = document.getElementById('searchToggle');
@@ -17,9 +19,18 @@ document.addEventListener('click', function (event) {
     }
 });
 
+// Show the cart count badge after a short delay
 document.addEventListener('DOMContentLoaded', () => {
     const badge = document.getElementById('cartCount');
     if (badge) {
         setTimeout(() => badge.classList.add('show'), 100); 
     }
+});
+
+// Show Bootstrap toasts on page load
+document.addEventListener("DOMContentLoaded", function () {
+    const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.forEach(function (toastEl) {
+        new bootstrap.Toast(toastEl).show();
+    });
 });
