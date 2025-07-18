@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
+using static PCShop.GCommon.ErrorMessages;
 
 namespace PCShop.Web.Controllers
 {
@@ -31,9 +32,9 @@ namespace PCShop.Web.Controllers
 
                 return this.View(results);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(string.Format(Search.QueryError, ex.Message));
                 return this.RedirectToAction(nameof(Index), "Home");
             }
         }

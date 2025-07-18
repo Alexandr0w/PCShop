@@ -4,6 +4,7 @@ using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Controllers;
 using PCShop.Web.ViewModels.Order;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.GCommon.MessageConstants.OrderMessages;
 
 [Authorize]
 public class OrderController : BaseController
@@ -32,9 +33,9 @@ public class OrderController : BaseController
             IEnumerable<OrderItemViewModel> cartItems = await this._orderService.GetCartItemsAsync(userId);
             return this.View(cartItems);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e.Message);
+            this._logger.LogError(string.Format(LoadPage.IndexError, ex.Message));
             return this.RedirectToAction(nameof(Index), "Product");
         }
     }
@@ -53,30 +54,30 @@ public class OrderController : BaseController
 
             if (string.IsNullOrEmpty(model.ProductId) && string.IsNullOrEmpty(model.ComputerId))
             {
-                ModelState.AddModelError(string.Empty, RequiredIdMessage);
-                this._logger.LogError(RequiredIdMessage);
+                ModelState.AddModelError(string.Empty, Common.RequiredId);
+                this._logger.LogError(Common.RequiredId);
 
                 return this.RedirectToAction(nameof(Index), "Product");
             }
 
             if (model.Quantity <= 0)
             {
-                ModelState.AddModelError("Quantity", QuantityMustBeMessage);
-                this._logger.LogError(QuantityMustBeMessage);
+                ModelState.AddModelError(string.Empty, Common.QuantityGreaterThanZero);
+                this._logger.LogError(Common.QuantityGreaterThanZero);
 
                 return this.RedirectToAction(nameof(Index), "Product");
             }
 
             await this._orderService.AddProductToCartAsync(model, userId);
 
-            TempData["SuccessMessage"] = "Product added to cart successfully!";
+            TempData["SuccessMessage"] = AddedToCartSuccessfully;
 
             return this.RedirectToAction(nameof(Index));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e.Message);
-            TempData["ErrorMessage"] = "Failed to add product to cart. Please try again.";
+            this._logger.LogError(string.Format(Order.AddError, ex.Message));
+            TempData["ErrorMessage"] = AddToCartFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
@@ -96,14 +97,14 @@ public class OrderController : BaseController
 
             await this._orderService.RemoveItemAsync(id, userId);
 
-            TempData["SuccessMessage"] = "Item removed from cart successfully!";
+            TempData["SuccessMessage"] = ItemRemovedSuccessfully;
 
             return this.RedirectToAction(nameof(Index));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e.Message);
-            TempData["ErrorMessage"] = "Failed to remove item from cart.";
+            this._logger.LogError(string.Format(Order.RemoveError, ex.Message));
+            TempData["ErrorMessage"] = RemoveItemFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
@@ -123,14 +124,14 @@ public class OrderController : BaseController
 
             await this._orderService.ClearCartAsync(userId);
 
-            TempData["SuccessMessage"] = "Cart cleared successfully!";
+            TempData["SuccessMessage"] = ClearedSuccessfully;
 
             return this.RedirectToAction(nameof(Index));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e.Message);
-            TempData["ErrorMessage"] = "Failed to clear cart.";
+            this._logger.LogError(string.Format(Order.ClearError, ex.Message));
+            TempData["ErrorMessage"] = ClearCartFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
@@ -150,14 +151,14 @@ public class OrderController : BaseController
 
             await this._orderService.FinalizeOrderAsync(userId);
 
-            TempData["SuccessMessage"] = "Order finalized successfully!";
+            TempData["SuccessMessage"] = FinalizedSuccessfully;
 
             return this.RedirectToAction(nameof(Index), "Home");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e.Message);
-            TempData["ErrorMessage"] = "Failed to finalize order.";
+            this._logger.LogError(string.Format(Order.FinalizeError, ex.Message));
+            TempData["ErrorMessage"] = FinalizeFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
@@ -178,9 +179,9 @@ public class OrderController : BaseController
 
             bool isProfileComplete = await this._orderService.IsUserProfileCompleteAsync(userId);
 
-            if (!isProfileComplete)
+            if (isProfileComplete == false)
             {
-                TempData["ErrorMessage"] = "Please complete your profile before placing an order.";
+                TempData["ErrorMessage"] = CompleteProfile;
                 return this.RedirectToAction("EditProfile", "Account");
             }
 
@@ -188,7 +189,7 @@ public class OrderController : BaseController
 
             if (model == null)
             {
-                TempData["ErrorMessage"] = "No pending order found or cart is empty.";
+                TempData["ErrorMessage"] = NoPendingOrders;
                 return this.RedirectToAction(nameof(Index));
             }
 
@@ -196,10 +197,11 @@ public class OrderController : BaseController
 
             return this.View(model);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e, "Failed to load order confirmation form.");
-            TempData["ErrorMessage"] = "Unable to load confirmation form.";
+            this._logger.LogError(string.Format(Order.LoadConfirmationError, ex.Message));
+            TempData["ErrorMessage"] = UnableToConfirm;
+
             return this.RedirectToAction(nameof(Index));
         }
     }
@@ -226,12 +228,12 @@ public class OrderController : BaseController
 
             if (isFinalized)
             {
-                TempData["SuccessMessage"] = "Order finalized successfully!";
+                TempData["SuccessMessage"] = OrderConfirmedSuccessfully;
                 return this.RedirectToAction(nameof(Index), "Home");
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed to finalize order. Please try again.";
+                TempData["ErrorMessage"] = OrderConfirmationFailed;
 
                 decimal totalPrice = await this._orderService.GetTotalCartPriceAsync(userId);
                 model.TotalProductsPrice = totalPrice;
@@ -239,10 +241,10 @@ public class OrderController : BaseController
                 return this.View(model);
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this._logger.LogError(e, "Error finalizing order");
-            TempData["ErrorMessage"] = "An error occurred while finalizing your order.";
+            this._logger.LogError(string.Format(Order.ConfirmError, ex.Message));
+            TempData["ErrorMessage"] = OrderConfirmationFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
