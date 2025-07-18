@@ -36,6 +36,7 @@ namespace PCShop.Services.Core
                     Name = c.Name,
                     Price = c.Price
                 })
+                .OrderBy(c => c.Price)
                 .ToListAsync();
 
             return new SearchResultsViewModel
