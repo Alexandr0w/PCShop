@@ -3,10 +3,10 @@ using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
-using static PCShop.Services.Common.ServiceConstants;
 using PCShop.Web.ViewModels.Order;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core
 {
@@ -211,13 +211,17 @@ namespace PCShop.Services.Core
         public async Task<OrderConfirmationViewModel?> GetOrderConfirmationDataAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("User ID is null or empty.");
+                throw new ArgumentException(UserIdNullOrEmptyMessage);
 
-            ApplicationUser? user = await this._userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await this._userManager
+                .FindByIdAsync(userId);
+
             if (user == null)
                 return null;
 
-            Order? order = await this._orderRepository.GetPendingOrderWithItemsAsync(userId);
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
             if (order == null || !order.OrdersItems.Any())
                 return null;
 
@@ -235,7 +239,7 @@ namespace PCShop.Services.Core
                 PostalCode = user.PostalCode ?? string.Empty,
                 PhoneNumber = user.PhoneNumber ?? string.Empty,
                 TotalProductsPrice = totalPrice,
-                DeliveryMethod = DeliveryMethod.None, 
+                DeliveryMethod = DeliveryMethod.None,
                 Comment = string.Empty
             };
         }
