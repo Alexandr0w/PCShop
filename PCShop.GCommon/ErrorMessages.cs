@@ -45,6 +45,7 @@
             public const string FinalizeError = "An error occurred while finalizing the order: {0}.";
             public const string ConfirmError = "An error occurred while confirming the order: {0}.";
             public const string LoadConfirmationError = "An error occurred while loading the confirmation: {0}.";
+            public const string DeliveryMethodError = "Please select a delivery method.";
         }
     }
 }
