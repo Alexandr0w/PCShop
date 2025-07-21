@@ -32,6 +32,10 @@ namespace PCShop.Data.Configuration
                 .IsRequired();
 
             entity
+                .Property(p => p.DeletedOn)
+                .IsRequired(false);
+
+            entity
                 .Property(p => p.ImageUrl)
                 .IsRequired()
                 .HasMaxLength(ImageUrlMaxLength);
