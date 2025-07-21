@@ -1,0 +1,51 @@
+﻿@using PCShop.Web.ViewModels.Admin
+@model DeletedProductsListViewModel
+
+@{
+    ViewData["Title"] = "Deleted Products";
+}
+
+<h2 class="mt-4">Deleted Products</h2>
+<hr />
+
+@if (Model.Products == null || !Model.Products.Any())
+{
+    <div class="alert alert-info">No deleted products found.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price (€)</th>
+                <th>Deleted On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price.ToString("F2")</td>
+                    <td>@(product.DeletedOn?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                    <td>
+                        <form asp-area="Admin" asp-controller="Product" asp-action="Restore" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                        </form>
+                        <form asp-area="Admin" asp-controller="Product" asp-action="HardDelete" method="post" class="d-inline ms-1">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                <i class="fas fa-trash-alt"></i> Delete Forever
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

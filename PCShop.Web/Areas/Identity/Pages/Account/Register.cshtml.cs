@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using PCShop.Data.Models;
 using System.ComponentModel.DataAnnotations;
 using static PCShop.Data.Common.EntityConstants.ApplicationUser;
+using static PCShop.Data.Common.ValidationMessageConstants.ApplicationUser;
 
 namespace PCShop.Web.Areas.Identity.Pages.Account
 {
@@ -42,8 +43,8 @@ namespace PCShop.Web.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = EmailRequired)]
+            [EmailAddress(ErrorMessage = EmailInvalid)]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -58,23 +59,23 @@ namespace PCShop.Web.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Required]
-            [StringLength(FullNameMaxLength, MinimumLength = FullNameMinLength)]
+            [Required(ErrorMessage = FullNameRequired)]
+            [StringLength(FullNameMaxLength, MinimumLength = FullNameMinLength, ErrorMessage = FullNameLength)]
             [Display(Name = "Full Name")]
             public string FullName { get; set; }
 
-            [Required]
-            [StringLength(AddressMaxLength, MinimumLength = AddressMinLength)]
+            [Required(ErrorMessage = AddressRequired)]
+            [StringLength(AddressMaxLength, MinimumLength = AddressMinLength, ErrorMessage = AddressLength)]
             [Display(Name = "Address")]
             public string Address { get; set; }
 
-            [Required]
-            [StringLength(CityMaxLength, MinimumLength = CityMinLength)]
+            [Required(ErrorMessage = CityRequired)]
+            [StringLength(CityMaxLength, MinimumLength = CityMinLength, ErrorMessage = CityLength)]
             [Display(Name = "City")]
             public string City { get; set; }
 
-            [Required]
-            [StringLength(PostalCodeMaxLength, MinimumLength = PostalCodeMinLength)]
+            [Required(ErrorMessage = PostalCodeRequired)]
+            [StringLength(PostalCodeMaxLength, MinimumLength = PostalCodeMinLength, ErrorMessage = PostalCodeLength)]
             [Display(Name = "Postal Code")]
             public string PostalCode { get; set; }
         }
