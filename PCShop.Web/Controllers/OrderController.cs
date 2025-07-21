@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PCShop.Data.Models.Enum;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Controllers;
 using PCShop.Web.ViewModels.Order;
@@ -137,33 +138,6 @@ public class OrderController : BaseController
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Finalize()
-    {
-        try
-        {
-            string? userId = this.GetUserId();
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return this.Unauthorized();
-            }
-
-            await this._orderService.FinalizeOrderAsync(userId);
-
-            TempData["SuccessMessage"] = FinalizedSuccessfully;
-
-            return this.RedirectToAction(nameof(Index), "Home");
-        }
-        catch (Exception ex)
-        {
-            this._logger.LogError(string.Format(Order.FinalizeError, ex.Message));
-            TempData["ErrorMessage"] = FinalizeFailed;
-
-            return this.RedirectToAction(nameof(Index));
-        }
-    }
-
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> Confirm()
@@ -177,37 +151,22 @@ public class OrderController : BaseController
                 return this.Unauthorized();
             }
 
-            bool isProfileComplete = await this._orderService.IsUserProfileCompleteAsync(userId);
-
-            if (isProfileComplete == false)
-            {
-                TempData["ErrorMessage"] = CompleteProfile;
-                return this.RedirectToAction("EditProfile", "Account");
-            }
-
-            OrderConfirmationViewModel? model = await this._orderService.GetOrderConfirmationDataAsync(userId);
-
-            if (model == null)
-            {
-                TempData["ErrorMessage"] = NoPendingOrders;
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            this.ModelState.Clear();
+            OrderConfirmationInputModel? model = await this._orderService.GetOrderConfirmationDataAsync(userId);
 
             return this.View(model);
         }
         catch (Exception ex)
         {
             this._logger.LogError(string.Format(Order.LoadConfirmationError, ex.Message));
-            TempData["ErrorMessage"] = UnableToConfirm;
+            TempData["ErrorMessage"] = OrderConfirmationFailed;
 
             return this.RedirectToAction(nameof(Index));
         }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Confirm(OrderConfirmationViewModel model)
+    [Authorize]
+    public async Task<IActionResult> Confirm(OrderConfirmationInputModel model)
     {
         try
         {
@@ -224,6 +183,12 @@ public class OrderController : BaseController
                 return this.View(model);
             }
 
+            if (model.DeliveryMethod == DeliveryMethod.None)
+            {
+                ModelState.AddModelError(nameof(model.DeliveryMethod), Order.DeliveryMethodError);
+                return this.View(model);
+            }
+
             bool isFinalized = await this._orderService.FinalizeOrderWithDetailsAsync(userId, model);
 
             if (isFinalized)
@@ -234,10 +199,7 @@ public class OrderController : BaseController
             else
             {
                 TempData["ErrorMessage"] = OrderConfirmationFailed;
-
-                decimal totalPrice = await this._orderService.GetTotalCartPriceAsync(userId);
-                model.TotalProductsPrice = totalPrice;
-
+                model.TotalProductsPrice = await this._orderService.GetTotalCartPriceAsync(userId);
                 return this.View(model);
             }
         }

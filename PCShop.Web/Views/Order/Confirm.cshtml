@@ -1,7 +1,7 @@
 ﻿@using PCShop.Web.ViewModels.Order
 @using PCShop.Data.Models.Enum
 @using static PCShop.Services.Common.ServiceConstants
-@model OrderConfirmationViewModel
+@model OrderConfirmationInputModel
 
 @{
     ViewData["Title"] = "Confirm Order";
@@ -15,6 +15,11 @@
     };
 
     decimal totalWithDelivery = Model.TotalProductsPrice + deliveryFee;
+
+    string econtFeeStr = EcontFee.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    string speedyFeeStr = SpeedyFee.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    string toAddressFeeStr = ToAddressFee.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    string productsTotalStr = Model.TotalProductsPrice.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
 
 <h2 class="mt-4 mb-3">@ViewData["Title"]</h2>
@@ -31,6 +36,12 @@
         <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
         <input asp-for="PhoneNumber" class="form-control" />
         <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
     </div>
 
     <div class="col-md-6">
@@ -93,12 +104,12 @@
             const deliverySelect = document.getElementById('deliveryMethod');
             const deliveryFeeSpan = document.getElementById('deliveryFee');
             const totalPriceSpan = document.getElementById('totalWithDelivery');
-            const productsTotal = parseFloat('@Model.TotalProductsPrice');
+            const productsTotal = parseFloat('@productsTotalStr');
 
             const deliveryFees = {
-                1: @EcontFee,     // Econt
-                2: @SpeedyFee,    // Speedy
-                3: @ToAddressFee  // ToAddress
+                1: parseFloat('@econtFeeStr'),
+                2: parseFloat('@speedyFeeStr'),
+                3: parseFloat('@toAddressFeeStr')
             };
 
             deliverySelect.addEventListener('change', function () {

@@ -179,85 +179,75 @@ namespace PCShop.Services.Core
             return isCleared;
         }
 
-        public async Task<bool> FinalizeOrderAsync(string userId)
+        public async Task<OrderConfirmationInputModel?> GetOrderConfirmationDataAsync(string userId)
         {
-            bool isFinalized = false;
+            OrderConfirmationInputModel? confirmModel = null;
 
-            Order? order = await this._orderRepository
-                .GetPendingOrderWithItemsAsync(userId);
-
-            if (order != null)
-            {
-                order.Status = OrderStatus.Completed;
-                order.OrderDate = DateTime.UtcNow;
-
-                decimal totalPrice = 0m;
-
-                foreach (OrderItem item in order.OrdersItems)
-                {
-                    decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
-                    totalPrice += unitPrice * item.Quantity;
-                }
-
-                order.TotalPrice = totalPrice;
-                isFinalized = true;
-
-                await this._orderRepository.UpdateAsync(order);
-            }
-
-            return isFinalized;
-        }
-
-        public async Task<OrderConfirmationViewModel?> GetOrderConfirmationDataAsync(string userId)
-        {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException(UserIdNullOrEmptyMessage);
+            {
+                return null;
+            }
 
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 
             if (user == null)
+            {
                 return null;
+            }
 
             Order? order = await this._orderRepository
                 .GetPendingOrderWithItemsAsync(userId);
 
             if (order == null || !order.OrdersItems.Any())
+            {
                 return null;
+            }
 
-            decimal totalPrice = order.OrdersItems.Sum(item =>
-            {
-                decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
-                return unitPrice * item.Quantity;
-            });
+            decimal totalPrice = SumTotalPrice(order);
 
-            return new OrderConfirmationViewModel
+            if (user != null && order != null)
             {
-                FullName = user.FullName ?? string.Empty,
-                Address = user.Address ?? string.Empty,
-                City = user.City ?? string.Empty,
-                PostalCode = user.PostalCode ?? string.Empty,
-                PhoneNumber = user.PhoneNumber ?? string.Empty,
-                TotalProductsPrice = totalPrice,
-                DeliveryMethod = DeliveryMethod.None,
-                Comment = string.Empty
-            };
+                confirmModel = new OrderConfirmationInputModel
+                {
+                    FullName = user.FullName,
+                    Address = user.Address,
+                    City = user.City,
+                    PostalCode = user.PostalCode,
+                    PhoneNumber = user.PhoneNumber ?? string.Empty,
+                    Email = user.Email ?? string.Empty,
+                    TotalProductsPrice = totalPrice,
+                    DeliveryMethod = DeliveryMethod.None,
+                    Comment = string.Empty
+                };
+            }
+
+            return confirmModel;
         }
 
-        public async Task<bool> FinalizeOrderWithDetailsAsync(string userId, OrderConfirmationViewModel model)
+        public async Task<bool> FinalizeOrderWithDetailsAsync(string userId, OrderConfirmationInputModel model)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            ApplicationUser? user = await this._userManager
+                .FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
             bool isFinalized = false;
 
             Order? order = await this._orderRepository
                 .GetPendingOrderWithItemsAsync(userId);
 
-            if (order != null && order.OrdersItems.Any())
+            if (order != null && order.OrdersItems.Any() && model.DeliveryMethod != DeliveryMethod.None)
             {
-                decimal totalPrice = order.OrdersItems.Sum(item =>
-                {
-                    decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
-                    return unitPrice * item.Quantity;
-                });
+                decimal totalPrice = SumTotalPrice(order);
 
                 order.DeliveryMethod = model.DeliveryMethod;
                 order.Comment = model.Comment;
@@ -274,36 +264,33 @@ namespace PCShop.Services.Core
             return isFinalized;
         }
 
-        public async Task<bool> IsUserProfileCompleteAsync(string userId)
-        {
-            ApplicationUser? user = await this._userManager
-                .FindByIdAsync(userId);
-
-            if (user == null) return false;
-
-            return !string.IsNullOrWhiteSpace(user.FullName) &&
-                   !string.IsNullOrWhiteSpace(user.Address) &&
-                   !string.IsNullOrWhiteSpace(user.City) &&
-                   !string.IsNullOrWhiteSpace(user.PostalCode) &&
-                   !string.IsNullOrWhiteSpace(user.PhoneNumber);
-        }
-
         public async Task<decimal> GetTotalCartPriceAsync(string userId)
         {
-            Order? order = await _orderRepository.GetPendingOrderWithItemsAsync(userId);
-
-            if (order == null)
-                return 0m;
-
-            decimal total = 0m;
-
-            foreach (var item in order.OrdersItems)
+            if (string.IsNullOrEmpty(userId))
             {
-                decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
-                total += unitPrice * item.Quantity;
+                return 0m;
             }
 
+            Order? order = await this._orderRepository
+                .GetPendingOrderWithItemsAsync(userId);
+
+            if (order == null)
+            {
+                return 0m;
+            }
+
+            decimal total = SumTotalPrice(order);
+
             return total;
+        }
+
+        private static decimal SumTotalPrice(Order order)
+        {
+            return order.OrdersItems.Sum(item =>
+            {
+                decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
+                return unitPrice * item.Quantity;
+            });
         }
 
         private decimal CalculateDeliveryFee(DeliveryMethod method)
