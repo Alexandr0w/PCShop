@@ -1,4 +1,4 @@
-# 🖥️ PCShop - Modern ASP.NET Core E-Commerce Platform
+# 🖥️ PCShop - ASP.NET Core E-Commerce
 
 PCShop is a full-featured e-commerce web application built with **ASP.NET Core**, allowing users to browse, filter, and purchase PC components and computers. It includes advanced features such as user authentication, shopping cart, order confirmation, product management, and responsive UI using Bootstrap.
 
@@ -51,23 +51,18 @@ You can use the following test accounts to try out the application:
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
-PCShop/
-│
-├── PCShop.Data/ # DbContext, Repository, Seeding and EF Core Migrations
-├── PCShop.Data.Common # Entity constants and Exception messages
-├── PCShop.Data.Models/ # Entity classes (User, Product, Computer, Order, etc.)
-├── PCShop.Services/ # Business logic (e.g., ProductService, OrderService)
-├── PCShop.Services.Common/ # Service constants 
-├── PCShop.Search.AutoMapping # Optional for Auto-Mapping
-├── PCShop.IntegrationTests 
-├── PCShop.Services.Core.Test # Tests for business logic in Services
-├── PCShop.Web.Tests # Tests for Web area
-├── PCShop.Web/ # ASP.NET Core MVC application (Controllers, Views)
-├── PCShop.Web.Infrastructure # Extensions, TagHelpers and etc.
-├── PCShop.Web.ViewModels # All view models for the project
-└── PCShop.GCommon/ # Shared constants (e.g., ErrorMessages, MessageConstants and etc.)
+* `PCShop.Data` – DbContext, Repositories, Migrations, and seed data
+* `PCShop.Data.Models` – Entity models 
+* `PCShop.Data.Common` – Entity validation constants 
+* `PCShop.Services.Core` – Business logic and service layer
+* `PCShop.Services.Common` – Service constants
+* `PCShop.Tests` – Unit testing using NUnit and Moq
+* `PCShop.Web` – MVC presentation layer (controllers + views)
+* `PCShop.Web.Infrastructure` – TagHelpers, Extensions and etc.
+* `PCShop.Web.ViewModels` – All view models
+* `PCShop.GCommon` – Constants and validation rules
 
 ---
 
