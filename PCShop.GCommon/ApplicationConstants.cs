@@ -7,5 +7,15 @@
         public const string PriceSqlType = "decimal(18,2)";
         public const string OrderDateDefaultSqlValue = "GETUTCDATE()";
         public const string IsDeletedPropertyName = "IsDeleted";
+
+        public const string AdminRoleName = "Admin";
+        public const string ManagerRoleName = "Manager";
+        public const string UserRoleName = "User";
+
+        public const string AdminUserName = "admin@pcshop.com";
+        public const string AdminPassword = "Admin123!";
+
+        public const string ManagerUserName = "manager@pcshop.com";
+        public const string ManagerPassword = "Manager123!";
     }
 }

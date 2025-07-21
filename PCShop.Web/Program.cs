@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
+using PCShop.Data.Seeding;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Filters;
+using PCShop.Web.Infrastructure.Emailing;
 using PCShop.Web.Infrastructure.Extensions;
 
 namespace PCShop.Web
@@ -50,16 +53,29 @@ namespace PCShop.Web
 
             builder.Services.AddScoped<CartCountFilter>();
 
+            // Configuring email sender service
+            builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+
             builder.Services.AddControllersWithViews(options =>
             {
+                // Adding custom filter for cart count
                 options.Filters.AddService<CartCountFilter>();
+
+                // Adding AutoValidateAntiforgeryTokenAttribute globally
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
             builder.Services.AddRazorPages();
 
             WebApplication app = builder.Build();
-            
+
+            // Create Admin and Manager roles
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                IdentityDbSeeder.SeedAsync(services).GetAwaiter().GetResult();
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -80,6 +96,10 @@ namespace PCShop.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "default",

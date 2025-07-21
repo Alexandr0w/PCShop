@@ -293,6 +293,8 @@ namespace PCShop.Services.Core
 
             if (user != null && product != null)
             {
+                product.DeletedOn = DateTime.UtcNow;
+                
                 await this._productRepository.DeleteAsync(product);
 
                 isSuccessDeleted = true;

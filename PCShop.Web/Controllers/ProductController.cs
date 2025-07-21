@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
+using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.ExceptionMessages;
 using static PCShop.GCommon.MessageConstants.ProductMessages;
@@ -67,7 +68,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Add()
         {
             try
@@ -87,7 +88,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Add(ProductFormInputModel inputModel)
         {
             try
@@ -144,7 +145,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Edit(string? id)
         {
             try
@@ -172,7 +173,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Edit(ProductFormInputModel inputModel)
         {
             try
@@ -238,7 +239,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Delete(string id)
         {
             try
@@ -262,7 +263,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Delete(DeleteProductViewModel inputModel)
         {
             try

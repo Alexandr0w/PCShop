@@ -1,4 +1,5 @@
-﻿@using PCShop.Web.ViewModels.Product
+﻿@using static PCShop.GCommon.ApplicationConstants
+@using PCShop.Web.ViewModels.Product
 @model ProductListViewModel
 
 @{
@@ -10,7 +11,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
     <h2>@heading</h2>
-    @if (User?.Identity?.IsAuthenticated == true)
+    @if (User?.Identity?.IsAuthenticated == true && User.IsInRole(AdminRoleName))
     {
         <a asp-controller="Product" asp-action="Add" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Product

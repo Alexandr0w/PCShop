@@ -246,6 +246,8 @@ namespace PCShop.Services.Core
 
             if (user != null && computer != null)
             {
+                computer.DeletedOn = DateTime.UtcNow;
+
                 await this._computerRepository.DeleteAsync(computer);
 
                 isSuccessDeleted = true;

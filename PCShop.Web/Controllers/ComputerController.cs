@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Computer;
+using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.ExceptionMessages;
 using static PCShop.GCommon.MessageConstants.ComputerMessages;
@@ -62,7 +63,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public IActionResult Add()
         {
             try
@@ -84,7 +85,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Add(ComputerFormInputModel inputModel, IFormFile? imageFile)
         {
             try
@@ -135,7 +136,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Edit(string? id)
         {
             try
@@ -162,7 +163,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Edit(ComputerFormInputModel inputModel)
         {
             try
@@ -222,7 +223,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Delete(string id)
         {
             try
@@ -246,7 +247,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = AdminRoleName)]
         public async Task<IActionResult> Delete(DeleteComputerViewModel inputModel)
         {
             try
