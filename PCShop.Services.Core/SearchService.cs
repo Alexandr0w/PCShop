@@ -25,6 +25,7 @@ namespace PCShop.Services.Core
                     Name = p.Name,
                     Price = p.Price
                 })
+                .OrderBy(c => c.Price)
                 .ToListAsync();
 
             IEnumerable<ComputerSearchResultViewModel> computers = await this._dbContext
