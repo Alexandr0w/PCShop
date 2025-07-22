@@ -35,19 +35,11 @@ namespace PCShop.Web
             builder.Services
                 .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.SignIn.RequireConfirmedEmail = false;
-                    options.SignIn.RequireConfirmedPhoneNumber = false;
-
-                    options.Password.RequiredLength = 4;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequiredUniqueChars = 0;
+                    options.ConfigureFromConfiguration(builder.Configuration);
                 })
                 .AddRoles<IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<PCShopDbContext>();
+                .AddEntityFrameworkStores<PCShopDbContext>()
+                .AddDefaultTokenProviders();
 
             // Loading all services and repositories with extension method
             builder.Services.AddRepositories(typeof(IProductRepository).Assembly);
@@ -57,7 +49,7 @@ namespace PCShop.Web
             builder.Services.AddScoped<CartCountFilter>();
 
             // Seeding roles for Identity
-            builder.Services.AddScoped<IIdentityDbSeeder, IdentityDbSeeder>();
+            builder.Services.AddTransient<IIdentityDbSeeder, IdentityDbSeeder>();
 
             // Configuring email sender service
             builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
