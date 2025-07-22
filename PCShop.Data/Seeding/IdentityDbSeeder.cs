@@ -1,16 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using PCShop.Data.Models;
+using PCShop.Data.Seeding.Interfaces;
 using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Data.Seeding
 {
-    public static class IdentityDbSeeder
+    public class IdentityDbSeeder : IIdentityDbSeeder
     {
-        public static async Task SeedAsync(IServiceProvider serviceProvider)
+        private readonly IServiceProvider _serviceProvider;
+
+        public IdentityDbSeeder(IServiceProvider serviceProvider)
         {
-            RoleManager<IdentityRole<Guid>> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-            UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            this._serviceProvider = serviceProvider;
+        }
+        public async Task SeedAsync()
+        {
+            RoleManager<IdentityRole<Guid>> roleManager = this._serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+            UserManager<ApplicationUser> userManager = this._serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             await SeedRolesAsync(roleManager);
             await SeedUserAsync(userManager, AdminUserName, AdminPassword, AdminRoleName, "Admin User", "123 Admin Street", 
@@ -19,10 +26,13 @@ namespace PCShop.Data.Seeding
             await SeedUserAsync(userManager, ManagerUserName, ManagerPassword, ManagerRoleName, "Manager User", "456 Manager Blvd", 
                 "Manager Town", "1111");
 
+            await SeedUserAsync(userManager, DefaultUserName, DefaultUserPassword, UserRoleName, "Default User", "789 User Road", 
+                "User City", "2222");
+
             await AssignUserRoleToUsersWithoutRolesAsync(userManager);
         }
 
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole<Guid>> roleManager)
+        private async Task SeedRolesAsync(RoleManager<IdentityRole<Guid>> roleManager)
         {
             string[] roles = { AdminRoleName, ManagerRoleName, UserRoleName };
 
@@ -35,15 +45,8 @@ namespace PCShop.Data.Seeding
             }
         }
 
-        private static async Task SeedUserAsync(
-            UserManager<ApplicationUser> userManager,
-            string email,
-            string password,
-            string role,
-            string fullName,
-            string address,
-            string city,
-            string postalCode)
+        private async Task SeedUserAsync(UserManager<ApplicationUser> userManager, string email, string password, 
+            string role, string fullName, string address, string city, string postalCode)
         {
             ApplicationUser? existingUser = await userManager.FindByEmailAsync(email);
 
@@ -69,7 +72,7 @@ namespace PCShop.Data.Seeding
                 else
                 {
                     string errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                    Console.WriteLine($"Failed to create user {email}: {errors}");
+                    throw new Exception($"Failed to create user {email}: {errors}");
                 }
             }
             else
@@ -82,13 +85,14 @@ namespace PCShop.Data.Seeding
             }
         }
 
-        private static async Task AssignUserRoleToUsersWithoutRolesAsync(UserManager<ApplicationUser> userManager)
+        private async Task AssignUserRoleToUsersWithoutRolesAsync(UserManager<ApplicationUser> userManager)
         {
-            var users = userManager.Users;
+            IQueryable<ApplicationUser> users = userManager.Users;
 
             foreach (ApplicationUser user in users)
             {
                 var roles = await userManager.GetRolesAsync(user);
+
                 if (roles == null || roles.Count == 0)
                 {
                     await userManager.AddToRoleAsync(user, UserRoleName);

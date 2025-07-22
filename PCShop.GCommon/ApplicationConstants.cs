@@ -17,5 +17,8 @@
 
         public const string ManagerUserName = "manager@pcshop.com";
         public const string ManagerPassword = "Manager123!";
+
+        public const string DefaultUserName = "user@pcshop.com";
+        public const string DefaultUserPassword = "User123!";
     }
 }

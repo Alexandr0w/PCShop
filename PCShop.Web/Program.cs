@@ -6,6 +6,7 @@ using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Data.Seeding;
+using PCShop.Data.Seeding.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Emailing;
@@ -55,6 +56,9 @@ namespace PCShop.Web
             // Add custom filters for cart count
             builder.Services.AddScoped<CartCountFilter>();
 
+            // Seeding roles for Identity
+            builder.Services.AddScoped<IIdentityDbSeeder, IdentityDbSeeder>();
+
             // Configuring email sender service
             builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 
@@ -75,11 +79,11 @@ namespace PCShop.Web
 
             WebApplication app = builder.Build();
 
-            // Create Admin and Manager roles
-            using (var scope = app.Services.CreateScope())
+            // Creating Default Admin, Manager, and User roles
+            using (IServiceScope scope = app.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-                IdentityDbSeeder.SeedAsync(services).GetAwaiter().GetResult();
+                IIdentityDbSeeder seeder = scope.ServiceProvider.GetRequiredService<IIdentityDbSeeder>();
+                seeder.SeedAsync().GetAwaiter().GetResult();
             }
 
             if (app.Environment.IsDevelopment())
