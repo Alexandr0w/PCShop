@@ -90,6 +90,19 @@
         <h4>Total: <span id="totalWithDelivery">@totalWithDelivery.ToString("F2")</span> €</h4>
     </div>
 
+    <div class="col-md-12">
+        <label class="form-label">Payment Method</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="1" id="cashOnDelivery" checked />
+            <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="2" id="card" />
+            <label class="form-check-label" for="card">Pay with Card</label>
+        </div>
+        <span asp-validation-for="PaymentMethod" class="text-danger small"></span>
+    </div>
+
     <div class="col-12 mt-3">
         <button type="submit" class="btn btn-success w-100 py-2">
             <i class="fas fa-check"></i> Finalize Order

@@ -56,6 +56,13 @@ footer.footer {
         }
 
 /* Toast Notifications */
+.toast-body {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+}
+
 .toast.slide-in {
     animation: slideIn 0.5s ease-out forwards;
 }

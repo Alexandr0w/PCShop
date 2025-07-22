@@ -36,6 +36,10 @@ namespace PCShop.Web.ViewModels.Order
         [EnumDataType(typeof(DeliveryMethod), ErrorMessage = DeliveryMethodInvalid)]
         public DeliveryMethod DeliveryMethod { get; set; } = DeliveryMethod.None;
 
+        [Required(ErrorMessage = PaymentMethodRequired)]
+        [EnumDataType(typeof(OrderPaymentMethod), ErrorMessage = PaymentMethodInvalid)]
+        public OrderPaymentMethod PaymentMethod { get; set; } = OrderPaymentMethod.None;
+
         public string? Comment { get; set; }
 
         public decimal TotalProductsPrice { get; set; }

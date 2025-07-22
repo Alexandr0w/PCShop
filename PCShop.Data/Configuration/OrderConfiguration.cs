@@ -38,6 +38,11 @@ namespace PCShop.Data.Configuration
                 .HasConversion<int>(); // Save enum like int in DB
 
             entity
+                .Property(o => o.PaymentMethod)
+                .IsRequired()
+                .HasConversion<int>(); // Save enum like int in DB
+
+            entity
                 .Property(o => o.DeliveryFee)
                 .HasColumnType(PriceSqlType);
 

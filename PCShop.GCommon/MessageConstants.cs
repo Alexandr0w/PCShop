@@ -44,8 +44,13 @@
             public const string NoPendingOrders = "No pending order found or cart is empty.";
             public const string UnableToConfirm = "Unable to confirm order. Please try again.";
 
-            public const string OrderConfirmedSuccessfully = "Order confirmed successfully!";
-            public const string OrderConfirmationFailed = "Failed to confirm order. Please try again.";
+            public const string ConfirmedSuccessfully = "Order confirmed successfully!";
+            public const string ConfirmationFailed = "Failed to confirm order. Please try again.";
+
+            public const string PaymentSuccessfully = "Payment successfully! Your order has been confirmed.";
+            public const string PaymentFailed = "Payment failed. Please try again.";
+            public const string OrderDataNotFound = "Order data not found. Please try again or contact support.";
+            public const string PaymentCanceled = "Payment has been canceled. Please try again.";
         }
     }
 }

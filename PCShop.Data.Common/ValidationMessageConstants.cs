@@ -49,6 +49,9 @@ namespace PCShop.Data.Common
         {
             public const string DeliveryMethodRequired = "Please select a delivery method.";
             public const string DeliveryMethodInvalid = "Invalid delivery method.";
+
+            public const string PaymentMethodRequired = "Please select a payment method.";
+            public const string PaymentMethodInvalid = "Invalid payment method.";
         }
     }
 }

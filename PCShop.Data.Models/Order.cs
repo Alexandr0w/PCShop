@@ -28,6 +28,9 @@ namespace PCShop.Data.Models
         [Comment("Delivery method for the order")]
         public DeliveryMethod DeliveryMethod { get; set; }
 
+        [Comment("Payment method used for the order")]
+        public OrderPaymentMethod PaymentMethod { get; set; }
+
         [Comment("Total delivery fee based on delivery method")]
         public decimal DeliveryFee { get; set; }
 

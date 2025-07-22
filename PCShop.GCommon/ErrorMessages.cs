@@ -41,11 +41,18 @@
         {
             public const string AddError = "An error occurred while adding product '{0}' to the cart.";
             public const string RemoveError = "An error occurred while removing product '{0}' from the cart.";
+
             public const string ClearError = "An error occurred while clearing the cart: {0}.";
             public const string FinalizeError = "An error occurred while finalizing the order: {0}.";
+
             public const string ConfirmError = "An error occurred while confirming the order: {0}.";
             public const string LoadConfirmationError = "An error occurred while loading the confirmation: {0}.";
+
             public const string DeliveryMethodError = "Please select a delivery method.";
+            public const string PaymentMethodError = "Invalid payment method selected.";
+
+            public const string StripeSettingsError = "Stripe settings are not configured correctly. Please check the configuration.";
+            public const string SuccessPaymentError = "Error processing successful payment: {0}.";
         }
     }
 }

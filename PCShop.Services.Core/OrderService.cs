@@ -255,6 +255,7 @@ namespace PCShop.Services.Core
                 order.DeliveryFee = CalculateDeliveryFee(model.DeliveryMethod);
                 order.TotalPrice = totalPrice + order.DeliveryFee;
                 order.OrderDate = DateTime.UtcNow;
+                order.PaymentMethod = model.PaymentMethod;
                 order.Status = OrderStatus.Completed;
 
                 await this._orderRepository.UpdateAsync(order);

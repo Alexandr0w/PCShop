@@ -10,6 +10,7 @@ using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Emailing;
 using PCShop.Web.Infrastructure.Extensions;
+using PCShop.Web.ViewModels.Order;
 
 namespace PCShop.Web
 {
@@ -51,10 +52,15 @@ namespace PCShop.Web
             builder.Services.AddRepositories(typeof(IProductRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IProductService).Assembly);
 
+            // Add custom filters for cart count
             builder.Services.AddScoped<CartCountFilter>();
 
             // Configuring email sender service
             builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+
+            // Configuring Stripe (payment with credit card)
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            builder.Services.AddSession();
 
             builder.Services.AddControllersWithViews(options =>
             {
@@ -96,6 +102,8 @@ namespace PCShop.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "areas",
