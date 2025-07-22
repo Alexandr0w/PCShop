@@ -59,8 +59,11 @@ footer.footer {
 .toast-body {
     white-space: normal !important;
     overflow: visible !important;
-    text-overflow: clip !important;
-    max-width: none !important;
+    text-overflow: unset !important;
+    max-width: 100% !important;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.5;
 }
 
 .toast.slide-in {
