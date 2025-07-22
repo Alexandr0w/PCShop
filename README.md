@@ -52,8 +52,8 @@ You can use the following test accounts to try out the application:
   * Password: Manager123!
   
 - **User:**
-  * Email: fr0sttzy@gmail.com
-  * Password: 123456
+  * Email: user@pcshop.com
+  * Password: User123!
 
 ---
 
