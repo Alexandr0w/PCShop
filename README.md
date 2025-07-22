@@ -11,6 +11,7 @@ PCShop is a full-featured e-commerce web application built with **ASP.NET Core**
 - 🖥️ Manage Computer Listings Separately from Products
 - 🛒 Shopping Cart with Quantity Management and Order Finalization
 - 📦 Order Confirmation with Pre-Filled User Profile Data
+- 💳 Stripe for payment processing via card
 - 📤 Product Image Upload, Replace, and Auto-delete Old Files
 - 📃 Clean Razor Pages & MVC Architecture
 - 💬 Global TempData Messages (Auto-hide Toasts with Icons)
@@ -18,7 +19,6 @@ PCShop is a full-featured e-commerce web application built with **ASP.NET Core**
 - 🧰 Repository Pattern and Service Layer Separation
 - 📦 Entity Framework Core with Migrations
 - 🎨 Responsive UI with Bootstrap 5 & FontAwesome Icons
-
 ---
 
 ## 🛠️ Technologies Used
@@ -31,12 +31,18 @@ PCShop is a full-featured e-commerce web application built with **ASP.NET Core**
 - **FontAwesome / Bootstrap Icons**
 - **jQuery** (for toast behavior)
 - **LINQ, TempData, Tag Helpers, Model Validation**
+- **Stripe** (for payment processing)
 
 ---
 
 ## 🧪 Test Credentials
 You can use the following test accounts to try out the application:
 
+- **Stripe** test card:
+  * Number: 4242 4242 4242 4242
+  * Date: 10/34 (any future date)
+  * CVC: 123 (any 3 digits)
+  
 - **Admin:**
   * Email: admin@pcshop.com
   * Password: Admin123!
