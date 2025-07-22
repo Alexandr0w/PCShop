@@ -53,6 +53,8 @@
 
             public const string StripeSettingsError = "Stripe settings are not configured correctly. Please check the configuration.";
             public const string SuccessPaymentError = "Error processing successful payment: {0}.";
+            public const string FailedPaymentError = "Error processing failed payment: {0}.";
+            public const string PaymentCanceledError = "Payment was canceled by the user: {0}.";
         }
     }
 }

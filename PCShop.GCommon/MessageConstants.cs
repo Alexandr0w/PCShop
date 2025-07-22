@@ -51,6 +51,8 @@
             public const string PaymentFailed = "Payment failed. Please try again.";
             public const string OrderDataNotFound = "Order data not found. Please try again or contact support.";
             public const string PaymentCanceled = "Payment has been canceled. Please try again.";
+            public const string PaymentError = "Failed to processing the payment. Please try again.";
+            public const string PaymentCancelFailed = "Failed to cancel the payment. Please try again.";
         }
     }
 }

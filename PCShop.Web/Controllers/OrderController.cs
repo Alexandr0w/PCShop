@@ -257,6 +257,7 @@ namespace PCShop.Web.Controllers
             {
                 this._logger.LogError(string.Format(Order.ConfirmError, ex.Message));
                 TempData["ErrorMessage"] = ConfirmationFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -264,19 +265,21 @@ namespace PCShop.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCheckoutSession([FromBody] StripePaymentViewModel model)
         {
-            string secretKey = this._stripeSettings.SecretKey; 
-
-            if (string.IsNullOrEmpty(secretKey))
+            try
             {
-                this._logger.LogError(Order.StripeSettingsError);
-            }
+                string secretKey = this._stripeSettings.SecretKey;
 
-            StripeConfiguration.ApiKey = secretKey;
+                if (string.IsNullOrEmpty(secretKey))
+                {
+                    this._logger.LogError(Order.StripeSettingsError);
+                }
 
-            SessionCreateOptions options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
+                StripeConfiguration.ApiKey = secretKey;
+
+                SessionCreateOptions options = new SessionCreateOptions
+                {
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions
                     {
@@ -292,22 +295,30 @@ namespace PCShop.Web.Controllers
                         Quantity = 1,
                     }
                 },
-                Mode = "payment",
-                SuccessUrl = Url.Action("Success", "Order", null, Request.Scheme)!,
-                CancelUrl = Url.Action("Cancel", "Order", null, Request.Scheme)!,
-                CustomerEmail = model.Email,
+                    Mode = "payment",
+                    SuccessUrl = Url.Action("Success", "Order", null, Request.Scheme)!,
+                    CancelUrl = Url.Action("Cancel", "Order", null, Request.Scheme)!,
+                    CustomerEmail = model.Email,
 
-                Metadata = new Dictionary<string, string>
+                    Metadata = new Dictionary<string, string>
                 {
                     {"orderId", Guid.NewGuid().ToString()},
                     {"userId", this.GetUserId() ?? ""}
                 }
-            };
+                };
 
-            SessionService service = new SessionService();
-            Session session = await service.CreateAsync(options);
+                SessionService service = new SessionService();
+                Session session = await service.CreateAsync(options);
 
-            return this.Json(new { id = session.Id });
+                return this.Json(new { id = session.Id });
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(Order.FailedPaymentError, ex.Message));
+                TempData["ErrorMessage"] = PaymentError;
+
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
         }
 
         [HttpGet]
@@ -361,8 +372,18 @@ namespace PCShop.Web.Controllers
         [HttpGet]
         public IActionResult Cancel()
         {
-            TempData["ErrorMessage"] = PaymentCanceled;
-            return this.RedirectToAction(nameof(Index));
+            try
+            {
+                TempData["ErrorMessage"] = PaymentCanceled;
+                return this.RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(Order.PaymentCanceledError, ex.Message));
+                TempData["ErrorMessage"] = PaymentCancelFailed;
+
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
         }
     }
 }
