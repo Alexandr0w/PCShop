@@ -1,4 +1,5 @@
-﻿using PCShop.Web.ViewModels.Order;
+﻿using PCShop.Data.Models;
+using PCShop.Web.ViewModels.Order;
 
 namespace PCShop.Services.Core.Interfaces
 {
@@ -17,6 +18,7 @@ namespace PCShop.Services.Core.Interfaces
         
         Task<bool> FinalizeOrderWithDetailsAsync(string userId, OrderConfirmationInputModel model);
 
+        Task SendOrderConfirmationEmailAsync(string userEmail, Order order);
     }
 }
 

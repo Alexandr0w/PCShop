@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Order;
+using System.Text;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ExceptionMessages;
 using static PCShop.Services.Common.ServiceConstants;
@@ -15,15 +17,18 @@ namespace PCShop.Services.Core
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
         public OrderService(
             IOrderRepository orderRepository,
             IOrderItemRepository orderItemRepository,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IEmailSender emailSender)
         {
             this._orderRepository = orderRepository;
             this._orderItemRepository = orderItemRepository;
             this._userManager = userManager;
+            this._emailSender = emailSender;
         }
 
         public async Task<bool> AddProductToCartAsync(AddToCartFormModel model, string userId)
@@ -260,6 +265,11 @@ namespace PCShop.Services.Core
 
                 await this._orderRepository.UpdateAsync(order);
                 isFinalized = true;
+
+                if (user.Email != null)
+                {
+                    await this.SendOrderConfirmationEmailAsync(user.Email, order);
+                }
             }
 
             return isFinalized;
@@ -283,6 +293,25 @@ namespace PCShop.Services.Core
             decimal total = SumTotalPrice(order);
 
             return total;
+        }
+
+        public async Task SendOrderConfirmationEmailAsync(string userEmail, Order order)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"<p>Hello {order.ApplicationUser?.FullName ?? "Customer"},</p>");
+            sb.AppendLine($"<p>Thank you for your order <strong>#{order.Id}</strong>.</p>");
+            sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong>.</p>");
+            sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong>.</p>");
+            sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong>.</p>");
+            sb.AppendLine("<p>We will notify you once your order is shipped.</p>");
+            sb.AppendLine("<br><p>Best regards,<br>PCShop Team</p>");
+
+
+            string subject = $"Order Confirmation - #{order.Id}";
+            string message = sb.ToString();
+
+            await this._emailSender.SendEmailAsync(userEmail, subject, message);
         }
 
         private static decimal SumTotalPrice(Order order)

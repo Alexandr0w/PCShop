@@ -20,10 +20,10 @@ namespace PCShop.Web
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            
-            string connectionString = builder.Configuration.GetConnectionString("PCShopDbConnection") 
+
+            string connectionString = builder.Configuration.GetConnectionString("PCShopDbConnection")
                 ?? throw new InvalidOperationException("Connection string 'PCShopDbConnection' not found.");
-            
+
             builder.Services
                 .AddDbContext<PCShopDbContext>(options =>
                 {
@@ -51,7 +51,7 @@ namespace PCShop.Web
             // Seeding roles for Identity
             builder.Services.AddTransient<IIdentityDbSeeder, IdentityDbSeeder>();
 
-            // Configuring email sender service
+            // Configuring email sender service 
             builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 
             // Configuring Stripe (payment with credit card)

@@ -23,9 +23,14 @@ namespace PCShop.Web.Infrastructure.Emailing
             SendGridClient client = new SendGridClient(apiKey);
             EmailAddress from = new EmailAddress(fromEmail, fromName);
             EmailAddress to = new EmailAddress(email);
-            SendGridMessage msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent: null, htmlContent: htmlMessage);
-            
+            SendGridMessage msg = MailHelper.CreateSingleEmail(from, to, subject, StripHtmlTags(htmlMessage), htmlMessage);
+
             await client.SendEmailAsync(msg);
+        }
+
+        private static string StripHtmlTags(string input)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty);
         }
     }
 }
