@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using static PCShop.GCommon.ApplicationConstants;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace PCShop.Web.Areas.Admin.Controllers
 {
-    [Area(AdminRoleName)]
-    [Authorize(Roles = AdminRoleName)]
-    public class HomeController : Controller
+    public class HomeController : BaseAdminController
     {
         public IActionResult Index()
         {

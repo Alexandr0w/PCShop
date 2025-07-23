@@ -1,32 +1,28 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
-using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Web.Areas.Admin.Controllers
 {
-    [Area(AdminRoleName)]
-    [Authorize(Roles = AdminRoleName)]
-    public class ProductController : Controller
+    public class ProductController : BaseAdminController
     {
-        private readonly IAdminService _productService;
+        private readonly IAdminService _adminService;
 
-        public ProductController(IAdminService productService)
+        public ProductController(IAdminService adminService)
         {
-            this._productService = productService;
+            this._adminService = adminService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Deleted(int currentPage = 1)
         {
-            var model = await this._productService.GetDeletedProductsAsync(currentPage);
+            var model = await this._adminService.GetDeletedProductsAsync(currentPage);
             return this.View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Restore(string id)
         {
-            bool result = await this._productService.RestoreProductAsync(id);
+            bool result = await this._adminService.RestoreProductAsync(id);
 
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -49,7 +45,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> HardDelete(string id)
         {
-            bool result = await this._productService.DeleteProductPermanentlyAsync(id);
+            bool result = await this._adminService.DeleteProductPermanentlyAsync(id);
 
             if (!result)
             {
