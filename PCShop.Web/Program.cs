@@ -11,7 +11,8 @@ using PCShop.Services.Core.Interfaces;
 using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Emailing;
 using PCShop.Web.Infrastructure.Extensions;
-using PCShop.Web.ViewModels.Order;
+using PCShop.Web.Infrastructure.Middlewares;
+using PCShop.Web.Infrastructure.Settings;
 
 namespace PCShop.Web
 {
@@ -41,6 +42,17 @@ namespace PCShop.Web
                 .AddEntityFrameworkStores<PCShopDbContext>()
                 .AddDefaultTokenProviders();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Home/Error?statusCode=403";
+
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+            });
+
             // Loading all services and repositories with extension method
             builder.Services.AddRepositories(typeof(IProductRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IProductService).Assembly);
@@ -56,7 +68,14 @@ namespace PCShop.Web
 
             // Configuring Stripe (payment with credit card)
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            builder.Services.AddSession();
+
+            // Configuring session for storing cart items
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(120); 
+                options.Cookie.HttpOnly = true;                  
+                options.Cookie.IsEssential = true;               
+            });
 
             builder.Services.AddControllersWithViews(options =>
             {
@@ -88,9 +107,6 @@ namespace PCShop.Web
                 app.UseHsts();
             }
 
-            // Added custom Error pages
-            app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -99,6 +115,13 @@ namespace PCShop.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Using custom global exception handling middleware
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+            // Added custom Error pages
+            app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
+
+            // Using session for storing cart items
             app.UseSession();
 
             app.MapControllerRoute(

@@ -7,6 +7,7 @@
             public const string ModificationNotAllowed = "Modification is not allowed.";
             public const string RequiredId = "Product ID or Computer ID is required.";
             public const string QuantityGreaterThanZero = "Quantity must be greater than 0.";
+            public const string ExceptionOccurred = "An unhandled exception occurred";
         }
 
         public static class LoadPage
