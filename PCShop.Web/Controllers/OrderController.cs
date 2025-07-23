@@ -8,6 +8,7 @@ using System.Text.Json;
 using PCShop.Data.Models.Enum;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Order;
+using PCShop.Web.Infrastructure.Settings;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.MessageConstants.OrderMessages;
 using static PCShop.Services.Common.ServiceConstants;

@@ -1,4 +1,4 @@
-﻿namespace PCShop.Web.ViewModels.Order
+﻿namespace PCShop.Web.Infrastructure.Settings
 {
     public class StripeSettings
     {
