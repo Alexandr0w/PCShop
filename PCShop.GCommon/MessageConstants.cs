@@ -111,6 +111,9 @@ namespace PCShop.GCommon
         {
             public const string OrderApprovedSuccessfully = "Order approved successfully.";
             public const string OrderApproveFailed = "Failed to approve order. Please try again.";
+
+            public const string DeleteOrderSuccessfully = "Order deleted successfully.";
+            public const string DeleteOrderFailed = "Failed to delete order. Please try again.";
         }
     }
 }

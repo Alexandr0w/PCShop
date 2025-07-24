@@ -413,6 +413,30 @@ namespace PCShop.Services.Core
             return true;
         }
 
+        public async Task<bool> DeleteOrderAsync(string orderId)
+        {
+            if (!Guid.TryParse(orderId, out Guid parsedOrderId))
+            {
+                return false;
+            }
+
+            Order? order = await this._orderRepository
+                .GetByIdAsync(parsedOrderId);
+
+            if (order == null)
+            {
+                return false;
+            }
+
+            if (order.Status != OrderStatus.Pending || order.DeliveryMethod != DeliveryMethod.None)
+            {
+                return false;
+            }
+
+            await this._orderRepository.HardDeleteAsync(order);
+
+            return true;
+        }
 
         private static decimal SumTotalPrice(Order order)
         {

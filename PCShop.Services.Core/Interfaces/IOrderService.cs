@@ -24,7 +24,9 @@ namespace PCShop.Services.Core.Interfaces
 
         Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = 10);
         Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = 10);
+        
         Task<bool> ApproveOrderAsync(string orderId);
+        Task<bool> DeleteOrderAsync(string orderId);
     }
 }
 

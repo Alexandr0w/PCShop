@@ -76,5 +76,33 @@ namespace PCShop.Web.Areas.Manager.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string orderId)
+        {
+            try
+            {
+                bool isDeleted = await this._orderService.DeleteOrderAsync(orderId);
+
+                if (isDeleted)
+                {
+                    TempData["SuccessMessage"] = DeleteOrderSuccessfully;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = DeleteOrderFailed;
+                }
+
+                return this.RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(ManagerDashboard.DeleteOrderError, orderId, ex.Message));
+                TempData["ErrorMessage"] = DeleteOrderFailed;
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
+
     }
 }
