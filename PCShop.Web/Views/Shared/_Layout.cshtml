@@ -34,54 +34,144 @@
 				<div class="collapse navbar-collapse" id="mainNavbar">
 					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 						<li class="nav-item">
-							<a class="nav-link @((ViewContext.RouteData.Values["controller"]?.ToString() == "Home") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+							<a class="nav-link @((ViewContext.RouteData.Values["controller"]?.ToString() == "Home") ? "active" : "")"
+							   asp-area="" asp-controller="Home" asp-action="Index">
+								<i class="fas fa-home me-1"></i> Home
+							</a>
 						</li>
+
 						<li class="nav-item">
-							<a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">All Products</a>
+							<a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">
+								<i class="fas fa-th me-1"></i> All Products
+							</a>
 						</li>
+
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Components") ? "active" : "")" href="#" id="componentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								PC Components
+							<a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Components") ? "active" : "")"
+							   href="#" id="componentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fas fa-microchip me-1"></i> PC Components
 							</a>
 							<ul class="dropdown-menu" aria-labelledby="componentsDropdown">
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Processor">Processors</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Video Card">Video Cards</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Motherboard">Motherboards</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="RAM">Memory (RAM)</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="SSD">SSD</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="HDD">HDD</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Power Supply">Power Supplies</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Cooling System">Cooling Systems</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Case Fan">Case Fans</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Case">Cases</a></li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Processor">
+										<i class="fas fa-microchip me-2"></i> Processors
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Video Card">
+										<i class="fas fa-video me-2"></i> Video Cards
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Motherboard">
+										<i class="fas fa-network-wired me-2"></i> Motherboards
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="RAM">
+										<i class="fas fa-memory me-2"></i> Memory (RAM)
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="SSD">
+										<i class="fas fa-hdd me-2"></i> SSD
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="HDD">
+										<i class="fas fa-database me-2"></i> HDD
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Power Supply">
+										<i class="fas fa-plug me-2"></i> Power Supplies
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Cooling System">
+										<i class="fas fa-fan me-2"></i> Cooling Systems
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Case Fan">
+										<i class="fas fa-wind me-2"></i> Case Fans
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Case">
+										<i class="fas fa-box me-2"></i> Cases
+									</a>
+								</li>
 							</ul>
 						</li>
+
 						<li class="nav-item">
-							<a class="nav-link" asp-area="" asp-controller="Computer" asp-action="Index">Computers</a>
+							<a class="nav-link" asp-area="" asp-controller="Computer" asp-action="Index">
+								<i class="fas fa-desktop me-1"></i> Computers
+							</a>
 						</li>
+
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Peripherals") ? "active" : "")" href="#" id="peripheralsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Peripherals
+							<a class="nav-link dropdown-toggle @((ViewContext.RouteData.Values["controller"]?.ToString() == "Peripherals") ? "active" : "")"
+							   href="#" id="peripheralsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fas fa-keyboard me-1"></i> Peripherals
 							</a>
 							<ul class="dropdown-menu" aria-labelledby="peripheralsDropdown">
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Monitor">Monitors</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Keyboard">Keyboards</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Mouse">Mice</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Headset">Headsets</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Mousepad">Mousepads</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Speaker">Speakers</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Microphone">Microphones</a></li>
-								<li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Webcam">Webcams</a></li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Monitor">
+										<i class="fas fa-tv me-2"></i> Monitors
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Keyboard">
+										<i class="fas fa-keyboard me-2"></i> Keyboards
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Mouse">
+										<i class="fas fa-computer-mouse me-2"></i> Mice
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Headset">
+										<i class="fas fa-headphones-alt me-2"></i> Headsets
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Mousepad">
+										<i class="fas fa-mouse-pointer me-2"></i> Mousepads
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Speaker">
+										<i class="fas fa-volume-up me-2"></i> Speakers
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Microphone">
+										<i class="fas fa-microphone me-2"></i> Microphones
+									</a>
+								</li>
+								<li>
+									<a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index" asp-route-productType="Webcam">
+										<i class="fas fa-video-camera me-2"></i> Webcams
+									</a>
+								</li>
 							</ul>
 						</li>
+
 						<li class="nav-item">
 							@if (User.IsInRole(AdminRoleName))
 							{
-								<a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-white text-decoration-none">Admin Panel</a>
+								<a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+									<i class="fas fa-tools me-1"></i> Admin Panel
+								</a>
 							}
-							else if (User.IsInRole(ManagerRoleName))
+							@if (User.IsInRole(ManagerRoleName))
 							{
-								<a class="nav-link" asp-area="Manager" asp-controller="Order" asp-action="Index" class="text-white text-decoration-none">Manager Panel</a>
+								<a class="nav-link" asp-area="Manager" asp-controller="Order" asp-action="Index">
+									<i class="fas fa-clipboard-check me-1"></i> Manager Panel
+								</a>
 							}
 						</li>
 					</ul>
@@ -101,13 +191,13 @@
 						</div>
 
 						<div class="nav-item position-relative me-3">
-							<a asp-controller="Order" asp-action="Index" class="nav-link position-relative cart-icon" style="font-size: 1.6rem;">
+							<a asp-area="" asp-controller="Order" asp-action="Index" class="nav-link position-relative cart-icon" style="font-size: 1.6rem;">
 								<i class="bi bi-cart3" id="cartIcon"></i>
 							</a>
 						</div>
 
 						<div id="notificationIcon" class="nav-item position-relative me-3">
-							<a asp-controller="Notification" asp-action="Index" class="nav-link" title="Notifications" style="font-size: 1.6rem;">
+							<a asp-area="" asp-controller="Notification" asp-action="Index" class="nav-link" title="Notifications" style="font-size: 1.6rem;">
 								<i class="fas fa-bell"></i>
 							</a>
 						</div>

@@ -70,18 +70,6 @@ footer.footer {
     animation: slideIn 0.5s ease-out forwards;
 }
 
-/* Notification Icon */
-#notificationIcon .nav-link {
-    color: white;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-    #notificationIcon .nav-link:hover {
-        color: #f8f9fa;
-        transform: scale(1.1);
-        cursor: pointer;
-    }
-
 @keyframes slideIn {
     from {
         transform: translateY(-30px);
@@ -93,6 +81,19 @@ footer.footer {
         opacity: 1;
     }
 }
+
+/* Notification Icon */
+#notificationIcon .nav-link {
+    color: white;
+    display: inline-block;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+    #notificationIcon .nav-link:hover {
+        color: #f8f9fa;
+        transform: scale(1.1);
+        cursor: pointer;
+    }
 
 /* Responsive */
 @media (max-width: 991.98px) {
