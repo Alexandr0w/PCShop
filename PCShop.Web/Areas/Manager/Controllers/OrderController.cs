@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCShop.Data.Models.Enum;
 using PCShop.Services.Core.Interfaces;
+using PCShop.Web.Controllers;
 using PCShop.Web.ViewModels.Manager;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ErrorMessages;
@@ -11,12 +12,14 @@ namespace PCShop.Web.Areas.Manager.Controllers
 {
     [Area(ManagerRoleName)]
     [Authorize(Roles = ManagerRoleName)]
-    public class OrderController : Controller
+    public class OrderController : BaseController
     {
         private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
 
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(
+            IOrderService orderService, 
+            ILogger<OrderController> logger)
         {
             this._orderService = orderService;
             this._logger = logger;
