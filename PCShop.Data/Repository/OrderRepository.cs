@@ -28,5 +28,23 @@ namespace PCShop.Data.Repository
                 .Include(o => o.OrdersItems)
                 .FirstOrDefaultAsync(o => o.ApplicationUserId.ToString().ToLower() == userId.ToLower() && o.Status == OrderStatus.Pending);
         }
+
+        public async Task<ICollection<Order>> GetAllOrdersWithItemsAsync()
+        {
+            return await this._DbSet
+                .Include(o => o.ApplicationUser)
+                .Include(o => o.OrdersItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrdersItems)
+                    .ThenInclude(oi => oi.Computer)
+                .ToListAsync();
+        }
+
+        public async Task<Order?> GetByIdWithUserAsync(string id)
+        {
+            return await this._DbSet
+                .Include(o => o.ApplicationUser)
+                .FirstOrDefaultAsync(o => o.Id.ToString().ToLower() == id.ToLower());
+        }
     }
 }

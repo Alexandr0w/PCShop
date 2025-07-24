@@ -4,7 +4,9 @@ using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
+using PCShop.Web.ViewModels.Manager;
 using PCShop.Web.ViewModels.Order;
+using System.Globalization;
 using System.Text;
 using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.GCommon.ExceptionMessages;
@@ -78,30 +80,32 @@ namespace PCShop.Services.Core
 
                 await this._orderRepository.AddAsync(order);
             }
-
-            OrderItem? existingItem = order.OrdersItems.FirstOrDefault(i =>
-                (productId.HasValue && i.ProductId == productId) ||
-                (computerId.HasValue && i.ComputerId == computerId));
-
-            if (existingItem != null)
+            else if (order != null)
             {
-                existingItem.Quantity += model.Quantity;
-                await this._orderItemRepository.UpdateAsync(existingItem);
-            }
-            else
-            {
-                OrderItem newItem = new OrderItem
+                OrderItem? existingItem = order.OrdersItems.FirstOrDefault(i =>
+                    (productId.HasValue && i.ProductId == productId) ||
+                    (computerId.HasValue && i.ComputerId == computerId));
+
+                if (existingItem != null)
                 {
-                    Id = Guid.NewGuid(),
-                    OrderId = order.Id,
-                    ProductId = productId,
-                    ComputerId = computerId,
-                    Quantity = model.Quantity
-                };
+                    existingItem.Quantity += model.Quantity;
+                    await this._orderItemRepository.UpdateAsync(existingItem);
+                }
+                else
+                {
+                    OrderItem newItem = new OrderItem
+                    {
+                        Id = Guid.NewGuid(),
+                        OrderId = order.Id,
+                        ProductId = productId,
+                        ComputerId = computerId,
+                        Quantity = model.Quantity
+                    };
 
-                await this._orderItemRepository.AddAsync(newItem);
+                    await this._orderItemRepository.AddAsync(newItem);
 
-                isAdded = true;
+                    isAdded = true;
+                }
             }
 
             return isAdded;
@@ -313,6 +317,102 @@ namespace PCShop.Services.Core
 
             await this._emailSender.SendEmailAsync(userEmail, subject, message);
         }
+
+        public async Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = 10)
+        {
+            ICollection<Order> allOrders = (await this._orderRepository.GetAllOrdersWithItemsAsync())
+                .Where(o => o.Status == status)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            int totalOrders = allOrders.Count;
+            int totalPages = (int)Math.Ceiling(totalOrders / (double)pageSize);
+
+            IEnumerable<ManagerOrderViewModel> pagedOrders = allOrders
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(o => new ManagerOrderViewModel
+                {
+                    Id = o.Id.ToString(),
+                    CustomerName = o.ApplicationUser.FullName,
+                    TotalPrice = o.TotalPrice,
+                    OrderDate = o.OrderDate.ToString(OrderDateFormat, CultureInfo.InvariantCulture),
+                    DeliveryMethod = o.DeliveryMethod.ToString(),
+                    Status = o.Status.ToString(),
+                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(OrderDateFormat, CultureInfo.InvariantCulture) : null
+                });
+
+            return new ManagerOrdersPageViewModel
+            {
+                Orders = pagedOrders,
+                CurrentPage = currentPage,
+                TotalPages = totalPages
+            };
+        }
+
+        public async Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = 10)
+        {
+            IEnumerable<Order> allOrders = await this._orderRepository
+                .GetAllOrdersWithItemsAsync();
+
+            int totalOrders = allOrders.Count();
+            int totalPages = (int)Math.Ceiling(totalOrders / (double)pageSize);
+
+            IEnumerable<ManagerOrderViewModel> pagedOrders = allOrders
+                .OrderByDescending(o => o.OrderDate)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(o => new ManagerOrderViewModel
+                {
+                    Id = o.Id.ToString(),
+                    CustomerName = o.ApplicationUser.FullName,
+                    TotalPrice = o.TotalPrice,
+                    OrderDate = o.OrderDate.ToString(OrderDateFormat, CultureInfo.InvariantCulture),
+                    DeliveryMethod = o.DeliveryMethod.ToString(),
+                    Status = o.Status.ToString(),
+                    SendDate = o.SendDate?.ToString(OrderDateFormat, CultureInfo.InvariantCulture)
+                });
+
+            return new ManagerOrdersPageViewModel
+            {
+                Orders = pagedOrders,
+                CurrentPage = currentPage,
+                TotalPages = totalPages,
+                CurrentStatusFilter = null 
+            };
+        }
+
+        public async Task<bool> ApproveOrderAsync(string orderId)
+        {
+            Order? order = await this._orderRepository.GetByIdWithUserAsync(orderId); 
+
+            if (order == null || order.Status != OrderStatus.Completed)
+                return false;
+
+            order.Status = OrderStatus.Sent;
+            order.SendDate = DateTime.UtcNow;
+
+            await this._orderRepository.UpdateAsync(order);
+
+            if (!string.IsNullOrWhiteSpace(order.ApplicationUser?.Email))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine($"<p>Hello <strong>{order.ApplicationUser.FullName}</strong>,</p>");
+                sb.AppendLine($"<p>Your order <strong>#{order.Id}</strong> has been <span style='color:green;'>approved</span> and will be shipped soon.</p>");
+                sb.AppendLine("<p>Thank you for shopping with us!</p>");
+                sb.AppendLine("<hr/>");
+                sb.AppendLine("<p>Best regards,<br/>PCShop Team</p>");
+
+                string subject = "Your Order Has Been Approved";
+                string messageBody = sb.ToString();
+
+                await this._emailSender.SendEmailAsync(order.ApplicationUser.Email, subject, messageBody);
+            }
+
+            return true;
+        }
+
 
         private static decimal SumTotalPrice(Order order)
         {

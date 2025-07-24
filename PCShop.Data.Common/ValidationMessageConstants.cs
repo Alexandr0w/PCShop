@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace PCShop.Data.Common
+﻿namespace PCShop.Data.Common
 {
     public static class ValidationMessageConstants
     {
@@ -47,6 +45,10 @@ namespace PCShop.Data.Common
 
         public static class Order
         {
+            public const int MinQuantity = 1;
+            public const int MaxQuantity = 100;
+            public const string QuantityRange = "Quantity must be between {1} and {2}.";
+
             public const string DeliveryMethodRequired = "Please select a delivery method.";
             public const string DeliveryMethodInvalid = "Invalid delivery method.";
 

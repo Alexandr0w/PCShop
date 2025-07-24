@@ -78,5 +78,11 @@
             public const string RestoreComputerError = "An error occurred while restoring the computer '{0}': {1}.";
             public const string HardDeleteComputerError = "An error occurred while permanently deleting the computer '{0}': {1}.";
         }
+
+        public static class ManagerDashboard
+        {
+            public const string LoadOrdersError = "An error occurred while loading orders: {0}.";
+            public const string ApproveOrderError = "An error occurred while approving the order '{0}': {1}.";
+        }
     }
 }

@@ -106,5 +106,11 @@ namespace PCShop.GCommon
             public const string DeleteUserPermanentlySuccessfully = "User permanently deleted.";
             public const string DeleteUserPermanentlyFailed = "Failed to permanently delete user. User may not exist or is not deleted.";
         }
+
+        public static class ManagerDashboard
+        {
+            public const string OrderApprovedSuccessfully = "Order approved successfully.";
+            public const string OrderApproveFailed = "Failed to approve order. Please try again.";
+        }
     }
 }

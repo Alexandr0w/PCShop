@@ -37,6 +37,9 @@ namespace PCShop.Data.Models
         [Comment("Final delivery address composed of city, postal code, and address")]
         public string? DeliveryAddress { get; set; }
 
+        [Comment("Date and time when the order was sent to the user")]
+        public DateTime? SendDate { get; set; }
+
         public virtual ICollection<OrderItem> OrdersItems { get; set; } = new HashSet<OrderItem>();
     }
 }

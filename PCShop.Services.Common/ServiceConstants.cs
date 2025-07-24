@@ -3,7 +3,7 @@
     public static class ServiceConstants
     {
         public const string CreatedOnFormat = "yyyy-MM-dd";
-    
+
         public const string RootFolder = "wwwroot";
         public const string ImagesFolder = "images";
 

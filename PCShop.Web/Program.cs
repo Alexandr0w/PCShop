@@ -45,7 +45,6 @@ namespace PCShop.Web
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Home/Error?statusCode=403";
 
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;

@@ -52,6 +52,10 @@ namespace PCShop.Data.Configuration
                 .HasMaxLength(DeliveryAddressMaxLength);
 
             entity
+                .Property(o => o.SendDate)
+                .IsRequired(false);
+
+            entity
                 .HasQueryFilter(o => o.ApplicationUser.IsDeleted == false);
 
             entity

@@ -6,5 +6,7 @@ namespace PCShop.Data.Repository.Interfaces
     {
         Task<Order?> GetPendingOrderWithItemsAsync(string userId);
         Task<Order?> GetPendingOrderAsync(string userId);
+        Task<ICollection<Order>> GetAllOrdersWithItemsAsync();
+        Task<Order?> GetByIdWithUserAsync(string id);
     }
 }

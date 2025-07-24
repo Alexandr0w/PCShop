@@ -75,6 +75,8 @@ namespace PCShop.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(UserManagement.AssignRoleError, role, ex.Message, userId));
+                TempData["ErrorMessage"] = string.Format(AssignRoleFailed, role);
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -114,6 +116,8 @@ namespace PCShop.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(UserManagement.RemoveRoleError, role, ex.Message, userId));
+                TempData["ErrorMessage"] = string.Format(RemoveRoleFailed, role);
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -153,6 +157,8 @@ namespace PCShop.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(UserManagement.DeleteUserError, ex.Message, userId));
+                TempData["ErrorMessage"] = DeleteUserFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -184,6 +190,8 @@ namespace PCShop.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(UserManagement.RestoreUserError, ex.Message, userId));
+                TempData["ErrorMessage"] = RestoreUserFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
@@ -215,6 +223,8 @@ namespace PCShop.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(UserManagement.DeleteUserForeverError, ex.Message, userId));
+                TempData["ErrorMessage"] = DeleteUserPermanentlyFailed;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }
