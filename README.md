@@ -6,32 +6,50 @@ PCShop is a full-featured e-commerce web application built with **ASP.NET Core**
 
 ## ✨ Features
 
-- 🔐 User Registration, Login, and Profile Management (ASP.NET Identity)
-- 🛍️ Browse, Filter, Sort, and Search Products by Type, Name, or Price
-- 🖥️ Manage Computer Listings Separately from Products
-- 🛒 Shopping Cart with Quantity Management and Order Finalization
-- 📦 Order Confirmation with Pre-Filled User Profile Data
-- 💳 Stripe for payment processing via card
-- 📤 Product Image Upload, Replace, and Auto-delete Old Files
-- 📃 Clean Razor Pages & MVC Architecture
-- 💬 Global TempData Messages (Auto-hide Toasts with Icons)
-- 📄 Pagination and Server-Side Filtering
-- 🧰 Repository Pattern and Service Layer Separation
-- 📦 Entity Framework Core with Migrations
-- 🎨 Responsive UI with Bootstrap 5 & FontAwesome Icons
+- 🔐 **User Authentication & Profile Management**
+  - Register, login, and manage profile via ASP.NET Identity
+- 🛍️ **Product Catalog**
+  - Browse, filter, sort, and search products by type, name, or price
+- 🖥️ **Computer Listings**
+  - Manage computer systems separately from individual products
+- 🛒 **Shopping Cart**
+  - Add products or computers to cart with quantity management and finalization
+- 📦 **Order Confirmation**
+  - Pre-filled user details from profile; supports delivery method selection and comment
+- 💳 **Payment Integration**
+  - Stripe support for secure credit/debit card payments
+- 📤 **Image Management**
+  - Upload, replace, and automatically delete old product images
+- 📃 **Clean MVC & Razor Architecture**
+  - Separation of concerns with Controllers, Services, and Repositories
+- 💬 **Global TempData Messaging**
+  - Toast-style messages with icons and auto-hide animations
+- 📄 **Pagination, Sorting, and Filtering**
+  - Server-side implementation for both Products and Computers
+- 🧰 **Repository Pattern & Service Layer**
+  - Clean code architecture for maintainability and testability
+- 📦 **Entity Framework Core**
+  - Code-first migrations and query filters for soft deletes
+- 🎨 **Responsive UI**
+  - Built with Bootstrap 5, FontAwesome, and clean layout components
+- 🗂️ **Area-Based Role Management**
+  - 💼 **Admin Area** – Manage users, products, and restore/delete soft-deleted records  
+  - 📦 **Manager Area** – View, filter, approve, and delete pending orders  
+  - 👤 **User Area** – View orders, manage profile, and complete purchases
+
 ---
 
 ## 🛠️ Technologies Used
 
-- **ASP.NET Core 8.0**
-- **Entity Framework Core**
-- **Razor Pages / MVC**
-- **SQL Server**
-- **Bootstrap 5**
-- **FontAwesome / Bootstrap Icons**
-- **jQuery** (for toast behavior)
-- **LINQ, TempData, Tag Helpers, Model Validation**
-- **Stripe** (for payment processing)
+- **ASP.NET Core 8.0** – Main web framework (MVC & Razor Pages)
+- **Entity Framework Core** – ORM for database access with LINQ
+- **SQL Server** – Relational database (code-first migrations)
+- **Razor Pages / MVC** – View rendering and structured routing
+- **Bootstrap 5** – Responsive UI framework
+- **FontAwesome / Bootstrap Icons** – UI icons and visuals
+- **jQuery** – Used for dynamic features like toast auto-dismiss
+- **TempData, Tag Helpers, Model Validation** – Built-in ASP.NET Core features
+- **Stripe** – Payment processing via credit/debit cards
 
 ---
 
@@ -59,16 +77,16 @@ You can use the following test accounts to try out the application:
 
 ## 📂 Project Structure
 
-* `PCShop.Data` – DbContext, Repositories, Migrations, and seed data
-* `PCShop.Data.Models` – Entity models 
-* `PCShop.Data.Common` – Entity validation constants 
-* `PCShop.Services.Core` – Business logic and service layer
-* `PCShop.Services.Common` – Service constants
-* `PCShop.Tests` – Unit testing using NUnit and Moq
-* `PCShop.Web` – MVC presentation layer (controllers + views)
-* `PCShop.Web.Infrastructure` – TagHelpers, Extensions and etc.
-* `PCShop.Web.ViewModels` – All view models
-* `PCShop.GCommon` – Constants and validation rules
+- `PCShop.Data` – Contains the `DbContext`, repositories, migrations, and seed data
+- `PCShop.Data.Models` – Entity models representing database tables
+- `PCShop.Data.Common` – Common validation constants for entities
+- `PCShop.Services.Core` – Core business logic and service interfaces/implementations
+- `PCShop.Services.Common` – Shared constants used across services
+- `PCShop.Tests` – Unit tests using NUnit and Moq
+- `PCShop.Web` – Presentation layer (MVC controllers, Razor views, and startup config)
+- `PCShop.Web.Infrastructure` – TagHelpers, middleware, extensions, and settings
+- `PCShop.Web.ViewModels` – ViewModels used for data transfer between views and controllers
+- `PCShop.GCommon` – Global constants, enums, and shared validation logic
 
 ---
 
