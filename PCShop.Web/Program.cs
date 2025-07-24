@@ -8,7 +8,6 @@ using PCShop.Data.Repository.Interfaces;
 using PCShop.Data.Seeding;
 using PCShop.Data.Seeding.Interfaces;
 using PCShop.Services.Core.Interfaces;
-using PCShop.Web.Filters;
 using PCShop.Web.Infrastructure.Emailing;
 using PCShop.Web.Infrastructure.Extensions;
 using PCShop.Web.Infrastructure.Middlewares;
@@ -58,9 +57,6 @@ namespace PCShop.Web
             builder.Services.AddRepositories(typeof(IProductRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IProductService).Assembly);
 
-            // Add custom filters for cart count
-            builder.Services.AddScoped<CartCountFilter>();
-
             // Seeding roles for Identity
             builder.Services.AddTransient<IIdentityDbSeeder, IdentityDbSeeder>();
 
@@ -80,9 +76,6 @@ namespace PCShop.Web
 
             builder.Services.AddControllersWithViews(options =>
             {
-                // Adding custom filter for cart count
-                options.Filters.AddService<CartCountFilter>();
-
                 // Adding AutoValidateAntiforgeryTokenAttribute globally
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
