@@ -41,7 +41,12 @@ namespace PCShop.Web.Controllers
 
                 if (string.IsNullOrEmpty(userId))
                 {
+                    ViewBag.CartCount = 0;
                     return this.Unauthorized();
+                }
+                else
+                {
+                    ViewBag.CartCount = await this._orderService.GetCartCountAsync(userId);
                 }
 
                 IEnumerable<OrderItemViewModel> cartItems = await this._orderService.GetCartItemsAsync(userId);
@@ -71,7 +76,7 @@ namespace PCShop.Web.Controllers
                     ModelState.AddModelError(string.Empty, Common.RequiredId);
                     this._logger.LogError(Common.RequiredId);
 
-                    return this.RedirectToAction(nameof(Index), "Product");
+                    return this.RedirectToAction(nameof(Index));
                 }
 
                 if (model.Quantity <= 0)
@@ -79,15 +84,16 @@ namespace PCShop.Web.Controllers
                     ModelState.AddModelError(string.Empty, Common.QuantityGreaterThanZero);
                     this._logger.LogError(Common.QuantityGreaterThanZero);
 
-                    return this.RedirectToAction(nameof(Index), "Product");
+                    return this.View(model);
                 }
 
                 await this._orderService.AddProductToCartAsync(model, userId);
-                HttpContext.Session.SetString("ForceUpdate", Guid.NewGuid().ToString());
 
+                IEnumerable<OrderItemViewModel> cartItems = await this._orderService.GetCartItemsAsync(userId);
+                ViewBag.CartCount = await this._orderService.GetCartCountAsync(userId);
                 TempData["SuccessMessage"] = AddedToCartSuccessfully;
 
-                return this.RedirectToAction(nameof(Index));
+                return this.View("Index", cartItems);
             }
             catch (Exception ex)
             {
@@ -385,6 +391,29 @@ namespace PCShop.Web.Controllers
                 TempData["ErrorMessage"] = PaymentCancelFailed;
 
                 return this.RedirectToAction(nameof(Index), "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartCount()
+        {
+            try
+            {
+                string? userId = this.GetUserId();
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return this.Unauthorized();
+                }
+
+                int cartCount = await this._orderService.GetCartCountAsync(userId);
+
+                return this.Json(new { cartCount });
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format("Error in cart count get method", ex.Message));
+                return this.RedirectToAction(nameof(Index));
             }
         }
     }
