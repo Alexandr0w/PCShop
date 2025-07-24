@@ -57,5 +57,26 @@
             public const string FailedPaymentError = "Error processing failed payment: {0}.";
             public const string PaymentCanceledError = "Payment was canceled by the user: {0}.";
         }
+
+        public static class UserManagement
+        {
+            public const string IndexError = "An error occurred while loading the user management page: {0}.";
+            public const string AssignRoleError = "An error occurred while assigning the role '{1}' to user '{0}': {2}.";
+            public const string RemoveRoleError = "An error occurred while removing the role '{1}' from user '{0}': {2}.";
+            public const string DeleteUserError = "An error occurred while deleting the user '{0}': {1}.";
+            public const string RestoreUserError = "An error occurred while restoring the user '{0}': {1}.";
+            public const string DeleteUserForeverError = "An error occurred while permanently deleting the user '{0}': {1}.";
+        }
+
+        public static class AdminDashboard
+        { 
+            public const string DeletedProductsError = "An error occurred while loading deleted products: {0}.";
+            public const string RestoreProductError = "An error occurred while restoring the product '{0}': {1}.";
+            public const string HardDeleteProductError = "An error occurred while permanently deleting the product '{0}': {1}.";
+
+            public const string DeletedComputersError = "An error occurred while loading deleted computers: {0}.";
+            public const string RestoreComputerError = "An error occurred while restoring the computer '{0}': {1}.";
+            public const string HardDeleteComputerError = "An error occurred while permanently deleting the computer '{0}': {1}.";
+        }
     }
 }

@@ -1,16 +1,16 @@
-﻿@using PCShop.Web.ViewModels.Admin.Product
-@model DeletedProductsListViewModel
+﻿@using PCShop.Web.ViewModels.Admin.Computer
+@model DeletedComputersListViewModel
 
 @{
-    ViewData["Title"] = "Deleted Products";
+    ViewData["Title"] = "Deleted Computers";
 }
 
-<h2 class="mt-4">Deleted Products</h2>
+<h2 class="mt-4">Deleted Computers</h2>
 <hr />
 
-@if (Model.Products == null || !Model.Products.Any())
+@if (Model.Computers == null || !Model.Computers.Any())
 {
-    <div class="alert alert-info">No deleted products found.</div>
+    <div class="alert alert-info">No deleted computers found.</div>
 }
 else
 {
@@ -24,21 +24,21 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model.Products)
+            @foreach (var computer in Model.Computers)
             {
                 <tr>
-                    <td>@product.Name</td>
-                    <td>@product.Price.ToString("F2")</td>
-                    <td>@(product.DeletedOn?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                    <td>@computer.Name</td>
+                    <td>@computer.Price.ToString("F2")</td>
+                    <td>@(computer.DeletedOn?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
                     <td>
-                        <form asp-area="Admin" asp-controller="Product" asp-action="Restore" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@product.Id" />
+                        <form asp-area="Admin" asp-controller="Computer" asp-action="Restore" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@computer.Id" />
                             <button type="submit" class="btn btn-sm btn-success">
                                 <i class="fas fa-undo"></i> Restore
                             </button>
                         </form>
-                        <form asp-area="Admin" asp-controller="Product" asp-action="HardDelete" method="post" class="d-inline ms-1">
-                            <input type="hidden" name="id" value="@product.Id" />
+                        <form asp-area="Admin" asp-controller="Computer" asp-action="HardDelete" method="post" class="d-inline ms-1">
+                            <input type="hidden" name="id" value="@computer.Id" />
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
                                 <i class="fas fa-trash-alt"></i> Delete Forever
                             </button>

@@ -1,4 +1,4 @@
-﻿namespace PCShop.Web.ViewModels.Admin
+﻿namespace PCShop.Web.ViewModels.Admin.Product
 {
     public class DeletedProductsListViewModel
     {

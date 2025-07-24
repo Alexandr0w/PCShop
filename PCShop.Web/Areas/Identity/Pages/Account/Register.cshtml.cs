@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PCShop.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.Data.Common.EntityConstants.ApplicationUser;
 using static PCShop.Data.Common.ValidationMessageConstants.ApplicationUser;
 
@@ -17,21 +18,24 @@ namespace PCShop.Web.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole<Guid>> roleManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger)
         {
-            _userManager = userManager;
-            _userStore = userStore;
-            _emailStore = GetEmailStore();
-            _signInManager = signInManager;
-            _logger = logger;
+            this._userManager = userManager;
+            this._roleManager = roleManager;
+            this._userStore = userStore;
+            this._emailStore = GetEmailStore();
+            this._signInManager = signInManager;
+            this._logger = logger;
         }
 
         [BindProperty]
@@ -108,6 +112,21 @@ namespace PCShop.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    bool userRoleExists = await this._roleManager
+                        .RoleExistsAsync(UserRoleName);
+
+                    if (userRoleExists)
+                    {
+                        // This should be always the case
+                        result = await _userManager
+                            .AddToRoleAsync(user, UserRoleName);
+
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception($"User can't be registered, because {UserRoleName} role can't be found!");
+                        }
+                    }
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

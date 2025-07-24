@@ -1,0 +1,32 @@
+﻿@{
+    var success = TempData["SuccessMessage"] as string;
+    var error = TempData["ErrorMessage"] as string;
+}
+
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1080;">
+    @if (!string.IsNullOrEmpty(success))
+    {
+        <div class="toast slide-in text-bg-success border-0 shadow" role="alert" data-bs-delay="3000" data-bs-autohide="true">
+            <div class="d-flex">
+                <div class="toast-body w-100 text-center" title="@success">
+                    <i class="fas fa-check-circle fa-lg mb-2 d-block"></i>
+                    @success
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="toast slide-in text-bg-danger border-0 shadow" role="alert" data-bs-delay="3000" data-bs-autohide="true">
+            <div class="d-flex">
+                <div class="toast-body w-100 text-center" title="@error">
+                    <i class="fas fa-exclamation-triangle fa-lg mb-2 d-block"></i>
+                    @error
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+</div>

@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Admin.Interfaces;
-using PCShop.Web.ViewModels.Admin.Product;
+using PCShop.Web.ViewModels.Admin.Computer;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.MessageConstants.AdminDashboard;
 
 namespace PCShop.Web.Areas.Admin.Controllers
 {
-    public class ProductController : BaseAdminController
+    public class ComputerController : BaseAdminController
     {
         private readonly IAdminService _adminService;
-        private readonly ILogger<ProductController> _logger;
-        public ProductController(IAdminService adminService, ILogger<ProductController> logger)
+        private readonly ILogger<ComputerController> _logger;
+
+        public ComputerController(IAdminService adminService, ILogger<ComputerController> logger)
         {
             this._adminService = adminService;
             this._logger = logger;
@@ -21,15 +22,15 @@ namespace PCShop.Web.Areas.Admin.Controllers
         {
             try
             {
-                DeletedProductsListViewModel model = await this._adminService.GetDeletedProductsAsync(currentPage);
+                DeletedComputersListViewModel model = await this._adminService.GetDeletedComputersAsync(currentPage);
                 return this.View(model);
             }
             catch (Exception ex)
             {
-                this._logger.LogError(string.Format(AdminDashboard.DeletedProductsError, ex.Message));
-                TempData["ErrorMessage"] = DeletedProductsFailed;
+                this._logger.LogError(string.Format(AdminDashboard.DeletedComputersError, ex.Message));
+                TempData["ErrorMessage"] = DeletedComputersFailed;
 
-                return this.RedirectToAction(nameof(Deleted), "Product");
+                return this.RedirectToAction(nameof(Deleted), "Computer");
             }
         }
 
@@ -40,27 +41,27 @@ namespace PCShop.Web.Areas.Admin.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    TempData["ErrorMessage"] = InvalidProductId;
+                    TempData["ErrorMessage"] = InvalidComputerId;
                     return this.RedirectToAction(nameof(Deleted));
                 }
 
-                bool result = await this._adminService.RestoreProductAsync(id);
+                bool result = await this._adminService.RestoreComputerAsync(id);
 
                 if (result)
                 {
-                    TempData["SuccessMessage"] = ProductRestoredSuccessfully;
+                    TempData["SuccessMessage"] = ComputerRestoredSuccessfully;
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = ProductRestoredFailed;
+                    TempData["ErrorMessage"] = ComputerRestoredFailed;
                 }
 
                 return this.RedirectToAction(nameof(Deleted));
             }
             catch (Exception ex)
             {
-                this._logger.LogError(string.Format(AdminDashboard.RestoreProductError, id, ex.Message));
-                TempData["ErrorMessage"] = ProductRestoredError;
+                this._logger.LogError(string.Format(AdminDashboard.RestoreComputerError, id, ex.Message));
+                TempData["ErrorMessage"] = ComputerRestoredFailed;
 
                 return this.RedirectToAction(nameof(Deleted));
             }
@@ -73,27 +74,27 @@ namespace PCShop.Web.Areas.Admin.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    TempData["ErrorMessage"] = InvalidProductId;
+                    TempData["ErrorMessage"] = InvalidComputerId;
                     return this.RedirectToAction(nameof(Deleted));
                 }
 
-                bool result = await this._adminService.DeleteProductPermanentlyAsync(id);
+                bool result = await this._adminService.DeleteComputerPermanentlyAsync(id);
 
                 if (result)
                 {
-                    TempData["SuccessMessage"] = ProductDeletedPermanentlySuccessfully;
+                    TempData["SuccessMessage"] = ComputerDeletedPermanentlySuccessfully;
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = ProductDeletedPermanentlyFailed;
+                    TempData["ErrorMessage"] = ComputerDeletedPermanentlyFailed;
                 }
 
                 return this.RedirectToAction(nameof(Deleted));
             }
             catch (Exception ex)
             {
-                this._logger.LogError(string.Format(AdminDashboard.HardDeleteProductError, id, ex.Message));
-                TempData["ErrorMessage"] = HardDeleteProductError;
+                this._logger.LogError(string.Format(AdminDashboard.HardDeleteComputerError, id, ex.Message));
+                TempData["ErrorMessage"] = HardDeleteComputerError;
 
                 return this.RedirectToAction(nameof(Deleted));
             }

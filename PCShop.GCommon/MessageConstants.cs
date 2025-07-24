@@ -1,4 +1,6 @@
-﻿namespace PCShop.GCommon
+﻿using System.Data;
+
+namespace PCShop.GCommon
 {
     public static class MessageConstants
     {
@@ -53,6 +55,56 @@
             public const string PaymentCanceled = "Payment has been canceled. Please try again.";
             public const string PaymentError = "Failed to processing the payment. Please try again.";
             public const string PaymentCancelFailed = "Failed to cancel the payment. Please try again.";
+        }
+
+        public static class AdminDashboard
+        {
+            public const string DeletedProductsFailed = "Error loading deleted products.";
+            public const string InvalidProductId = "Missing product ID.";
+
+            public const string ProductRestoredSuccessfully = "Product restored successfully.";
+            public const string ProductRestoredFailed = "Failed to restore product. It may not exist or is already active.";
+            public const string ProductRestoredError = "An error occurred while restoring the product.";
+
+            public const string ProductDeletedPermanentlySuccessfully = "Product permanently deleted.";
+            public const string ProductDeletedPermanentlyFailed 
+                = "Failed to permanently delete product. Product may not exist or is not deleted.";
+
+            public const string HardDeleteProductError = "An error occurred while restoring the product.";
+
+            public const string DeletedComputersFailed = "Error loading deleted computers.";
+            public const string InvalidComputerId = "Missing computer ID.";
+
+            public const string ComputerRestoredSuccessfully = "Computer restored successfully.";
+            public const string ComputerRestoredFailed = "Failed to restore computer. It may not exist or is already active.";
+            public const string ComputerRestoredError = "An error occurred while restoring the computer.";
+
+            public const string ComputerDeletedPermanentlySuccessfully = "Computer permanently deleted.";
+            public const string ComputerDeletedPermanentlyFailed
+                = "Failed to permanently delete computer. Computer may not exist or is not deleted.";
+
+            public const string HardDeleteComputerError = "An error occurred while restoring the computer.";
+        }
+
+        public static class UserManagement
+        {
+            public const string InvalidUserId = "Invalid user ID.";
+            public const string UserNotFound = "User not found.";
+
+            public const string AssignRoleSuccessfully = "Role '{0}' assigned successfully.";
+            public const string AssignRoleFailed = "Failed to assign role '{0}'.";
+
+            public const string RemoveRoleSuccessfully = "Role '{0}' removed successfully.";
+            public const string RemoveRoleFailed = "Failed to remove role '{0}'.";
+
+            public const string DeletedUserSuccessfully = "User deleted successfully.";
+            public const string DeleteUserFailed = "Failed to delete user.";
+
+            public const string RestoreUserSuccessfully = "User restored successfully.";
+            public const string RestoreUserFailed = "Failed to restore user. User may not exist or is already active.";
+
+            public const string DeleteUserPermanentlySuccessfully = "User permanently deleted.";
+            public const string DeleteUserPermanentlyFailed = "Failed to permanently delete user. User may not exist or is not deleted.";
         }
     }
 }
