@@ -76,56 +76,5 @@
 
 @section Scripts {
     <script src="https://js.stripe.com/v3/"></script>
-    <script>
-                document.addEventListener('DOMContentLoaded', function () {
-            const stripePublicKey = '@Model.StripePublicKey';
-            const checkoutButton = document.getElementById('checkout-button');
-            const buttonText = document.getElementById('button-text');
-
-            // Вземи anti-forgery токена от формата
-            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
-            checkoutButton.disabled = false;
-            buttonText.textContent = 'Pay Now';
-
-            checkoutButton.addEventListener('click', function () {
-                checkoutButton.disabled = true;
-                buttonText.textContent = 'Processing...';
-
-                const paymentData = {
-                    amount: @totalPrice.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                    fullName: '@fullNameEscaped',
-                    email: '@emailEscaped'
-                };
-
-                fetch('@Url.Action("CreateCheckoutSession", "Order")', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token // <-- добавяме CSRF токена тук
-                    },
-                    body: JSON.stringify(paymentData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(session => {
-                    if (session.id) {
-                        const stripe = Stripe(stripePublicKey);
-                        return stripe.redirectToCheckout({ sessionId: session.id });
-                    } else {
-                        throw new Error('No session ID returned from server');
-                    }
-                })
-                .catch(error => {
-                    alert('There was an error processing your payment: ' + error.message);
-                    checkoutButton.disabled = false;
-                    buttonText.textContent = 'Pay Now';
-                });
-            });
-        });
-    </script>
+    <script src="~/js/stripeCheckout.js" asp-append-version="true"></script>
     }
