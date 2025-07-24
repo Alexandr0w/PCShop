@@ -107,7 +107,7 @@ namespace PCShop.Web.Controllers
 
                 bool addResult = await this._computerService.AddComputerAsync(userId, inputModel, imageFile);
 
-                if (addResult == false)
+                if (!addResult)
                 {
                     ModelState.AddModelError(string.Empty, string.Format(Computer.AddError, inputModel.Name));
                     this._logger.LogError(string.Format(Computer.AddError, inputModel.Name));
@@ -201,7 +201,7 @@ namespace PCShop.Web.Controllers
 
                 bool editResult = await this._computerService.PersistUpdatedComputerAsync(userId, inputModel, null);
 
-                if (editResult == false)
+                if (!editResult)
                 {
                     ModelState.AddModelError(string.Empty, string.Format(Computer.EditError, inputModel.Name));
                     this._logger.LogError(string.Format(Computer.EditError, inputModel.Name));
@@ -269,7 +269,7 @@ namespace PCShop.Web.Controllers
 
                 bool deleteResult = await this._computerService.SoftDeleteComputerAsync(userId, inputModel);
 
-                if (deleteResult == false)
+                if (!deleteResult)
                 {
                     ModelState.AddModelError(string.Empty, string.Format(Computer.DeleteError, inputModel.Name));
                     this._logger.LogError(string.Format(Computer.DeleteError, inputModel.Name));

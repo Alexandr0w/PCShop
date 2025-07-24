@@ -112,7 +112,7 @@ namespace PCShop.Web.Controllers
 
                 bool addResult = await this._productService.AddProductAsync(userId, inputModel, inputModel.ImageFile);
 
-                if (addResult == false)
+                if (!addResult)
                 {
                     inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
 
@@ -215,7 +215,7 @@ namespace PCShop.Web.Controllers
 
                 bool editResult = await this._productService.PersistUpdatedProductAsync(userId, inputModel, null);
 
-                if (editResult == false)
+                if (!editResult)
                 {
                     inputModel.ProductTypes = await this._productTypeService.GetProductTypeMenuAsync();
 
@@ -285,7 +285,7 @@ namespace PCShop.Web.Controllers
 
                 bool deleteResult = await this._productService.SoftDeleteProductAsync(userId, inputModel);
 
-                if (deleteResult == false)
+                if (!deleteResult)
                 {
                     ModelState.AddModelError(string.Empty, string.Format(Product.DeleteError, inputModel.Name));
                     this._logger.LogError(string.Format(Product.DeleteError, inputModel.Name));
