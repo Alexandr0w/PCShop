@@ -1,77 +1,60 @@
 # 🖥️ PCShop - ASP.NET Core E-Commerce
 
-PCShop is a full-featured e-commerce web application built with **ASP.NET Core**, allowing users to browse, filter, and purchase PC components and computers. It includes advanced features such as user authentication, shopping cart, order confirmation, product management, and responsive UI using Bootstrap.
+PCShop is a feature-rich e-commerce web application built with **ASP.NET Core**, enabling users to browse, filter, and purchase PC components and computers. It includes user management, shopping cart, order processing, and responsive UI.
 
 ---
 
 ## ✨ Features
 
-- 🔐 **User Authentication & Profile Management**
-  - Register, login, and manage profile via ASP.NET Identity
-- 🛍️ **Product Catalog**
-  - Browse, filter, sort, and search products by type, name, or price
-- 🖥️ **Computer Listings**
-  - Manage computer systems separately from individual products
-- 🛒 **Shopping Cart**
-  - Add products or computers to cart with quantity management and finalization
-- 📦 **Order Confirmation**
-  - Pre-filled user details from profile; supports delivery method selection and comment
-- 💳 **Payment Integration**
-  - Stripe support for secure credit/debit card payments
-- 📤 **Image Management**
-  - Upload, replace, and automatically delete old product images
-- 📃 **Clean MVC & Razor Architecture**
-  - Separation of concerns with Controllers, Services, and Repositories
-- 💬 **Global TempData Messaging**
-  - Toast-style messages with icons and auto-hide animations
-- 📄 **Pagination, Sorting, and Filtering**
-  - Server-side implementation for both Products and Computers
-- 🧰 **Repository Pattern & Service Layer**
-  - Clean code architecture for maintainability and testability
-- 📦 **Entity Framework Core**
-  - Code-first migrations and query filters for soft deletes
-- 🎨 **Responsive UI**
-  - Built with Bootstrap 5, FontAwesome, and clean layout components
-- 🗂️ **Area-Based Role Management**
-  - 💼 **Admin Area** – Manage users, products, and restore/delete soft-deleted records  
-  - 📦 **Manager Area** – View, filter, approve, and delete pending orders  
-  - 👤 **User Area** – View orders, manage profile, and complete purchases
+- 🔐 **Authentication & Profile**
+- 🛍️ **Product & Computer Catalog**
+- 🛒 **Cart & Order Finalization**
+- 💳 **Stripe Payments**
+- 📤 **Image Upload & Management**
+- 📃 **Clean MVC + Service Architecture**
+- 🔔 **Notification System** with real-time unread count
+- 🗂️ **Admin / Manager / User Areas**
+
+---
+
+## 🖼️ Screenshots
+
+### 🔹 Home Page  
+![Home Page](screenshots/home.png)
+
+### 🔹 Shopping Cart  
+![Shopping Cart](screenshots/cart.png)
+
+### 🔹 Admin Panel – Product Management  
+![Admin Panel](screenshots/admin-products.png)
+
+---
+
+## 🧪 Test Credentials
+
+- **Admin**: `admin@pcshop.com` / `Admin123!`  
+- **Manager**: `manager@pcshop.com` / `Manager123!`  
+- **User**: `user@pcshop.com` / `User123!`
+
+### 💳 Stripe Test Card
+
+  * Number: 4242 4242 4242 4242
+  * Date: 10/34 (any future date)
+  * CVC: 123 (any 3 digits)
 
 ---
 
 ## 🛠️ Technologies Used
 
-- **ASP.NET Core 8.0** – Main web framework (MVC & Razor Pages)
-- **Entity Framework Core** – ORM for database access with LINQ
-- **SQL Server** – Relational database (code-first migrations)
-- **Razor Pages / MVC** – View rendering and structured routing
-- **Bootstrap 5** – Responsive UI framework
-- **FontAwesome / Bootstrap Icons** – UI icons and visuals
-- **jQuery** – Used for dynamic features like toast auto-dismiss
-- **TempData, Tag Helpers, Model Validation** – Built-in ASP.NET Core features
-- **Stripe** – Payment processing via credit/debit cards
-
----
-
-## 🧪 Test Credentials
-You can use the following test accounts to try out the application:
-
-- **Stripe** test card:
-  * Number: 4242 4242 4242 4242
-  * Date: 10/34 (any future date)
-  * CVC: 123 (any 3 digits)
-  
-- **Admin:**
-  * Email: admin@pcshop.com
-  * Password: Admin123!
-
-- **Manager:**
-  * Email: manager@pcshop.com
-  * Password: Manager123!
-  
-- **User:**
-  * Email: user@pcshop.com
-  * Password: User123!
+- ASP.NET Core 8 (MVC & Razor Pages)
+- Entity Framework Core + SQL Server
+- Bootstrap 5 + FontAwesome
+- Stripe API (payment)
+- Email integration with SendGrid API
+- Repository Pattern & Service Layer
+- TempData / Toast Messaging
+- Soft Deletes + Admin Restore Panel
+- Area-based Role Management
 
 ---
 
@@ -82,11 +65,13 @@ You can use the following test accounts to try out the application:
 - `PCShop.Data.Common` – Common validation constants for entities
 - `PCShop.Services.Core` – Core business logic and service interfaces/implementations
 - `PCShop.Services.Common` – Shared constants used across services
-- `PCShop.Tests` – Unit tests using NUnit and Moq
 - `PCShop.Web` – Presentation layer (MVC controllers, Razor views, and startup config)
 - `PCShop.Web.Infrastructure` – TagHelpers, middleware, extensions, and settings
 - `PCShop.Web.ViewModels` – ViewModels used for data transfer between views and controllers
 - `PCShop.GCommon` – Global constants, enums, and shared validation logic
+- `PCShop.Tests` – Unit tests using NUnit and Moq
+- `screenshots` - 📸 Screenshots used in README
+- `README.md` - project documentation
 
 ---
 
