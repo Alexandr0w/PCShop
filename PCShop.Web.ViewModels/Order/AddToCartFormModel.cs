@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static PCShop.Data.Common.ValidationMessageConstants.Order;
 
 namespace PCShop.Web.ViewModels.Order
 {
@@ -14,7 +15,7 @@ namespace PCShop.Web.ViewModels.Order
 
         public string? ComputerId { get; set; }
 
-        [Range(1, 100, ErrorMessage = "Quantity must be between 1 and 100")]
+        [Range(MinQuantity, MaxQuantity, ErrorMessage = QuantityRange)]
         public int Quantity { get; set; } = 1;
     }
 }
