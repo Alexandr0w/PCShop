@@ -21,6 +21,7 @@ namespace PCShop.Data
         public virtual DbSet<OrderItem> OrdersItems { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductType> ProductsTypes { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

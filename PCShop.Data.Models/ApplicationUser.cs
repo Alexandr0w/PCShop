@@ -22,5 +22,6 @@ namespace PCShop.Data.Models
         public bool IsDeleted { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
     }
 }

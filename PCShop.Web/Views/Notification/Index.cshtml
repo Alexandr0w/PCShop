@@ -1,0 +1,97 @@
+﻿@using PCShop.Web.ViewModels.Notification
+@model NotificationListViewModel
+
+@{
+    ViewData["Title"] = "My Notifications";
+    string createdOnFormat = "dd.MM.yyyy HH:mm";
+}
+
+<h2 class="mt-4">Notifications</h2>
+<hr />
+
+@if (!Model.Notifications.Any())
+{
+    <div class="alert alert-info">You have no notifications.</div>
+}
+else
+{
+    <form asp-controller="Notification" method="post" asp-action="MarkAllAsRead">
+        <button class="btn btn-sm btn-primary mb-3" @(ViewBag.HasUnreadNotifications ? "" : "disabled")>
+            Mark All as Read
+        </button>
+    </form>
+
+    <ul class="list-group">
+        @foreach (var notification in Model.Notifications)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center @(notification.IsRead ? "" : "list-group-item-warning")">
+                <div>
+                    <strong>@notification.Message</strong><br />
+                    <small class="text-muted">@string.Format("{0:" + createdOnFormat + "}", notification.CreatedOn)</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                    @if (!notification.IsRead)
+                    {
+                        <form asp-controller="Notification" method="post" asp-action="MarkAsRead" asp-route-id="@notification.Id">
+                            <button class="btn btn-sm btn-outline-secondary">Mark as Read</button>
+                        </form>
+                    }
+
+                    <form asp-controller="Notification" method="post" asp-action="Delete" asp-route-id="@notification.Id">
+                        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this notification?');">Delete</button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <!-- Pagination -->
+    @if (Model.TotalNotifications > Model.NotificationsPerPage)
+    {
+        int totalPages = (int)Math.Ceiling((double)Model.TotalNotifications / Model.NotificationsPerPage);
+        int currentPage = Model.CurrentPage;
+
+        <nav aria-label="Notification pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+
+                <!-- Previous -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-controller="Notification"
+                       asp-action="Index"
+                       asp-route-currentPage="@(currentPage - 1)"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Numbered pages -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    bool isActive = (i == currentPage);
+                    <li class="page-item @(isActive ? "active" : "")">
+                        <a class="page-link"
+                           asp-controller="Notification"
+                           asp-action="Index"
+                           asp-route-currentPage="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <!-- Next -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-controller="Notification"
+                       asp-action="Index"
+                       asp-route-currentPage="@(currentPage + 1)"
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+}

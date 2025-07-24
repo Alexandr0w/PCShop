@@ -20,17 +20,20 @@ namespace PCShop.Services.Core
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly INotificationService _notificationService;
 
         public OrderService(
             IOrderRepository orderRepository,
             IOrderItemRepository orderItemRepository,
             UserManager<ApplicationUser> userManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            INotificationService notificationService)
         {
             this._orderRepository = orderRepository;
             this._orderItemRepository = orderItemRepository;
             this._userManager = userManager;
             this._emailSender = emailSender;
+            this._notificationService = notificationService;
         }
 
         public async Task<bool> AddProductToCartAsync(AddToCartFormModel model, string userId)
@@ -38,7 +41,7 @@ namespace PCShop.Services.Core
             Guid? productId = null;
             Guid? computerId = null;
 
-            bool isAdded = false;
+            bool isValidUser = Guid.TryParse(userId, out Guid parsedUserId);
 
             if (!string.IsNullOrEmpty(model.ProductId) && Guid.TryParse(model.ProductId, out Guid parsedProductId))
             {
@@ -60,15 +63,14 @@ namespace PCShop.Services.Core
                 throw new ArgumentException(QuantityMustBeGreaterMessage);
             }
 
-            Order? order = await this._orderRepository
-                .GetPendingOrderWithItemsAsync(userId);
+            Order? order = await this._orderRepository.GetPendingOrderWithItemsAsync(userId);
 
-            if (order == null)
+            if (order == null && isValidUser)
             {
                 order = new Order
                 {
                     Id = Guid.NewGuid(),
-                    ApplicationUserId = Guid.Parse(userId),
+                    ApplicationUserId = parsedUserId,
                     OrderDate = DateTime.UtcNow,
                     Status = OrderStatus.Pending,
                     Comment = string.Empty,
@@ -79,6 +81,19 @@ namespace PCShop.Services.Core
                 };
 
                 await this._orderRepository.AddAsync(order);
+
+                OrderItem newItem = new OrderItem
+                {
+                    Id = Guid.NewGuid(),
+                    OrderId = order.Id,
+                    ProductId = productId,
+                    ComputerId = computerId,
+                    Quantity = model.Quantity
+                };
+
+                await this._orderItemRepository.AddAsync(newItem);
+
+                return true;
             }
             else if (order != null)
             {
@@ -89,7 +104,9 @@ namespace PCShop.Services.Core
                 if (existingItem != null)
                 {
                     existingItem.Quantity += model.Quantity;
-                    await this._orderItemRepository.UpdateAsync(existingItem);
+                    bool updateResult = await this._orderItemRepository.UpdateAsync(existingItem);
+
+                    return updateResult;
                 }
                 else
                 {
@@ -103,12 +120,11 @@ namespace PCShop.Services.Core
                     };
 
                     await this._orderItemRepository.AddAsync(newItem);
-
-                    isAdded = true;
+                    return true;
                 }
             }
 
-            return isAdded;
+            return false; 
         }
 
         public async Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId)
@@ -141,8 +157,14 @@ namespace PCShop.Services.Core
 
         public async Task<int> GetCartCountAsync(string userId)
         {
-            Order? order = await this._orderRepository.GetPendingOrderAsync(userId);
-            return order?.OrdersItems.Sum(i => i.Quantity) ?? 0;
+            Order? order = await _orderRepository.GetPendingOrderAsync(userId);
+            
+            if (order == null)
+            {
+                return 0;
+            }
+
+            return order.OrdersItems.Sum(i => i.Quantity);
         }
 
         public async Task<bool> RemoveItemAsync(string itemId, string userId)
@@ -336,10 +358,10 @@ namespace PCShop.Services.Core
                     Id = o.Id.ToString(),
                     CustomerName = o.ApplicationUser.FullName,
                     TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToString(OrderDateFormat, CultureInfo.InvariantCulture),
+                    OrderDate = o.OrderDate.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(OrderDateFormat, CultureInfo.InvariantCulture) : null
+                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture) : null
                 });
 
             return new ManagerOrdersPageViewModel
@@ -367,10 +389,10 @@ namespace PCShop.Services.Core
                     Id = o.Id.ToString(),
                     CustomerName = o.ApplicationUser.FullName,
                     TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToString(OrderDateFormat, CultureInfo.InvariantCulture),
+                    OrderDate = o.OrderDate.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.SendDate?.ToString(OrderDateFormat, CultureInfo.InvariantCulture)
+                    SendDate = o.SendDate?.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture)
                 });
 
             return new ManagerOrdersPageViewModel
@@ -407,6 +429,7 @@ namespace PCShop.Services.Core
                 string subject = "Your Order Has Been Approved";
                 string messageBody = sb.ToString();
 
+                await this._notificationService.CreateAsync(order.ApplicationUserId.ToString(), "Your order has been shipped. Check your email address.");
                 await this._emailSender.SendEmailAsync(order.ApplicationUser.Email, subject, messageBody);
             }
 

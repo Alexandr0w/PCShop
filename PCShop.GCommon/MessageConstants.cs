@@ -49,7 +49,7 @@ namespace PCShop.GCommon
             public const string ConfirmedSuccessfully = "Order confirmed successfully!";
             public const string ConfirmationFailed = "Failed to confirm order. Please try again.";
 
-            public const string PaymentSuccessfully = "Payment successfully! Your order has been confirmed.";
+            public const string PaymentSuccessfully = "Payment successfully! Your order will be confirmed soon.";
             public const string PaymentFailed = "Payment failed. Please try again.";
             public const string OrderDataNotFound = "Order data not found. Please try again or contact support.";
             public const string PaymentCanceled = "Payment has been canceled. Please try again.";
@@ -97,8 +97,8 @@ namespace PCShop.GCommon
             public const string RemoveRoleSuccessfully = "Role '{0}' removed successfully.";
             public const string RemoveRoleFailed = "Failed to remove role '{0}'.";
 
-            public const string DeletedUserSuccessfully = "User deleted successfully.";
-            public const string DeleteUserFailed = "Failed to delete user.";
+            public const string DeletedUserSuccessfully = "User soft-deleted successfully.";
+            public const string DeleteUserFailed = "Failed to soft-delete user.";
 
             public const string RestoreUserSuccessfully = "User restored successfully.";
             public const string RestoreUserFailed = "Failed to restore user. User may not exist or is already active.";
@@ -114,6 +114,18 @@ namespace PCShop.GCommon
 
             public const string DeleteOrderSuccessfully = "Order deleted successfully.";
             public const string DeleteOrderFailed = "Failed to delete order. Please try again.";
+        }
+
+        public static class NotificationMessages
+        {
+            public const string MarkedAsReadSuccessfully = "Notification marked as read successfully.";
+            public const string MarkedAsReadFailed = "Failed to mark notification as read. Please try again.";
+
+            public const string MarkedAllAsReadSuccessfully = "All notifications marked as read successfully.";
+            public const string MarkedAllAsReadFailed = "Failed to mark all notifications as read. Please try again.";
+            
+            public const string NotificationDeletedSuccessfully = "Notification deleted successfully.";
+            public const string NotificationDeleteFailed = "Failed to delete notification. Please try again.";
         }
     }
 }

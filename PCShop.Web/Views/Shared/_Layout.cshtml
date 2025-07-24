@@ -1,4 +1,15 @@
 ﻿@using static PCShop.GCommon.ApplicationConstants
+@inject PCShop.Services.Core.Interfaces.INotificationService NotificationService
+
+@{
+	int unreadCount = 0;
+	if (int.TryParse(Convert.ToString(ViewData["UnreadNotificationsCount"]), out int count))
+	{
+		unreadCount = count;
+	}
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,16 +99,16 @@
 								</form>
 							</div>
 						</div>
+
 						<div class="nav-item position-relative me-3">
 							<a asp-controller="Order" asp-action="Index" class="nav-link position-relative cart-icon" style="font-size: 1.6rem;">
-								<i class="bi bi-cart3"></i>
-								@if (ViewBag.CartCount != null && (int)ViewBag.CartCount > 0)
-								{
-									<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm cart-badge"
-										  id="cartCount" aria-label="Items in cart">
-										@ViewBag.CartCount
-									</span>
-								}
+								<i class="bi bi-cart3" id="cartIcon"></i>
+							</a>
+						</div>
+
+						<div id="notificationIcon" class="nav-item position-relative me-3">
+							<a asp-controller="Notification" asp-action="Index" class="nav-link" title="Notifications" style="font-size: 1.6rem;">
+								<i class="fas fa-bell"></i>
 							</a>
 						</div>
 					}

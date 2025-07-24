@@ -85,5 +85,14 @@
             public const string ApproveOrderError = "An error occurred while approving the order '{0}': {1}.";
             public const string DeleteOrderError = "An error occurred while deleting the order '{0}': {1}.";
         }
+
+        public static class Notification
+        {
+            public const string LoadIndexError = "An error occurred while loading user notifications: {0}.";
+            public const string MarkAsReadError = "An error occurred while marking notification as read: {0}.";
+            public const string MarkAllAsReadError = "An error occurred while marking all notifications as read: {0}.";
+            public const string GetUnreadCountError = "An error occurred while getting unread notifications count: {0}.";
+            public const string DeleteNotificationError = "An error occurred while deleting notification: {0}.";
+        }
     }
 }

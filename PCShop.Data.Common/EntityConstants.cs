@@ -86,5 +86,11 @@
             public const int DeliveryAddressMinLength = 5;
             public const int DeliveryAddressMaxLength = 300;
         }
+
+        public static class Notification
+        {
+            public const int MessageMinLength = 5;
+            public const int MessageMaxLength = 300;
+        }
     }
 }
