@@ -41,6 +41,9 @@ namespace PCShop.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
+            // Configuring Identity options from appsettings.json
+            builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityConfig"));
+
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";

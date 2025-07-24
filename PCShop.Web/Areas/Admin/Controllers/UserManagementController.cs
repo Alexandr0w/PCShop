@@ -23,12 +23,10 @@ namespace PCShop.Web.Areas.Admin.Controllers
             try
             {
                 IEnumerable<UserManagementIndexViewModel> allUsers = await this._userService.GetAllUsersAsync(includeDeleted: true);
-                IEnumerable<string> roles = await this._userService.GetAvailableRolesAsync();
 
                 UserManagementPageViewModel viewModel = new UserManagementPageViewModel
                 {
-                    Users = allUsers,
-                    Roles = roles
+                    Users = allUsers
                 };
 
                 return this.View(viewModel);

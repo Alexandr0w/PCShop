@@ -1,8 +1,15 @@
-﻿@using PCShop.Web.ViewModels.Admin.UserManagement
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using PCShop.Web.ViewModels.Admin.UserManagement
 @model UserManagementPageViewModel
+@inject RoleManager<IdentityRole<Guid>> roleManager
 
 @{
     ViewData["Title"] = "Manage Users";
+
+    IEnumerable<string?> allRoles = await roleManager.Roles
+        .Select(r => r.Name)
+        .ToArrayAsync();
 }
 
 <h2 class="mt-4">Manage Users</h2>
@@ -65,7 +72,7 @@ else
                             else if (!user.Roles.Contains("Admin"))
                             {
                                 <select id="roleDropdown-@user.Id" class="form-select form-select-sm w-auto">
-                                    @foreach (var role in Model.Roles)
+                                    @foreach (var role in allRoles)
                                     {
                                         <option value="@role" selected="@(user.Roles.Contains(role) ? "selected" : null)">
                                             @role

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Web.ViewModels.Admin.UserManagement;
-using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Admin
 {
@@ -30,13 +29,14 @@ namespace PCShop.Services.Core.Admin
                 query = query.Where(u => !u.IsDeleted);
             }
 
-            ICollection<ApplicationUser> allUsers = await query.ToListAsync();
+            ICollection<ApplicationUser> allUsers = await query
+                .ToListAsync();
 
-            ICollection<UserManagementIndexViewModel> allUsersViewModel = new List<UserManagementIndexViewModel>();
+            List<UserManagementIndexViewModel> allUsersViewModel = new List<UserManagementIndexViewModel>();
 
             foreach (ApplicationUser user in allUsers)
             {
-                ICollection<string> roles = await this._userManager.GetRolesAsync(user);
+                IEnumerable<string> roles = await this._userManager.GetRolesAsync(user);
 
                 allUsersViewModel.Add(new UserManagementIndexViewModel
                 {
@@ -48,19 +48,6 @@ namespace PCShop.Services.Core.Admin
             }
 
             return allUsersViewModel;
-        }
-
-        public async Task<IEnumerable<string>> GetAvailableRolesAsync()
-        {
-            string[] rolesName = { AdminRoleName, ManagerRoleName, UserRoleName };
-
-            List<string> roles = await this._roleManager
-                .Roles
-                .Where(r => rolesName.Contains(r.Name))
-                .Select(r => r.Name!)
-                .ToListAsync();
-
-            return roles;
         }
 
         public async Task<bool> UserExistsByIdAsync(string userId)
