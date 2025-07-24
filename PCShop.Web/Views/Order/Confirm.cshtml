@@ -64,7 +64,20 @@
 
     <div class="col-md-6">
         <label asp-for="DeliveryMethod" class="form-label">Delivery Method</label>
-        <select asp-for="DeliveryMethod" asp-items="Html.GetEnumSelectList<DeliveryMethod>()" class="form-select" id="deliveryMethod"></select>
+        <select asp-for="DeliveryMethod" class="form-select" id="deliveryMethod" required>
+            <option value="" disabled selected="@(Model.DeliveryMethod == DeliveryMethod.None)">Select a delivery method</option>
+            
+            @foreach (var item in Html.GetEnumSelectList<DeliveryMethod>())
+            {
+                if ((DeliveryMethod)Enum.Parse(typeof(DeliveryMethod), item.Value) == DeliveryMethod.None)
+                {
+                    continue; 
+                }
+                <option value="@item.Value" selected="@(Model.DeliveryMethod.ToString() == item.Value)">@item.Text</option>
+
+            }
+
+        </select>
         <span asp-validation-for="DeliveryMethod" class="text-danger small"></span>
 
         <div class="mt-2">
@@ -127,6 +140,13 @@
 
             deliverySelect.addEventListener('change', function () {
                 const selectedMethod = parseInt(this.value);
+
+                if (isNaN(selectedMethod) || selectedMethod === 0) {
+                    deliveryFeeSpan.textContent = "0.00";
+                    totalPriceSpan.textContent = productsTotal.toFixed(2);
+                    return;
+                }
+
                 const deliveryFee = deliveryFees[selectedMethod] || 0;
                 const total = productsTotal + deliveryFee;
 
