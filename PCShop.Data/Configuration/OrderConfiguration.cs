@@ -16,7 +16,7 @@ namespace PCShop.Data.Configuration
 
             entity
                 .Property(o => o.OrderDate)
-                .HasDefaultValueSql(OrderDateDefaultSqlValue);
+                .HasDefaultValueSql(DefaultSqlValue);
 
             entity
                 .Property(o => o.Status)
