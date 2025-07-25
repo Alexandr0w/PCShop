@@ -25,13 +25,13 @@ PCShop is a feature-rich e-commerce web application built with **ASP.NET Core**,
 ### 🔹 Shopping Cart  
 ![Shopping Cart](screenshots/cart.png)
 
-### 🔹 Admin Panel – Product Management  
-![Admin Panel](screenshots/admin-products.png)
+### 🔹 Admin Panel – Home page  
+![Admin Panel](screenshots/admin-home.png)
 
 ---
 
 ## 🧪 Test Credentials
-
+	
 - **Admin**: `admin@pcshop.com` / `Admin123!`  
 - **Manager**: `manager@pcshop.com` / `Manager123!`  
 - **User**: `user@pcshop.com` / `User123!`
