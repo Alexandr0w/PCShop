@@ -1,4 +1,5 @@
 ﻿@using PCShop.Web.ViewModels.Admin.ProductManagement
+@using static PCShop.GCommon.ApplicationConstants
 @model ProductManagementPageViewModel
 
 @{
@@ -45,14 +46,14 @@ else
                     <td>@product.Name</td>
                     <td>@product.Price.ToString("C")</td>
                     <td>@product.ProductType</td>
-                    <td>@product.CreatedOn.ToString("yyyy-MM-dd")</td>
+                    <td>@product.CreatedOn.ToString(AppDateFormat)</td>
 
                     @if (anyDeleted)
                     {
                         <td>
                             @if (product.IsDeleted && product.DeletedOn != null)
                             {
-                                @product.DeletedOn?.ToString("yyyy-MM-dd HH:mm")
+                                @product.DeletedOn?.ToString(DateAndTimeFormat)
                             }
                             else
                             {

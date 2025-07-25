@@ -1,12 +1,14 @@
-﻿namespace PCShop.Web.ViewModels.Admin.ComputerManagement
+﻿using static PCShop.Data.Common.EntityConstants.Computer;
+namespace PCShop.Web.ViewModels.Admin.ComputerManagement
 {
     public class ComputerManagementPageViewModel
     {
-        public required IEnumerable<ComputerManagementIndexViewModel> Computers { get; set; } 
+        public int CurrentPage { get; set; } = CurrentPageNumber;
+
+        public int ComputersPerPage { get; set; } = MaxComputersPerPage;
+
         public int TotalComputers { get; set; }
 
-        public int ComputersPerPage { get; set; }
-
-        public int CurrentPage { get; set; }
+        public IEnumerable<ComputerManagementIndexViewModel> Computers { get; set; } = new List<ComputerManagementIndexViewModel>();
     }
 }

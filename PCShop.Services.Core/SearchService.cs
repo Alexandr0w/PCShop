@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
+using PCShop.Data.Models;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
+using static PCShop.Data.Common.EntityConstants.Search;
 
 namespace PCShop.Services.Core
 {
@@ -14,37 +16,48 @@ namespace PCShop.Services.Core
             this._dbContext = dbContext;
         }
 
-        public async Task<SearchResultsViewModel> SearchAsync(string query)
+        public async Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchProductsPerPage)
         {
-            IEnumerable<ProductSearchResultViewModel> products = await this._dbContext
+            IQueryable<SearchResultItemViewModel> productQuery = this._dbContext
                 .Products
                 .Where(p => p.Name.ToLower().Contains(query.ToLower()))
-                .Select(p => new ProductSearchResultViewModel
+                .Select(p => new SearchResultItemViewModel
                 {
                     Id = p.Id.ToString(),
                     Name = p.Name,
-                    Price = p.Price
-                })
-                .OrderBy(c => c.Price)
-                .ToListAsync();
+                    Price = p.Price,
+                    Type = "Product"
+                });
 
-            IEnumerable<ComputerSearchResultViewModel> computers = await this._dbContext
+            IQueryable<SearchResultItemViewModel> computerQuery = this._dbContext
                 .Computers
                 .Where(c => c.Name.ToLower().Contains(query.ToLower()))
-                .Select(c => new ComputerSearchResultViewModel
+                .Select(c => new SearchResultItemViewModel
                 {
                     Id = c.Id.ToString(),
                     Name = c.Name,
-                    Price = c.Price
-                })
-                .OrderBy(c => c.Price)
+                    Price = c.Price,
+                    Type = "Computer"
+                });
+
+            IQueryable<SearchResultItemViewModel> combinedQuery = productQuery
+                .Concat(computerQuery)
+                .OrderBy(r => r.Price);
+
+            int totalResults = await combinedQuery.CountAsync();
+
+            ICollection<SearchResultItemViewModel> pagedResults = await combinedQuery
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
                 .ToListAsync();
 
             return new SearchResultsViewModel
             {
                 Query = query,
-                Products = products,
-                Computers = computers
+                Results = pagedResults,
+                CurrentPage = currentPage,
+                ItemsPerPage = itemsPerPage,
+                TotalResults = totalResults
             };
         }
     }

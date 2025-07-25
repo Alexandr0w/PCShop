@@ -24,28 +24,29 @@ namespace PCShop.Services.Core.Admin
             this._notificationService = notificationService;
         }
 
-        public async Task<IEnumerable<UserManagementIndexViewModel>> GetAllUsersAsync(bool includeDeleted = true)
+        public async Task GetAllUsersAsync(UserManagementPageViewModel model)
         {
             IQueryable<ApplicationUser> query = this._userManager
                 .Users
                 .AsQueryable()
                 .IgnoreQueryFilters();
 
-            if (!includeDeleted)
-            {
-                query = query.Where(u => !u.IsDeleted);
-            }
+            int totalUsers = await query
+                .CountAsync();
 
-            ICollection<ApplicationUser> allUsers = await query
+            List<ApplicationUser> pagedUsers = await query
+                .Skip((model.CurrentPage - 1) * model.UsersPerPage)
+                .Take(model.UsersPerPage)
                 .ToListAsync();
 
-            List<UserManagementIndexViewModel> allUsersViewModel = new List<UserManagementIndexViewModel>();
+            List<UserManagementIndexViewModel> userViewModels = new List<UserManagementIndexViewModel>();
 
-            foreach (ApplicationUser user in allUsers)
+            foreach (ApplicationUser user in pagedUsers)
             {
-                IEnumerable<string> roles = await this._userManager.GetRolesAsync(user);
+                IEnumerable<string> roles = await this._userManager
+                    .GetRolesAsync(user);
 
-                allUsersViewModel.Add(new UserManagementIndexViewModel
+                userViewModels.Add(new UserManagementIndexViewModel
                 {
                     Id = user.Id.ToString(),
                     Email = user.Email,
@@ -54,7 +55,8 @@ namespace PCShop.Services.Core.Admin
                 });
             }
 
-            return allUsersViewModel;
+            model.Users = userViewModels;
+            model.TotalUsers = totalUsers;
         }
 
         public async Task<bool> UserExistsByIdAsync(string userId)

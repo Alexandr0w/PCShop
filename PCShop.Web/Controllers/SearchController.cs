@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.Data.Common.EntityConstants.Search;
 
 namespace PCShop.Web.Controllers
 {
@@ -19,7 +20,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string query)
+        public async Task<IActionResult> Index(string query, int currentPage = SearchCurrentPage)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace PCShop.Web.Controllers
                     return this.View(new SearchResultsViewModel { Query = "" });
                 }
 
-                SearchResultsViewModel results = await this._searchService.SearchAsync(query);
+                SearchResultsViewModel results = await this._searchService.SearchAsync(query, currentPage);
 
                 return this.View(results);
             }

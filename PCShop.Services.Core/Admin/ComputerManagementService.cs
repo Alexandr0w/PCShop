@@ -22,18 +22,20 @@ namespace PCShop.Services.Core.Admin
             this._userManager = userManager;
         }
 
-        public async Task<IEnumerable<ComputerManagementIndexViewModel>> GetAllComputersAsync(bool includeDeleted = true)
+        public async Task GetAllComputersAsync(ComputerManagementPageViewModel model)
         {
             IQueryable<Computer> computerQuery = this._computerRepository
                 .GetAllAttached()
-                .IgnoreQueryFilters();
+                .IgnoreQueryFilters()
+                .AsNoTracking();
 
-            if (!includeDeleted)
-            {
-                computerQuery = computerQuery.Where(c => !c.IsDeleted);
-            }
+            model.TotalComputers = await computerQuery
+                .CountAsync();
 
-            ICollection<ComputerManagementIndexViewModel> computers = await computerQuery
+            model.Computers = await computerQuery
+                .OrderByDescending(c => c.CreatedOn)
+                .Skip((model.CurrentPage - 1) * model.ComputersPerPage)
+                .Take(model.ComputersPerPage)
                 .Select(c => new ComputerManagementIndexViewModel
                 {
                     Id = c.Id.ToString(),
@@ -43,10 +45,7 @@ namespace PCShop.Services.Core.Admin
                     IsDeleted = c.IsDeleted,
                     DeletedOn = c.DeletedOn
                 })
-                .OrderByDescending(c => c.CreatedOn)
-                .ToListAsync();
-
-            return computers;
+                .ToArrayAsync();
         }
 
         public async Task<bool> AddComputerAsync(string? userId, ComputerManagementFormInputModel inputModel, IFormFile? imageFile)

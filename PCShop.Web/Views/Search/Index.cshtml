@@ -3,43 +3,76 @@
 
 @{
     ViewData["Title"] = $"Search for \"{Model.Query}\"";
+
+    int totalPages = (int)Math.Ceiling((double)Model.TotalResults / Model.ItemsPerPage);
+    int currentPage = Model.CurrentPage;
 }
 
 <h2 class="mb-4">Search results for "<strong>@Model.Query</strong>"</h2>
 
-@if (!Model.Products.Any() && !Model.Computers.Any())
+@if (!Model.Results.Any())
 {
     <div class="alert alert-warning" role="alert">
-        No results found.
+        No results found for "<strong>@Model.Query</strong>".
     </div>
 }
-
-@if (Model.Products.Any())
+else
 {
-    <h4>Matching Products</h4>
     <div class="list-group mb-4">
-        @foreach (var product in Model.Products)
+        @foreach (var result in Model.Results)
         {
-            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id"
+            <a asp-controller="@result.Type"
+               asp-action="Details"
+               asp-route-id="@result.Id"
                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                @product.Name
-                <span class="badge bg-primary rounded-pill">@product.Price €</span>
+                <span>
+                    <strong>@result.Name</strong>
+                    <span class="badge bg-secondary ms-2">@result.Type</span>
+                </span>
+                <span class="badge bg-primary rounded-pill">@result.Price €</span>
             </a>
         }
     </div>
-}
 
-@if (Model.Computers.Any())
-{
-    <h4>Matching Computers</h4>
-    <div class="list-group">
-        @foreach (var computer in Model.Computers)
-        {
-            <a asp-controller="Computer" asp-action="Details" asp-route-id="@computer.Id"
-               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                @computer.Name
-                <span class="badge bg-success rounded-pill">@computer.Price €</span>
-            </a>
-        }
-    </div>
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Search pagination">
+            <ul class="pagination justify-content-center mt-4">
+
+                <!-- Previous -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-query="@Model.Query"
+                       asp-route-currentPage="@(currentPage - 1)"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Page numbers -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link"
+                           asp-route-query="@Model.Query"
+                           asp-route-currentPage="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <!-- Next -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-query="@Model.Query"
+                       asp-route-currentPage="@(currentPage + 1)"
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
 }

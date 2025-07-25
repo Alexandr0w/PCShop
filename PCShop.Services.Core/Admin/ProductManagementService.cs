@@ -27,7 +27,7 @@ namespace PCShop.Services.Core.Admin
             this._userManager = userManager;
         }
 
-        public async Task<IEnumerable<ProductManagementIndexViewModel>> GetAllProductsAsync(bool includeDeleted = true)
+        public async Task GetAllProductsAsync(ProductManagementPageViewModel model)
         {
             IQueryable<Product> productQuery = this._productRepository
                 .GetAllAttached()
@@ -35,12 +35,13 @@ namespace PCShop.Services.Core.Admin
                 .AsNoTracking()
                 .IgnoreQueryFilters();
 
-            if (!includeDeleted)
-            {
-                productQuery = productQuery.Where(p => !p.IsDeleted);
-            }
+            model.TotalProducts = await productQuery
+                .CountAsync();
 
-            ICollection<ProductManagementIndexViewModel> products = await productQuery
+            model.Products = await productQuery
+                .OrderByDescending(p => p.CreatedOn)
+                .Skip((model.CurrentPage - 1) * model.ProductsPerPage)
+                .Take(model.ProductsPerPage)
                 .Select(p => new ProductManagementIndexViewModel
                 {
                     Id = p.Id.ToString(),
@@ -51,10 +52,7 @@ namespace PCShop.Services.Core.Admin
                     IsDeleted = p.IsDeleted,
                     DeletedOn = p.DeletedOn
                 })
-                .OrderByDescending(p => p.CreatedOn)
                 .ToListAsync();
-
-            return products;
         }
 
         public async Task<bool> AddProductAsync(string? userId, ProductManagementFormInputModel inputModel, IFormFile? imageFile)

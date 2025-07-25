@@ -4,7 +4,7 @@ namespace PCShop.Services.Core.Admin.Interfaces
 {
     public interface IUserManagementService
     {
-        Task<IEnumerable<UserManagementIndexViewModel>> GetAllUsersAsync(bool includeDeleted = true);
+        Task GetAllUsersAsync(UserManagementPageViewModel model);
 
         Task<bool> UserExistsByIdAsync(string userId);
 

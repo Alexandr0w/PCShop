@@ -1,4 +1,4 @@
-﻿﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using PCShop.Web.ViewModels.Admin.UserManagement
 @model UserManagementPageViewModel
@@ -10,6 +10,9 @@
     IEnumerable<string?> allRoles = await roleManager.Roles
         .Select(r => r.Name)
         .ToArrayAsync();
+
+    int totalPages = (int)Math.Ceiling((double)Model.TotalUsers / Model.UsersPerPage);
+    int currentPage = Model.CurrentPage;
 }
 
 <h2 class="mt-4">Manage Users</h2>
@@ -22,26 +25,26 @@
 else
 {
     <table class="table table-bordered table-striped mt-3">
-        <thead>
+        <thead class="text-center">
             <tr>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th class="align-middle">Email</th>
+                <th class="align-middle">Roles</th>
+                <th class="align-middle">Status</th>
+                <th class="align-middle">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var user in Model.Users)
             {
-                <tr class="@(user.IsDeleted ? "table-danger" : "")">
-                    <td>@user.Email</td>
-                    <td>
+                <tr class="@(user.IsDeleted ? "table-danger" : "") text-center align-middle">
+                    <td class="align-middle">@user.Email</td>
+                    <td class="align-middle">
                         @foreach (var role in user.Roles)
                         {
                             <span class="badge bg-secondary me-1">@role</span>
                         }
                     </td>
-                    <td>
+                    <td class="align-middle">
                         @if (user.IsDeleted)
                         {
                             <span class="badge bg-danger">Deleted</span>
@@ -51,8 +54,8 @@ else
                             <span class="badge bg-success">Active</span>
                         }
                     </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-2">
+                    <td class="align-middle">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center align-items-center text-center">
                             @if (user.IsDeleted)
                             {
                                 <form method="post" asp-action="RestoreUser" asp-controller="UserManagement" asp-area="Admin" class="d-inline">
@@ -115,6 +118,37 @@ else
             }
         </tbody>
     </table>
+}
+
+<!-- Pagination -->
+@if (totalPages > 1)
+{
+    <nav aria-label="User pagination">
+        <ul class="pagination justify-content-center mt-4">
+
+            <!-- Previous -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-route-CurrentPage="@(currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Numbered pages -->
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" asp-route-CurrentPage="@i">@i</a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" asp-route-CurrentPage="@(currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 }
 
 <script>

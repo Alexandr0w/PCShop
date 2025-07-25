@@ -5,8 +5,8 @@ namespace PCShop.Services.Core.Admin.Interfaces
 {
     public interface IProductManagementService
     {
-        Task<IEnumerable<ProductManagementIndexViewModel>> GetAllProductsAsync(bool includeDeleted = true);
-        
+        Task GetAllProductsAsync(ProductManagementPageViewModel model);
+
         Task<bool> AddProductAsync(string? userId, ProductManagementFormInputModel inputModel, IFormFile? imageFile);
 
         Task<ProductManagementFormInputModel?> GetProductEditFormModelAsync(string? productId);

@@ -1,11 +1,17 @@
-﻿namespace PCShop.Web.ViewModels.Search
+﻿using static PCShop.Data.Common.EntityConstants.Search;
+
+namespace PCShop.Web.ViewModels.Search
 {
     public class SearchResultsViewModel
     {
-        public required string Query { get; set; } 
+        public required string Query { get; set; }
 
-        public IEnumerable<ProductSearchResultViewModel> Products { get; set; } = new List<ProductSearchResultViewModel>();
+        public int CurrentPage { get; set; } = SearchCurrentPage;
 
-        public IEnumerable<ComputerSearchResultViewModel> Computers { get; set; } = new List<ComputerSearchResultViewModel>();
+        public int ItemsPerPage { get; set; } = SearchProductsPerPage;
+
+        public int TotalResults { get; set; }
+
+        public IEnumerable<SearchResultItemViewModel> Results { get; set; } = new List<SearchResultItemViewModel>();
     }
 }

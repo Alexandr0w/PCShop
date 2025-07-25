@@ -1,4 +1,5 @@
 ﻿@using PCShop.Web.ViewModels.Admin.ComputerManagement
+@using static PCShop.GCommon.ApplicationConstants
 @model ComputerManagementPageViewModel
 
 @{
@@ -43,14 +44,14 @@ else
                 <tr class="text-center @(computer.IsDeleted ? "table-danger" : "")">
                     <td>@computer.Name</td>
                     <td>@computer.Price.ToString("C")</td>
-                    <td>@computer.CreatedOn.ToString("yyyy-MM-dd")</td>
+                    <td>@computer.CreatedOn.ToString(AppDateFormat)</td>
 
                     @if (anyDeleted)
                     {
                         <td>
                             @if (computer.IsDeleted && computer.DeletedOn != null)
                             {
-                                @computer.DeletedOn?.ToString("yyyy-MM-dd HH:mm")
+                                @computer.DeletedOn?.ToString(DateAndTimeFormat)
                             }
                             else
                             {

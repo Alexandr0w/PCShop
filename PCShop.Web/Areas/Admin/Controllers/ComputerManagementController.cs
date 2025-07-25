@@ -3,6 +3,7 @@ using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Web.ViewModels.Admin.ComputerManagement;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.Data.Common.EntityConstants.Computer;
 using static PCShop.GCommon.MessageConstants.ComputerMessages;
 
 namespace PCShop.Web.Areas.Admin.Controllers
@@ -19,27 +20,24 @@ namespace PCShop.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Manage(int currentPage = 1)
+        public async Task<IActionResult> Manage(int currentPage = CurrentPageNumber)
         {
-            int computersPerPage = 10;
-
-            IEnumerable<ComputerManagementIndexViewModel> allComputers = await this._computerManagementService
-                .GetAllComputersAsync(includeDeleted: true);
-
-            ICollection<ComputerManagementIndexViewModel> pagedComputers = allComputers
-                .Skip((currentPage - 1) * computersPerPage)
-                .Take(computersPerPage)
-                .ToList();
-
-            ComputerManagementPageViewModel model = new ComputerManagementPageViewModel
+            try
             {
-                Computers = pagedComputers,
-                TotalComputers = allComputers.Count(),
-                ComputersPerPage = computersPerPage,
-                CurrentPage = currentPage
-            };
+                ComputerManagementPageViewModel model = new ComputerManagementPageViewModel
+                {
+                    CurrentPage = currentPage,
+                    ComputersPerPage = MaxComputersPerPage
+                };
 
-            return this.View(model);
+                await this._computerManagementService.GetAllComputersAsync(model);
+                return this.View(model);
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(LoadPage.IndexError, ex.Message));
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
         }
 
         [HttpGet]

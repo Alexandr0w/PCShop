@@ -4,7 +4,7 @@ namespace PCShop.Web.ViewModels.Product
 {
     public class ProductListViewModel
     {
-        public int CurrentPage { get; set; } = CurrentPageNumber;
+        public int CurrentPage { get; set; } = ProductCurrentPage;
 
         public int ProductsPerPage { get; set; } = MaxProductsPerPage;
 

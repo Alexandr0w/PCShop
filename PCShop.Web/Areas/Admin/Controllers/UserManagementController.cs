@@ -3,6 +3,7 @@ using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Web.ViewModels.Admin.UserManagement;
 using static PCShop.GCommon.ErrorMessages;
 using static PCShop.GCommon.MessageConstants.UserManagement;
+using static PCShop.Data.Common.EntityConstants.ApplicationUser;
 
 namespace PCShop.Web.Areas.Admin.Controllers
 {
@@ -18,18 +19,18 @@ namespace PCShop.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int currentPage = CurrentPageNumber)
         {
             try
             {
-                IEnumerable<UserManagementIndexViewModel> allUsers = await this._userManagementService.GetAllUsersAsync(includeDeleted: true);
-
-                UserManagementPageViewModel viewModel = new UserManagementPageViewModel
+                UserManagementPageViewModel model = new UserManagementPageViewModel
                 {
-                    Users = allUsers
+                    CurrentPage = currentPage,
+                    UsersPerPage = MaxUsersPerPage
                 };
 
-                return this.View(viewModel);
+                await this._userManagementService.GetAllUsersAsync(model);
+                return this.View(model);
             }
             catch (Exception ex)
             {

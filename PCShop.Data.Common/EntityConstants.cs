@@ -18,6 +18,9 @@
 
             public const int PostalCodeMinLength = 2;
             public const int PostalCodeMaxLength = 10;
+
+            public const int CurrentPageNumber = 1;
+            public const int MaxUsersPerPage = 10;
         }
 
         public static class Computer
@@ -58,7 +61,7 @@
             public const double PriceMinValue = 1;
             public const double PriceMaxValue = 10000;
 
-            public const int CurrentPageNumber = 1;
+            public const int ProductCurrentPage = 1;
             public const int MaxProductsPerPage = 12;
 
             public const string DefaultSortOption = "default";
@@ -91,6 +94,12 @@
         {
             public const int MessageMinLength = 5;
             public const int MessageMaxLength = 300;
+        }
+
+        public static class Search
+        {
+            public const int SearchCurrentPage = 1;
+            public const int SearchProductsPerPage = 10;
         }
     }
 }

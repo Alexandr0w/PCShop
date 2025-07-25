@@ -3,6 +3,7 @@ using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Admin.ProductManagement;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.Data.Common.EntityConstants.Product;
 using static PCShop.GCommon.MessageConstants.ProductMessages;
 
 namespace PCShop.Web.Areas.Admin.Controllers
@@ -24,27 +25,25 @@ namespace PCShop.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Manage(int currentPage = 1)
+        public async Task<IActionResult> Manage(int currentPage = ProductCurrentPage)
         {
-            int productsPerPage = 10;
-
-            IEnumerable<ProductManagementIndexViewModel> allProducts = await this._productManagementService
-                .GetAllProductsAsync(includeDeleted: true);
-
-            ICollection<ProductManagementIndexViewModel> pagedProducts = allProducts
-                .Skip((currentPage - 1) * productsPerPage)
-                .Take(productsPerPage)
-                .ToList();
-
-            ProductManagementPageViewModel model = new ProductManagementPageViewModel
+            try
             {
-                Products = pagedProducts,
-                TotalProducts = allProducts.Count(),
-                ProductsPerPage = productsPerPage,
-                CurrentPage = currentPage
-            };
+                ProductManagementPageViewModel model = new ProductManagementPageViewModel
+                {
+                    CurrentPage = currentPage,
+                    ProductsPerPage = MaxProductsPerPage
+                };
 
-            return this.View(model);
+                await this._productManagementService.GetAllProductsAsync(model);
+
+                return this.View(model);
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(LoadPage.IndexError, ex.Message));
+                return this.RedirectToAction(nameof(Index), "Home");
+            }
         }
 
         [HttpGet]
