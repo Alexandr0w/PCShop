@@ -38,7 +38,10 @@
 
                 <!-- Manage Products -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#productSubMenu" role="button" aria-expanded="false" aria-controls="productSubMenu">
+                    <a href="#"
+                       class="nav-link text-white main-menu-link"
+                       data-target="#productSubMenu"
+                       data-direct-url="@Url.Action("Manage", "ProductManagement", new { area = "Admin" })">
                         <i class="fas fa-box-open me-2"></i> <span>Manage Products</span>
                         <i class="fas fa-chevron-down float-end"></i>
                     </a>
@@ -46,15 +49,18 @@
                         <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Add">
                             <i class="fas fa-plus me-2"></i> Add Product
                         </a>
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Edit">
-                            <i class="fas fa-edit me-2"></i> Edit Products
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Manage">
+                            <i class="fas fa-box-open me-2"></i> Manage Products
                         </a>
                     </div>
                 </li>
 
                 <!-- Manage Computers -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#computerSubMenu" role="button" aria-expanded="false" aria-controls="computerSubMenu">
+                    <a href="#"
+                       class="nav-link text-white main-menu-link"
+                       data-target="#computerSubMenu"
+                       data-direct-url="@Url.Action("Manage", "ComputerManagement", new { area = "Admin" })">
                         <i class="fas fa-desktop me-2"></i> <span>Manage Computers</span>
                         <i class="fas fa-chevron-down float-end"></i>
                     </a>
@@ -62,8 +68,8 @@
                         <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Add">
                             <i class="fas fa-plus me-2"></i> Add Computer
                         </a>
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Index">
-                            <i class="fas fa-edit me-2"></i> Edit Computers
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Manage">
+                            <i class="fas fa-desktop me-2"></i> Manage Computers
                         </a>
                     </div>
                 </li>

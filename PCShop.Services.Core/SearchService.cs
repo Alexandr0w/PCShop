@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
-using PCShop.Data.Models;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
 using static PCShop.Data.Common.EntityConstants.Search;

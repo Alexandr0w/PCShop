@@ -20,9 +20,11 @@
         align-items: center;
         padding: 12px;
         color: white;
+        border-radius: 4px;
     }
 
-        .sidebar .nav-link:hover {
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
             background-color: #495057;
             text-decoration: none;
         }
@@ -30,61 +32,77 @@
         .sidebar .nav-link i {
             width: 25px;
             text-align: center;
+            font-size: 1.1rem;
         }
 
         .sidebar .nav-link span {
+            margin-left: 10px;
             transition: opacity 0.3s, visibility 0.3s;
             white-space: nowrap;
         }
 
-    /* Collapsed sidebar */
-    .sidebar.collapsed {
-        width: 70px;
-    }
-
-        .sidebar.collapsed .nav-link {
-            justify-content: center;
-            padding-left: 0;
-            padding-right: 0;
-        }
-
-            .sidebar.collapsed .nav-link i {
-                margin: 0 auto;
-            }
-
-            .sidebar.collapsed .nav-link span {
-                opacity: 0;
-                visibility: hidden;
-                width: 0;
-                overflow: hidden;
-            }
-
-        .sidebar.collapsed #adminTitleFull {
-            display: none;
-        }
-
-        .sidebar.collapsed #adminTitleIcon {
-            display: inline;
-        }
-
+/* Submenu links */
 .sidebar-submenu-link {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 10px 12px 10px 38px;
     color: white;
     text-decoration: none;
     border-radius: 4px;
+    font-size: 0.9rem;
     transition: background-color 0.3s ease;
 }
 
     .sidebar-submenu-link:hover {
-        background-color: #495057; 
+        background-color: #495057;
         text-decoration: none;
     }
 
     .sidebar-submenu-link i {
-        width: 25px;
+        width: 20px;
         text-align: center;
+    }
+
+/* Collapsed sidebar */
+.sidebar.collapsed {
+    width: 70px;
+}
+
+    .sidebar.collapsed .nav-link {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+        .sidebar.collapsed .nav-link i {
+            margin: 0 auto;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            overflow: hidden;
+        }
+
+    .sidebar.collapsed .sidebar-submenu-link {
+        display: none;
+    }
+
+    .sidebar.collapsed #adminTitleFull {
+        display: none;
+    }
+
+    .sidebar.collapsed #adminTitleIcon {
+        display: inline;
+    }
+
+    .sidebar.collapsed .collapse {
+        display: none !important;
+    }
+
+    .sidebar.collapsed .nav-link .fa-chevron-down {
+        display: none;
     }
 
 /* Content area */
@@ -100,10 +118,6 @@
     color: #343a40;
     font-size: 1.5rem;
     cursor: pointer;
-}
-
-header .toggle-btn {
-    display: block;
 }
 
 /* Overlay for mobile */
@@ -145,6 +159,34 @@ header .toggle-btn {
     }
 }
 
+/* Table truncation styling */
+.table td.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-actions > * {
+    white-space: nowrap;
+}
+
+th.actions-column,
+td.actions-column {
+    min-width: 160px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table-actions {
+    flex-wrap: nowrap !important;
+}
+
+    .table-actions .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
 /* Mobile styles */
 @media (max-width: 768px) {
     .sidebar {
@@ -176,3 +218,34 @@ header .toggle-btn {
     }
 }
 
+/* Responsive table */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #6c757d #e9ecef;
+    }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background-color: #6c757d;
+            border-radius: 4px;
+            border: 2px solid #e9ecef;
+        }
+}
+
+/* Responsive action buttons: hide text on small screens */
+@media (max-width: 576px) {
+    .table-actions .btn span {
+        display: none;
+    }
+}
