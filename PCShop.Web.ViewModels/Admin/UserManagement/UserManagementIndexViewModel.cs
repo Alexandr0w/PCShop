@@ -8,6 +8,6 @@
 
         public bool IsDeleted { get; set; }
 
-        public required IEnumerable<string> Roles { get; set; } 
+        public required IEnumerable<string> Roles { get; set; }
     }
 }

@@ -9,11 +9,24 @@ namespace PCShop.GCommon
             public const string AddedSuccessfully = "Product added successfully.";
             public const string AddFailed = "Failed to add the product. Please try again.";
 
-            public const string UpdatedSuccessfully = "Product updated successfully.";
-            public const string UpdateFailed = "Failed to update the product. Please try again.";
+            public const string EditedSuccessfully = "Product updated successfully.";
+            public const string EditeFailed = "Failed to update the product. Please try again.";
 
             public const string DeletedSuccessfully = "Product deleted successfully.";
             public const string DeleteFailed = "Failed to delete the product. Please try again.";
+
+            public const string DeletedProductsFailed = "Error loading deleted products.";
+            public const string InvalidProductId = "Missing product ID.";
+
+            public const string ProductRestoredSuccessfully = "Product restored successfully.";
+            public const string ProductRestoredFailed = "Failed to restore product. It may not exist or is already active.";
+            public const string ProductRestoredError = "An error occurred while restoring the product.";
+
+            public const string ProductDeletedPermanentlySuccessfully = "Product permanently deleted.";
+            public const string ProductDeletedPermanentlyFailed
+                = "Failed to permanently delete product. Product may not exist or is not deleted.";
+
+            public const string HardDeleteProductError = "An error occurred while restoring the product.";
         }
 
         public static class ComputerMessages
@@ -21,11 +34,24 @@ namespace PCShop.GCommon
             public const string AddedSuccessfully = "Computer added successfully.";
             public const string AddFailed = "Failed to add the computer. Please try again.";
 
-            public const string UpdatedSuccessfully = "Computer updated successfully.";
-            public const string UpdateFailed = "Failed to update the computer. Please try again.";
+            public const string EditSuccessfully = "Computer updated successfully.";
+            public const string EditFailed = "Failed to update the computer. Please try again.";
 
             public const string DeletedSuccessfully = "Computer deleted successfully.";
             public const string DeleteFailed = "Failed to delete the computer. Please try again.";
+
+            public const string DeletedComputersFailed = "Error loading deleted computers.";
+            public const string InvalidComputerId = "Missing computer ID.";
+
+            public const string ComputerRestoredSuccessfully = "Computer restored successfully.";
+            public const string ComputerRestoredFailed = "Failed to restore computer. It may not exist or is already active.";
+            public const string ComputerRestoredError = "An error occurred while restoring the computer.";
+
+            public const string ComputerDeletedPermanentlySuccessfully = "Computer permanently deleted.";
+            public const string ComputerDeletedPermanentlyFailed
+                = "Failed to permanently delete computer. Computer may not exist or is not deleted.";
+
+            public const string HardDeleteComputerError = "An error occurred while restoring the computer.";
         }
 
         public static class OrderMessages
@@ -55,35 +81,6 @@ namespace PCShop.GCommon
             public const string PaymentCanceled = "Payment has been canceled. Please try again.";
             public const string PaymentError = "Failed to processing the payment. Please try again.";
             public const string PaymentCancelFailed = "Failed to cancel the payment. Please try again.";
-        }
-
-        public static class AdminDashboard
-        {
-            public const string DeletedProductsFailed = "Error loading deleted products.";
-            public const string InvalidProductId = "Missing product ID.";
-
-            public const string ProductRestoredSuccessfully = "Product restored successfully.";
-            public const string ProductRestoredFailed = "Failed to restore product. It may not exist or is already active.";
-            public const string ProductRestoredError = "An error occurred while restoring the product.";
-
-            public const string ProductDeletedPermanentlySuccessfully = "Product permanently deleted.";
-            public const string ProductDeletedPermanentlyFailed 
-                = "Failed to permanently delete product. Product may not exist or is not deleted.";
-
-            public const string HardDeleteProductError = "An error occurred while restoring the product.";
-
-            public const string DeletedComputersFailed = "Error loading deleted computers.";
-            public const string InvalidComputerId = "Missing computer ID.";
-
-            public const string ComputerRestoredSuccessfully = "Computer restored successfully.";
-            public const string ComputerRestoredFailed = "Failed to restore computer. It may not exist or is already active.";
-            public const string ComputerRestoredError = "An error occurred while restoring the computer.";
-
-            public const string ComputerDeletedPermanentlySuccessfully = "Computer permanently deleted.";
-            public const string ComputerDeletedPermanentlyFailed
-                = "Failed to permanently delete computer. Computer may not exist or is not deleted.";
-
-            public const string HardDeleteComputerError = "An error occurred while restoring the computer.";
         }
 
         public static class UserManagement

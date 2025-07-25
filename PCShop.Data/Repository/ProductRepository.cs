@@ -6,8 +6,8 @@ using PCShop.Data.Repository.Interfaces;
 
 public class ProductRepository : BaseRepository<Product, Guid>, IProductRepository
 {
-    public ProductRepository(PCShopDbContext dbContext) 
-        : base(dbContext) 
+    public ProductRepository(PCShopDbContext dbContext)
+        : base(dbContext)
     {
     }
 
@@ -33,5 +33,13 @@ public class ProductRepository : BaseRepository<Product, Guid>, IProductReposito
         return await this._DbSet
             .Include(p => p.ProductType)
             .FirstOrDefaultAsync(p => p.Id.ToString().ToLower() == id.ToLower());
+    }
+
+    public Task<Product?> GetAllProductsWithTypes(string productId, string productTypeId)
+    {
+        return this.GetAllAttached()
+            .Include(p => p.ProductType)
+            .SingleOrDefaultAsync(p => p.Id.ToString().ToLower() == productId.ToLower() && 
+                p.ProductTypeId.ToString().ToLower() == productTypeId.ToLower());
     }
 }

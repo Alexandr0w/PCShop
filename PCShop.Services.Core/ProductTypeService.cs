@@ -1,6 +1,6 @@
 ﻿using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
-using PCShop.Web.ViewModels.Product;
+using PCShop.Web.ViewModels.Admin.ProductManagement;
 
 public class ProductTypeService : IProductTypeService
 {
@@ -11,7 +11,7 @@ public class ProductTypeService : IProductTypeService
         this._productTypeRepository = productTypeRepository;
     }
 
-    public async Task<IEnumerable<ProductTypeViewModel>> GetProductTypeMenuAsync()
+    public async Task<IEnumerable<ProductManagementProductTypeViewModel>> GetProductTypeMenuAsync()
     {
         return await this._productTypeRepository
             .GetAllProductTypeViewModelsAsync();

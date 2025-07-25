@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace PCShop.Data.Models
 {
+    [Comment("Notification system for the project")]
     public class Notification
     {
         [Comment("Unique identifier for the notification")]

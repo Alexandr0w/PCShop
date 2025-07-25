@@ -60,7 +60,7 @@ namespace PCShop.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(AddToCartFormModel model)
+        public async Task<IActionResult> ShoppingCart(AddToCartFormModel model)
         {
             try
             {

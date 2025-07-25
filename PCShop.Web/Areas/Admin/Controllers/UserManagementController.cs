@@ -8,12 +8,12 @@ namespace PCShop.Web.Areas.Admin.Controllers
 {
     public class UserManagementController : BaseAdminController
     {
-        private readonly IUserService _userService;
+        private readonly IUserManagementService _userManagementService;
         private readonly ILogger<UserManagementController> _logger;
 
-        public UserManagementController(IUserService userService, ILogger<UserManagementController> logger)
+        public UserManagementController(IUserManagementService userManagementService, ILogger<UserManagementController> logger)
         {
-            this._userService = userService;
+            this._userManagementService = userManagementService;
             this._logger = logger;
         }
 
@@ -22,7 +22,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
         {
             try
             {
-                IEnumerable<UserManagementIndexViewModel> allUsers = await this._userService.GetAllUsersAsync(includeDeleted: true);
+                IEnumerable<UserManagementIndexViewModel> allUsers = await this._userManagementService.GetAllUsersAsync(includeDeleted: true);
 
                 UserManagementPageViewModel viewModel = new UserManagementPageViewModel
                 {
@@ -49,7 +49,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool userExists = await this._userService.UserExistsByIdAsync(userGuid.ToString());
+                bool userExists = await this._userManagementService.UserExistsByIdAsync(userGuid.ToString());
 
                 if (!userExists)
                 {
@@ -57,7 +57,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool assignResult = await this._userService.AssignUserToRoleAsync(userGuid.ToString(), role);
+                bool assignResult = await this._userManagementService.AssignUserToRoleAsync(userGuid.ToString(), role);
 
                 if (assignResult)
                 {
@@ -90,7 +90,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool userExists = await this._userService.UserExistsByIdAsync(userGuid.ToString());
+                bool userExists = await this._userManagementService.UserExistsByIdAsync(userGuid.ToString());
 
                 if (!userExists)
                 {
@@ -98,7 +98,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool removeResult = await this._userService.RemoveUserRoleAsync(userGuid.ToString(), role);
+                bool removeResult = await this._userManagementService.RemoveUserRoleAsync(userGuid.ToString(), role);
 
                 if (removeResult)
                 {
@@ -131,7 +131,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool userExists = await this._userService.UserExistsByIdAsync(userGuid.ToString());
+                bool userExists = await this._userManagementService.UserExistsByIdAsync(userGuid.ToString());
 
                 if (!userExists)
                 {
@@ -139,7 +139,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool deleteResult = await this._userService.DeleteUserAsync(userGuid.ToString());
+                bool deleteResult = await this._userManagementService.DeleteUserAsync(userGuid.ToString());
 
                 if (deleteResult)
                 {
@@ -172,7 +172,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool success = await this._userService.RestoreUserAsync(userGuid.ToString());
+                bool success = await this._userManagementService.RestoreUserAsync(userGuid.ToString());
 
                 if (success)
                 {
@@ -205,7 +205,7 @@ namespace PCShop.Web.Areas.Admin.Controllers
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                bool success = await this._userService.DeleteUserForeverAsync(userGuid.ToString());
+                bool success = await this._userManagementService.DeleteUserForeverAsync(userGuid.ToString());
 
                 if (success)
                 {

@@ -28,31 +28,47 @@
             </div>
 
             <ul class="nav nav-pills flex-column">
+
+                <!-- Dashboard -->
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-area="Admin" asp-controller="Home" asp-action="Index">
                         <i class="fas fa-home me-2"></i> <span>Dashboard</span>
                     </a>
                 </li>
+
+                <!-- Manage Products -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="" asp-controller="Computer" asp-action="Add">
-                        <i class="fas fa-desktop me-2"></i> <span>Add Computer</span>
+                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#productSubMenu" role="button" aria-expanded="false" aria-controls="productSubMenu">
+                        <i class="fas fa-box-open me-2"></i> <span>Manage Products</span>
+                        <i class="fas fa-chevron-down float-end"></i>
                     </a>
+                    <div class="collapse ps-3" id="productSubMenu">
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Add">
+                            <i class="fas fa-plus me-2"></i> Add Product
+                        </a>
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Edit">
+                            <i class="fas fa-edit me-2"></i> Edit Products
+                        </a>
+                    </div>
                 </li>
+
+                <!-- Manage Computers -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Add">
-                        <i class="fas fa-box-open me-2"></i> <span>Add Product</span>
+                    <a class="nav-link text-white" data-bs-toggle="collapse" href="#computerSubMenu" role="button" aria-expanded="false" aria-controls="computerSubMenu">
+                        <i class="fas fa-desktop me-2"></i> <span>Manage Computers</span>
+                        <i class="fas fa-chevron-down float-end"></i>
                     </a>
+                    <div class="collapse ps-3" id="computerSubMenu">
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Add">
+                            <i class="fas fa-plus me-2"></i> Add Computer
+                        </a>
+                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Index">
+                            <i class="fas fa-edit me-2"></i> Edit Computers
+                        </a>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-controller="Computer" asp-action="Deleted">
-                        <i class="fas fa-trash-alt me-2"></i> <span>Deleted Computers</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-controller="Product" asp-action="Deleted">
-                        <i class="fas fa-trash-alt me-2"></i> <span>Deleted Products</span>
-                    </a>
-                </li>
+
+                <!-- Manage Users -->
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-area="Admin" asp-controller="UserManagement" asp-action="Index">
                         <i class="fas fa-users-slash me-2"></i> <span>Manage Users</span>
@@ -100,7 +116,7 @@
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/adminPanel.js" asp-append-version="true"></script>
-    
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

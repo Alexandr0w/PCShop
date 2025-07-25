@@ -9,5 +9,7 @@ namespace PCShop.Data.Repository.Interfaces
         Task<Product?> GetDetailsByIdAsync(string id);
 
         Task<Product?> GetByIdWithTypeAsync(string id);
+
+        Task<Product?> GetAllProductsWithTypes(string productId, string productTypeId);
     }
 }

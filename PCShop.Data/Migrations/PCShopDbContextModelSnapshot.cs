@@ -297,7 +297,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Computers", null, t =>
+                    b.ToTable("Computers", t =>
                         {
                             t.HasComment("Represents a computer in the PC Shop system");
                         });
@@ -379,7 +379,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ComputersParts", null, t =>
+                    b.ToTable("ComputersParts", t =>
                         {
                             t.HasComment("Represents a part of a computer, linking it to a specific product");
                         });
@@ -418,7 +418,10 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications", t =>
+                        {
+                            t.HasComment("Notification system for the project");
+                        });
                 });
 
             modelBuilder.Entity("PCShop.Data.Models.Order", b =>
@@ -478,7 +481,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Orders", null, t =>
+                    b.ToTable("Orders", t =>
                         {
                             t.HasComment("Represents an order placed by a user in the system");
                         });
@@ -517,7 +520,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrdersItems", null, t =>
+                    b.ToTable("OrdersItems", t =>
                         {
                             t.HasComment("Represents an item in an order, linking a product to an order");
                         });
@@ -574,7 +577,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("Products", null, t =>
+                    b.ToTable("Products", t =>
                         {
                             t.HasComment("Represents a product in the PC Shop system");
                         });
@@ -663,7 +666,7 @@ namespace PCShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductsTypes", null, t =>
+                    b.ToTable("ProductsTypes", t =>
                         {
                             t.HasComment("Product type of the PC Shop system");
                         });
@@ -758,6 +761,43 @@ namespace PCShop.Data.Migrations
                         {
                             Id = new Guid("aaaaaaa9-aaaa-bbbb-cccc-aaaaaaaaaaaa"),
                             Name = "Webcam"
+                        });
+                });
+
+            modelBuilder.Entity("PCShop.Data.Models.RoleAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Primary key of the role assignment.");
+
+                    b.Property<Guid>("AssignedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("The ID of the user who assigned the role.");
+
+                    b.Property<DateTime>("AssignedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("The date and time when the role was assigned.");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("The name of the role assigned.");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("The ID of the user who received the role.");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RolesAssignments", t =>
+                        {
+                            t.HasComment("Tracks who assigned what role to which user.");
                         });
                 });
 
@@ -889,11 +929,34 @@ namespace PCShop.Data.Migrations
                     b.Navigation("ProductType");
                 });
 
+            modelBuilder.Entity("PCShop.Data.Models.RoleAssignment", b =>
+                {
+                    b.HasOne("PCShop.Data.Models.ApplicationUser", "AssignedByUser")
+                        .WithMany("GivenRolesAssignments")
+                        .HasForeignKey("AssignedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PCShop.Data.Models.ApplicationUser", "User")
+                        .WithMany("ReceivedRolesAssignments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PCShop.Data.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("GivenRolesAssignments");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("ReceivedRolesAssignments");
                 });
 
             modelBuilder.Entity("PCShop.Data.Models.Computer", b =>

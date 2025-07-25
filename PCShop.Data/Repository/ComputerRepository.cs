@@ -5,7 +5,7 @@ namespace PCShop.Data.Repository
 {
     public class ComputerRepository : BaseRepository<Computer, Guid>, IComputerRepository
     {
-        public ComputerRepository(PCShopDbContext dbContext) 
+        public ComputerRepository(PCShopDbContext dbContext)
             : base(dbContext)
         {
         }

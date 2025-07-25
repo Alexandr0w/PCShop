@@ -23,8 +23,6 @@
         public const string DefaultUserName = "user@pcshop.com";
         public const string DefaultUserPassword = "User123!";
 
-        public const string Unauthorized403Path = "/Home/Error?statusCode=403";
-        public const string NotFound404Path = "/Home/Error?statusCode=404";
         public const string InternalServerError500Path = "/Home/Error?statusCode=500";
     }
 }

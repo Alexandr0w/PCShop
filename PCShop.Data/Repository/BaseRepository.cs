@@ -82,6 +82,12 @@ namespace PCShop.Data.Repository
             return entities;
         }
 
+        public IQueryable<TEntity> AllAsNoTracking()
+        {
+            return this._DbSet
+                .AsNoTracking();
+        }
+
         public IQueryable<TEntity> GetAllAttached()
         {
             return this._DbSet

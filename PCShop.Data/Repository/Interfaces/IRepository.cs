@@ -14,6 +14,8 @@
 
         IQueryable<TEntity> GetAllAttached();
 
+        IQueryable<TEntity> AllAsNoTracking();
+
         void Add(TEntity item);
 
         void AddRange(IEnumerable<TEntity> items);

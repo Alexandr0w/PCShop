@@ -1,0 +1,143 @@
+﻿@using PCShop.Web.ViewModels.Admin.ComputerManagement
+@model ComputerManagementPageViewModel
+
+@{
+    ViewData["Title"] = "Manage Computers";
+
+    int totalPages = (int)Math.Ceiling((double)Model.TotalComputers / Model.ComputersPerPage);
+    int currentPage = Model.CurrentPage;
+
+    bool anyDeleted = Model.Computers.Any(p => p.IsDeleted);
+}
+
+<h2 class="mt-4">Manage Computers</h2>
+<hr />
+
+<a asp-action="Add" asp-controller="ComputerManagement" asp-area="Admin" class="btn btn-primary mb-3 float-end">
+    <i class="fas fa-plus"></i> Add Computer
+</a>
+
+@if (!Model.Computers.Any())
+{
+    <div class="alert alert-info">No computers found.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr class="text-center">
+                <th>Name</th>
+                <th>Price</th>
+                <th>Created On</th>
+                @if (anyDeleted)
+                {
+                    <th>Deleted On</th>
+                }
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var computer in Model.Computers)
+            {
+                <tr class="text-center @(computer.IsDeleted ? "table-danger" : "")">
+                    <td>@computer.Name</td>
+                    <td>@computer.Price.ToString("C")</td>
+                    <td>@computer.CreatedOn.ToString("yyyy-MM-dd")</td>
+
+                    @if (anyDeleted)
+                    {
+                        <td>
+                            @if (computer.IsDeleted && computer.DeletedOn != null)
+                            {
+                                @computer.DeletedOn?.ToString("yyyy-MM-dd HH:mm")
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    }
+
+                    <td>
+                        @if (computer.IsDeleted)
+                        {
+                            <span class="badge bg-danger">Deleted</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center align-items-center">
+                            @if (computer.IsDeleted)
+                            {
+                                <form method="post" asp-action="Restore" asp-controller="ComputerManagement" asp-route-id="@computer.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-info">
+                                        <i class="fas fa-undo"></i> Restore
+                                    </button>
+                                </form>
+
+                                <form method="post" asp-action="DeleteForever" asp-controller="ComputerManagement" asp-route-id="@computer.Id" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-sm btn-dark" onclick="return confirm('Delete forever?');">
+                                        <i class="fas fa-skull-crossbones"></i> Delete Forever
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a asp-action="Edit" asp-route-id="@computer.Id" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+
+                                <form method="post" asp-action="Delete" asp-route-id="@computer.Id" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this computer?');">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Computer pagination">
+            <ul class="pagination justify-content-center mt-4">
+
+                <!-- Previous -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-CurrentPage="@(currentPage - 1)"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Numbered pages -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    bool isActive = (i == currentPage);
+                    <li class="page-item @(isActive ? "active" : "")">
+                        <a class="page-link" asp-route-CurrentPage="@i">@i</a>
+                    </li>
+                }
+
+                <!-- Next -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-CurrentPage="@(currentPage + 1)"
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+}

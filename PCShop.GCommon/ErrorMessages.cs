@@ -1,4 +1,6 @@
-﻿namespace PCShop.GCommon
+﻿using System.IO.Pipes;
+
+namespace PCShop.GCommon
 {
     public static class ErrorMessages
     {
@@ -29,6 +31,10 @@
             public const string AddError = "An error occurred while adding the product: {0}.";
             public const string EditError = "An error occurred while updating the product: {0}.";
             public const string DeleteError = "An error occurred while deleting the product: {0}.";
+
+            public const string SoftDeleteError = "An error occired while soft-delete the product: {0}.";
+            public const string RestoreProductError = "An error occurred while restoring the product '{0}': {1}.";
+            public const string HardDeleteProductError = "An error occurred while permanently deleting the product '{0}': {1}.";
         }
 
         public static class Computer
@@ -36,6 +42,10 @@
             public const string AddError = "An error occurred while adding the computer: {0}.";
             public const string EditError = "An error occurred while updating the computer: {0}.";
             public const string DeleteError = "An error occurred while deleting the computer: {0}.";
+
+            public const string SoftDeleteError = "An error occired while soft-delete the computer: {0}.";
+            public const string RestoreComputerError = "An error occurred while restoring the computer '{0}': {1}.";
+            public const string HardDeleteComputerError = "An error occurred while permanently deleting the computer '{0}': {1}.";
         }
 
         public static class Order
@@ -66,17 +76,6 @@
             public const string DeleteUserError = "An error occurred while deleting the user '{0}': {1}.";
             public const string RestoreUserError = "An error occurred while restoring the user '{0}': {1}.";
             public const string DeleteUserForeverError = "An error occurred while permanently deleting the user '{0}': {1}.";
-        }
-
-        public static class AdminDashboard
-        { 
-            public const string DeletedProductsError = "An error occurred while loading deleted products: {0}.";
-            public const string RestoreProductError = "An error occurred while restoring the product '{0}': {1}.";
-            public const string HardDeleteProductError = "An error occurred while permanently deleting the product '{0}': {1}.";
-
-            public const string DeletedComputersError = "An error occurred while loading deleted computers: {0}.";
-            public const string RestoreComputerError = "An error occurred while restoring the computer '{0}': {1}.";
-            public const string HardDeleteComputerError = "An error occurred while permanently deleting the computer '{0}': {1}.";
         }
 
         public static class ManagerDashboard
