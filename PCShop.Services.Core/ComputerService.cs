@@ -12,15 +12,13 @@ namespace PCShop.Services.Core
     public class ComputerService : IComputerService
     {
         private readonly IComputerRepository _computerRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ComputerService(IComputerRepository computerRepository, UserManager<ApplicationUser> userManager)
+        public ComputerService(IComputerRepository computerRepository)
         {
             this._computerRepository = computerRepository;
-            this._userManager = userManager;
         }
 
-        public async Task PopulateComputerQueryModelAsync(ComputerListViewModel model, string? userId)
+        public async Task GetAllComputersQueryAsync(ComputerListViewModel model)
         {
             IQueryable<Computer> query = this._computerRepository
                 .GetAllAttached()

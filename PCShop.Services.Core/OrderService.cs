@@ -461,16 +461,7 @@ namespace PCShop.Services.Core
             return true;
         }
 
-        private static decimal SumTotalPrice(Order order)
-        {
-            return order.OrdersItems.Sum(item =>
-            {
-                decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
-                return unitPrice * item.Quantity;
-            });
-        }
-
-        private decimal CalculateDeliveryFee(DeliveryMethod method)
+        public decimal CalculateDeliveryFee(DeliveryMethod method)
         {
             return method switch
             {
@@ -479,6 +470,15 @@ namespace PCShop.Services.Core
                 DeliveryMethod.ToAddress => ToAddressFee,
                 _ => throw new ArgumentOutOfRangeException(nameof(method), UnknownDeliveryMethodMessage)
             };
+        }
+
+        private static decimal SumTotalPrice(Order order)
+        {
+            return order.OrdersItems.Sum(item =>
+            {
+                decimal unitPrice = item.Product?.Price ?? item.Computer?.Price ?? 0;
+                return unitPrice * item.Quantity;
+            });
         }
     }
 }

@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 using System.Globalization;
-using static PCShop.GCommon.ExceptionMessages;
 using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core
@@ -14,20 +11,14 @@ namespace PCShop.Services.Core
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductTypeRepository _productTypeRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public ProductService(
-            IProductRepository productRepository,
-            IProductTypeRepository productTypeRepository,
-            UserManager<ApplicationUser> userManager)
+            IProductRepository productRepository)
         {
             this._productRepository = productRepository;
-            this._productTypeRepository = productTypeRepository;
-            this._userManager = userManager;
         }
 
-        public async Task PopulateProductQueryModelAsync(ProductListViewModel model, string? userId)
+        public async Task GetAllProductsQueryAsync(ProductListViewModel model)
         {
             IQueryable<Product> productsQuery = this._productRepository
                 .GetAllAttached()

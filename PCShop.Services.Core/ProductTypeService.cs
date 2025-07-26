@@ -8,7 +8,7 @@ public class ProductTypeService : IProductTypeService
 
     public ProductTypeService(IProductTypeRepository productTypeRepository)
     {
-        this._productTypeRepository = productTypeRepository;
+        this._productTypeRepository = productTypeRepository ?? throw new ArgumentNullException(nameof(productTypeRepository));
     }
 
     public async Task<IEnumerable<ProductManagementProductTypeViewModel>> GetProductTypeMenuAsync()

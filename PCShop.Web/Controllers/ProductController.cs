@@ -27,7 +27,7 @@ namespace PCShop.Web.Controllers
             {
                 string? userId = this.GetUserId();
 
-                await this._productService.PopulateProductQueryModelAsync(queryModel, userId);
+                await this._productService.GetAllProductsQueryAsync(queryModel);
                 return this.View(queryModel);
             }
             catch (Exception ex)

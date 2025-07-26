@@ -4,7 +4,6 @@ using PCShop.Data.Models;
 using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Admin.UserManagement;
-using System.Data;
 
 namespace PCShop.Services.Core.Admin
 {
@@ -184,6 +183,14 @@ namespace PCShop.Services.Core.Admin
             IdentityResult result = await this._userManager.DeleteAsync(user);
 
             return result.Succeeded;
+        }
+
+        public virtual async Task<ApplicationUser?> FindUserIncludingDeletedAsync(string userId)
+        {
+            return await this._userManager
+                .Users
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
         }
     }
 }

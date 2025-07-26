@@ -25,7 +25,7 @@ namespace PCShop.Web.Controllers
             {
                 string? userId = this.GetUserId();
 
-                await this._computerService.PopulateComputerQueryModelAsync(model, userId);
+                await this._computerService.GetAllComputersQueryAsync(model);
                 return this.View(model);
             }
             catch (Exception ex)

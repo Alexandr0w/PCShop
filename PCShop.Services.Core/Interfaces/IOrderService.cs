@@ -27,6 +27,8 @@ namespace PCShop.Services.Core.Interfaces
         
         Task<bool> ApproveOrderAsync(string orderId);
         Task<bool> DeleteOrderAsync(string orderId);
+
+        decimal CalculateDeliveryFee(DeliveryMethod method);
     }
 }
 
