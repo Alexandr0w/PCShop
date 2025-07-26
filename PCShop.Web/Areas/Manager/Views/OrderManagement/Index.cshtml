@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Manage Orders";
-    string orderDateFormat = "dd.MM.yyyy HH:mm";
 }
 
 <h2 class="mt-4">Manage Orders</h2>
@@ -54,7 +53,7 @@ else
                         <td>@order.Id</td>
                         <td>@order.CustomerName</td>
                         <td>@order.TotalPrice.ToString("F2") €</td>
-                        <td>@string.Format("{0:" + orderDateFormat + "}", order.OrderDate)</td>
+                        <td>@order.OrderDate</td>
                         <td>@order.DeliveryMethod</td>
                         <td class="text-center">
                             <span class="badge bg-@(order.Status == "Completed" ? "warning text-white" : order.Status == "Sent" ? "success" : "secondary")">

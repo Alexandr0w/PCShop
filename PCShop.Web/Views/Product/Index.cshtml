@@ -86,7 +86,7 @@
                                     <i class="fas fa-info-circle"></i> Details
                                 </a>
 
-                                <form asp-area="" asp-controller="Order" asp-action="ShoppingCart" method="post" class="d-flex align-items-center gap-2" style="width: 140px;">
+                                <form asp-area="" asp-controller="Order" asp-action="ShoppingCart" method="post" class="d-flex align-items-center gap-2" style="width: 140px;" title="Add to cart">
                                     <input type="hidden" name="ProductId" value="@product.Id" />
                                     <input type="hidden" name="Name" value="@product.Name" />
                                     <input type="hidden" name="ImageUrl" value="@product.ImageUrl" />

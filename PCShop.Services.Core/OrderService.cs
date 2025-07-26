@@ -124,7 +124,7 @@ namespace PCShop.Services.Core
                 }
             }
 
-            return false; 
+            return false;
         }
 
         public async Task<IEnumerable<OrderItemViewModel>> GetCartItemsAsync(string userId)
@@ -158,7 +158,7 @@ namespace PCShop.Services.Core
         public async Task<int> GetCartCountAsync(string userId)
         {
             Order? order = await _orderRepository.GetPendingOrderAsync(userId);
-            
+
             if (order == null)
             {
                 return 0;
@@ -292,7 +292,7 @@ namespace PCShop.Services.Core
                 await this._orderRepository.UpdateAsync(order);
                 isFinalized = true;
 
-                if (user.Email != null)
+                if (!string.IsNullOrWhiteSpace(user.Email))
                 {
                     await this.SendOrderConfirmationEmailAsync(user.Email, order);
                 }
@@ -327,10 +327,10 @@ namespace PCShop.Services.Core
 
             sb.AppendLine($"<p>Hello {order.ApplicationUser?.FullName ?? "Customer"},</p>");
             sb.AppendLine($"<p>Thank you for your order <strong>#{order.Id}</strong>.</p>");
-            sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong>.</p>");
-            sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong>.</p>");
-            sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong>.</p>");
-            sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string>.</p>");
+            sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong></p>");
+            sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong></p>");
+            sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong></p>");
+            sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string></p>");
             sb.AppendLine("<p>We will notify you once your order is shipped.</p>");
             sb.AppendLine("<br><p>Best regards,<br>PCShop Team</p>");
 
@@ -341,7 +341,7 @@ namespace PCShop.Services.Core
             await this._emailSender.SendEmailAsync(userEmail, subject, message);
         }
 
-        public async Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = 10)
+        public async Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = OrderManagerPageSize)
         {
             ICollection<Order> allOrders = (await this._orderRepository.GetAllOrdersWithItemsAsync())
                 .Where(o => o.Status == status)
@@ -359,10 +359,10 @@ namespace PCShop.Services.Core
                     Id = o.Id.ToString(),
                     CustomerName = o.ApplicationUser.FullName,
                     TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture),
+                    OrderDate = o.OrderDate.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture) : null
+                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture) : null
                 });
 
             return new ManagerOrdersPageViewModel
@@ -373,7 +373,7 @@ namespace PCShop.Services.Core
             };
         }
 
-        public async Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = 10)
+        public async Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = OrderManagerPageSize)
         {
             IEnumerable<Order> allOrders = await this._orderRepository
                 .GetAllOrdersWithItemsAsync();
@@ -390,10 +390,10 @@ namespace PCShop.Services.Core
                     Id = o.Id.ToString(),
                     CustomerName = o.ApplicationUser.FullName,
                     TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture),
+                    OrderDate = o.OrderDate.ToLocalTime().ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.SendDate?.ToString(DateAndTimeFormat, CultureInfo.InvariantCulture)
+                    SendDate = o.SendDate?.ToLocalTime().ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
                 });
 
             return new ManagerOrdersPageViewModel
@@ -401,13 +401,13 @@ namespace PCShop.Services.Core
                 Orders = pagedOrders,
                 CurrentPage = currentPage,
                 TotalPages = totalPages,
-                CurrentStatusFilter = null 
+                CurrentStatusFilter = null
             };
         }
 
         public async Task<bool> ApproveOrderAsync(string orderId)
         {
-            Order? order = await this._orderRepository.GetByIdWithUserAsync(orderId); 
+            Order? order = await this._orderRepository.GetByIdWithUserAsync(orderId);
 
             if (order == null || order.Status != OrderStatus.Completed)
                 return false;
@@ -423,10 +423,10 @@ namespace PCShop.Services.Core
 
                 sb.AppendLine($"<p>Hello <strong>{order.ApplicationUser.FullName}</strong>,</p>");
                 sb.AppendLine($"<p>Your order <strong>#{order.Id}</strong> has been <span style='color:green;'>approved</span> and will be shipped soon.</p>");
-                sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong>.</p>");
-                sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong>.</p>");
-                sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong>.</p>");
-                sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string>.</p>");
+                sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong></p>");
+                sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong></p>");
+                sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong></p>");
+                sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string></p>");
                 sb.AppendLine("<p>Thank you for shopping with us!</p>");
                 sb.AppendLine("<hr/>");
                 sb.AppendLine("<p>Best regards,<br/>PCShop Team</p>");
