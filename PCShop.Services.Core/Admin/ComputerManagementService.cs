@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Web.ViewModels.Admin.ComputerManagement;
+using System.Globalization;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core.Admin
@@ -22,7 +23,7 @@ namespace PCShop.Services.Core.Admin
             this._userManager = userManager;
         }
 
-        public async Task GetAllComputersAsync(ComputerManagementPageViewModel model)
+        public async Task<ComputerManagementPageViewModel> GetAllComputersAsync(ComputerManagementPageViewModel model)
         {
             IQueryable<Computer> computerQuery = this._computerRepository
                 .GetAllAttached()
@@ -46,20 +47,22 @@ namespace PCShop.Services.Core.Admin
                     DeletedOn = c.DeletedOn
                 })
                 .ToArrayAsync();
+
+            return model;
         }
 
         public async Task<bool> AddComputerAsync(string? userId, ComputerManagementFormInputModel inputModel, IFormFile? imageFile)
         {
+            bool isAdded = false;
+
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmptyMessage);
             }
 
-            bool isAdded = false;
-
             bool isCreatedOnValid = DateTime
-                    .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
-                        CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
+                        .TryParseExact(inputModel.CreatedOn, DateAndTimeInputFormat,
+                            CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
 
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
@@ -78,20 +81,20 @@ namespace PCShop.Services.Core.Admin
                 };
 
                 await this._computerRepository.AddAsync(computer);
-
                 isAdded = true;
             }
+
             return isAdded;
         }
 
         public async Task<ComputerManagementFormInputModel?> GetComputerEditFormModelAsync(string? computerId)
         {
+            ComputerManagementFormInputModel? editModel = null;
+
             if (!Guid.TryParse(computerId, out Guid computerIdGuid))
             {
                 throw new FormatException(InvalidComputerIdFormatMessage);
             }
-
-            ComputerManagementFormInputModel? editModel = null;
 
             Computer? computerToEdit = await this._computerRepository
                 .GetByIdAsync(computerIdGuid);
@@ -104,7 +107,7 @@ namespace PCShop.Services.Core.Admin
                     Name = computerToEdit.Name,
                     Description = computerToEdit.Description,
                     Price = computerToEdit.Price,
-                    CreatedOn = computerToEdit.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                    CreatedOn = computerToEdit.CreatedOn.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     ImageUrl = computerToEdit.ImageUrl
                 };
             }
@@ -114,6 +117,8 @@ namespace PCShop.Services.Core.Admin
 
         public async Task<bool> EditComputerAsync(string userId, ComputerManagementFormInputModel inputModel, IFormFile? imageFile)
         {
+            bool isEdited = false;
+
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmptyMessage);
@@ -124,10 +129,8 @@ namespace PCShop.Services.Core.Admin
                 throw new FormatException(InvalidComputerIdFormatMessage);
             }
 
-            bool isEdited = false;
-
             bool isCreatedOnValid = DateTime
-                    .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+                    .TryParseExact(inputModel.CreatedOn, DateAndTimeDisplayFormat,
                         CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
 
             ApplicationUser? user = await this._userManager
@@ -147,7 +150,6 @@ namespace PCShop.Services.Core.Admin
                 updatedComputer.ImageUrl = imageUrl;
 
                 await this._computerRepository.UpdateAsync(updatedComputer);
-
                 isEdited = true;
             }
 
@@ -168,9 +170,9 @@ namespace PCShop.Services.Core.Admin
                 {
                     computer.IsDeleted = true;
                     computer.DeletedOn = DateTime.UtcNow;
-                    isAlreadyDeleted = true;
 
                     await this._computerRepository.UpdateAsync(computer);
+                    isAlreadyDeleted = true;
                 }
             }
 
@@ -192,9 +194,9 @@ namespace PCShop.Services.Core.Admin
                 {
                     computer.IsDeleted = false;
                     computer.DeletedOn = null;
-                    isRestored = true;
 
                     await this._computerRepository.UpdateAsync(computer);
+                    isRestored = true;
                 }
             }
 
@@ -233,8 +235,8 @@ namespace PCShop.Services.Core.Admin
                         }
                     }
 
-                    isPermanent = true;
                     await this._computerRepository.HardDeleteAsync(computer);
+                    isPermanent = true;
                 }
             }
 

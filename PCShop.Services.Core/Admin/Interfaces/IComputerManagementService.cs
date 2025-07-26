@@ -5,7 +5,7 @@ namespace PCShop.Services.Core.Admin.Interfaces
 {
     public interface IComputerManagementService
     {
-        Task GetAllComputersAsync(ComputerManagementPageViewModel model);
+        Task<ComputerManagementPageViewModel> GetAllComputersAsync(ComputerManagementPageViewModel model);
 
         Task<bool> AddComputerAsync(string? userId, ComputerManagementFormInputModel inputModel, IFormFile? imageFile);
 

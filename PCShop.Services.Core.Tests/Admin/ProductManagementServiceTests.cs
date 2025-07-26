@@ -8,7 +8,7 @@ using PCShop.Services.Core.Admin;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.ProductManagement;
 using System.Globalization;
-using static PCShop.Services.Common.ServiceConstants;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Tests.Admin
 {
@@ -195,7 +195,7 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "New Product",
                 Description = "New Description",
                 Price = 1500,
-                CreatedOn = DateTime.UtcNow.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ProductTypeId = productTypeId.ToString(),
                 ImageUrl = "default.jpg"
             };
@@ -257,7 +257,7 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "Updated Product",
                 Description = "Updated Description",
                 Price = 2000,
-                CreatedOn = DateTime.UtcNow.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ProductTypeId = productTypeId.ToString(),
                 ImageUrl = "updated.jpg"
             };

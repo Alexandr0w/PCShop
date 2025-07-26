@@ -2,8 +2,8 @@
 {
     public static class ApplicationConstants
     {
-        public const string AppDateFormat = "yyyy-MM-dd";
-        public const string DateAndTimeFormat = "dd.MM.yyyy HH:mm";
+        public const string DateAndTimeInputFormat = "yyyy-MM-ddTHH:mm"; 
+        public const string DateAndTimeDisplayFormat = "dd.MM.yyyy HH:mm"; 
 
         public const string NoImageUrl = "no-image.jpg";
         public const string PriceSqlType = "decimal(18,2)";

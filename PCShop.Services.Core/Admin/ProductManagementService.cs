@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Web.ViewModels.Admin.ProductManagement;
+using System.Globalization;
 using static PCShop.GCommon.ExceptionMessages;
+using static PCShop.GCommon.ApplicationConstants;
 using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core.Admin
@@ -27,7 +28,7 @@ namespace PCShop.Services.Core.Admin
             this._userManager = userManager;
         }
 
-        public async Task GetAllProductsAsync(ProductManagementPageViewModel model)
+        public async Task<ProductManagementPageViewModel> GetAllProductsAsync(ProductManagementPageViewModel model)
         {
             IQueryable<Product> productQuery = this._productRepository
                 .GetAllAttached()
@@ -53,10 +54,14 @@ namespace PCShop.Services.Core.Admin
                     DeletedOn = p.DeletedOn
                 })
                 .ToListAsync();
+
+            return model;
         }
 
         public async Task<bool> AddProductAsync(string? userId, ProductManagementFormInputModel inputModel, IFormFile? imageFile)
         {
+            bool isAdded = false;
+
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmptyMessage);
@@ -67,7 +72,7 @@ namespace PCShop.Services.Core.Admin
                 throw new FormatException(InvalidProductTypeIdFormatMessage);
             }
 
-            bool isCreatedOnValid = DateTime.TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+            bool isCreatedOnValid = DateTime.TryParseExact(inputModel.CreatedOn, DateAndTimeInputFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
 
             ApplicationUser? user = await this._userManager
@@ -78,27 +83,30 @@ namespace PCShop.Services.Core.Admin
 
             string imageUrl = await this.UploadImageAsync(inputModel, imageFile);
 
-            if (user is null || productType is null || !isCreatedOnValid)
+            if (user != null && productType != null && isCreatedOnValid)
             {
-                return false;
+                Product product = new Product
+                {
+                    Name = inputModel.Name,
+                    Description = inputModel.Description,
+                    Price = inputModel.Price,
+                    CreatedOn = createdOn,
+                    ImageUrl = imageUrl,
+                    ProductTypeId = productType.Id
+                };
+
+                await this._productRepository.AddAsync(product);
+                
+                isAdded = true;
             }
 
-            Product product = new Product
-            {
-                Name = inputModel.Name,
-                Description = inputModel.Description,
-                Price = inputModel.Price,
-                CreatedOn = createdOn,
-                ImageUrl = imageUrl,
-                ProductTypeId = productType.Id
-            };
-
-            await this._productRepository.AddAsync(product);
-            return true;
+            return isAdded;
         }
 
         public async Task<ProductManagementFormInputModel?> GetProductEditFormModelAsync(string? productId)
         {
+            ProductManagementFormInputModel? editModel = null;
+
             if (string.IsNullOrEmpty(productId))
             {
                 throw new ArgumentException(ProductIdNullOrEmptyMessage);
@@ -108,8 +116,6 @@ namespace PCShop.Services.Core.Admin
             {
                 throw new FormatException(ProductIdNullOrEmptyMessage);
             }
-
-            ProductManagementFormInputModel? editModel = null;
 
             Product? productToEdit = await this._productRepository
                 .GetByIdAsync(productGuid);
@@ -125,7 +131,7 @@ namespace PCShop.Services.Core.Admin
                     Name = productToEdit.Name,
                     Description = productToEdit.Description,
                     Price = productToEdit.Price,
-                    CreatedOn = productToEdit.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                    CreatedOn = productToEdit.CreatedOn.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     ImageUrl = productToEdit.ImageUrl,
                     ProductTypeId = productToEdit.ProductTypeId.ToString(),
                     ProductTypes = await this._productTypeRepository.GetAllProductTypeViewModelsAsync()
@@ -137,6 +143,8 @@ namespace PCShop.Services.Core.Admin
 
         public async Task<bool> EditProductAsync(string userId, ProductManagementFormInputModel inputModel, IFormFile? imageFile)
         {
+            bool isEdited = false;
+
             if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentException(UserIdNullOrEmptyMessage);
@@ -152,10 +160,8 @@ namespace PCShop.Services.Core.Admin
                 throw new FormatException(InvalidProductTypeIdFormatMessage);
             }
 
-            bool isEdited = false;
-
             bool isCreatedOnValid = DateTime
-                .TryParseExact(inputModel.CreatedOn, CreatedOnFormat,
+                .TryParseExact(inputModel.CreatedOn, DateAndTimeDisplayFormat,
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdOn);
 
             ApplicationUser? user = await this._userManager
@@ -179,7 +185,6 @@ namespace PCShop.Services.Core.Admin
                 updatedProduct.ProductTypeId = productType.Id;
 
                 await this._productRepository.UpdateAsync(updatedProduct);
-
                 isEdited = true;
             }
 
@@ -200,9 +205,9 @@ namespace PCShop.Services.Core.Admin
                 {
                     product.IsDeleted = true;
                     product.DeletedOn = DateTime.UtcNow;
-                    isAlreadyDeleted = true;
 
                     await this._productRepository.UpdateAsync(product);
+                    isAlreadyDeleted = true;
                 }
             }
 
@@ -224,9 +229,9 @@ namespace PCShop.Services.Core.Admin
                 {
                     product.IsDeleted = false;
                     product.DeletedOn = null;
-                    isRestored = true;
 
                     await this._productRepository.UpdateAsync(product);
+                    isRestored = true;
                 }
             }
 
@@ -265,8 +270,8 @@ namespace PCShop.Services.Core.Admin
                         }
                     }
 
-                    isPermanent = true;
                     await this._productRepository.HardDeleteAsync(product);
+                    isPermanent = true;
                 }
             }
 

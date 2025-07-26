@@ -5,6 +5,7 @@ using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Computer;
 using System.Globalization;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Tests
 {
@@ -144,10 +145,10 @@ namespace PCShop.Services.Core.Tests
             Assert.That(result.Price, Is.EqualTo(1000));
             Assert.That(result.ImageUrl, Is.EqualTo("test.jpg"));
 
-            string expectedFormattedDate = createdOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            string expectedFormattedDate = createdOn.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture);
             Assert.That(result.CreatedOn, Is.EqualTo(expectedFormattedDate));
 
-            DateTime parsedDate = DateTime.ParseExact(result.CreatedOn, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            DateTime parsedDate = DateTime.ParseExact(result.CreatedOn, DateAndTimeDisplayFormat, CultureInfo.InvariantCulture);
             Assert.That(parsedDate.Date, Is.EqualTo(createdOn.Date)); 
         }
 

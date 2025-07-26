@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Services.Core.Admin.Interfaces;
@@ -24,7 +23,7 @@ namespace PCShop.Services.Core.Admin
             this._notificationService = notificationService;
         }
 
-        public async Task GetAllUsersAsync(UserManagementPageViewModel model)
+        public async Task<UserManagementPageViewModel> GetAllUsersAsync(UserManagementPageViewModel model)
         {
             IQueryable<ApplicationUser> query = this._userManager
                 .Users
@@ -57,6 +56,8 @@ namespace PCShop.Services.Core.Admin
 
             model.Users = userViewModels;
             model.TotalUsers = totalUsers;
+
+            return model;
         }
 
         public async Task<bool> UserExistsByIdAsync(string userId)

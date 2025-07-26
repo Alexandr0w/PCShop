@@ -4,7 +4,7 @@ namespace PCShop.Services.Core.Admin.Interfaces
 {
     public interface IUserManagementService
     {
-        Task GetAllUsersAsync(UserManagementPageViewModel model);
+        Task<UserManagementPageViewModel> GetAllUsersAsync(UserManagementPageViewModel model);
 
         Task<bool> UserExistsByIdAsync(string userId);
 

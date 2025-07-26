@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Admin;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.ComputerManagement;
-using static PCShop.Services.Common.ServiceConstants;
+using System.Globalization;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Tests.Admin
 {
@@ -175,7 +175,7 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "New Computer",
                 Description = "New Description",
                 Price = 1500,
-                CreatedOn = DateTime.UtcNow.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ImageUrl = "default.jpg"
             };
 
@@ -230,7 +230,7 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "Updated Computer",
                 Description = "Updated Description",
                 Price = 2000,
-                CreatedOn = DateTime.UtcNow.ToString(CreatedOnFormat, CultureInfo.InvariantCulture),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ImageUrl = "updated.jpg"
             };
 

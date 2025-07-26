@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PCShop.Data;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Notification;
 using static PCShop.GCommon.ApplicationConstants;
+using static PCShop.Services.Common.ServiceConstants;
 
 namespace PCShop.Services.Core
 {
@@ -17,7 +17,7 @@ namespace PCShop.Services.Core
             this._notificationRepository = notificationRepository;
         }
 
-        public async Task<NotificationListViewModel> GetUserNotificationsAsync(string userId, int page = 1, int pageSize = 10)
+        public async Task<NotificationListViewModel> GetUserNotificationsAsync(string userId, int page = 1, int pageSize = NotificationsPageSize)
         {
             if (!Guid.TryParse(userId, out Guid userGuid))
             {
@@ -39,7 +39,7 @@ namespace PCShop.Services.Core
                 {
                     Id = n.Id.ToString(),
                     Message = n.Message,
-                    CreatedOn = n.CreatedOn.ToString(DateAndTimeFormat),
+                    CreatedOn = n.CreatedOn.ToLocalTime().ToString(DateAndTimeDisplayFormat),
                     IsRead = n.IsRead
                 })
                 .ToListAsync();

@@ -5,7 +5,7 @@ namespace PCShop.Services.Core.Admin.Interfaces
 {
     public interface IProductManagementService
     {
-        Task GetAllProductsAsync(ProductManagementPageViewModel model);
+        Task<ProductManagementPageViewModel> GetAllProductsAsync(ProductManagementPageViewModel model);
 
         Task<bool> AddProductAsync(string? userId, ProductManagementFormInputModel inputModel, IFormFile? imageFile);
 

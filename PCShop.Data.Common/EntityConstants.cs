@@ -31,8 +31,7 @@
             public const int DescriptionMinLength = 15;
             public const int DescriptionMaxLength = 1000;
 
-            public const int CreatedOnLength = 10;
-            public const int DeletedOnLength = 10;
+            public const int CreatedOnLength = 16;
 
             public const int ImageUrlMaxLength = 2048;
 
@@ -53,8 +52,7 @@
             public const int DescriptionMinLength = 15;
             public const int DescriptionMaxLength = 1000;
 
-            public const int CreatedOnLength = 10;
-            public const int DeletedOnLength = 10;
+            public const int CreatedOnLength = 16;
 
             public const int ImageUrlMaxLength = 2048;
 

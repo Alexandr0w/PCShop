@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
+﻿using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Computer;
-using static PCShop.Services.Common.ServiceConstants;
+using System.Globalization;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core
 {
@@ -18,7 +17,7 @@ namespace PCShop.Services.Core
             this._computerRepository = computerRepository;
         }
 
-        public async Task GetAllComputersQueryAsync(ComputerListViewModel model)
+        public async Task<ComputerListViewModel> GetAllComputersQueryAsync(ComputerListViewModel model)
         {
             IQueryable<Computer> query = this._computerRepository
                 .GetAllAttached()
@@ -55,6 +54,8 @@ namespace PCShop.Services.Core
                     ImageUrl = c.ImageUrl
                 })
                 .ToArrayAsync();
+
+            return model;
         }
 
         public async Task<DetailsComputerViewModel?> GetComputerDetailsAsync(string? userId, string computerId)
@@ -76,7 +77,7 @@ namespace PCShop.Services.Core
                         Description = c.Description,
                         ImageUrl = c.ImageUrl,
                         Price = c.Price,
-                        CreatedOn = c.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture)
+                        CreatedOn = c.CreatedOn.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
                     })
                     .SingleOrDefaultAsync();
             }

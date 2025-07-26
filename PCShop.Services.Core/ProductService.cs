@@ -4,7 +4,7 @@ using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Product;
 using System.Globalization;
-using static PCShop.Services.Common.ServiceConstants;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core
 {
@@ -12,13 +12,12 @@ namespace PCShop.Services.Core
     {
         private readonly IProductRepository _productRepository;
 
-        public ProductService(
-            IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository)
         {
             this._productRepository = productRepository;
         }
 
-        public async Task GetAllProductsQueryAsync(ProductListViewModel model)
+        public async Task<ProductListViewModel> GetAllProductsQueryAsync(ProductListViewModel model)
         {
             IQueryable<Product> productsQuery = this._productRepository
                 .GetAllAttached()
@@ -68,6 +67,8 @@ namespace PCShop.Services.Core
                     ImageUrl = p.ImageUrl
                 })
                 .ToArrayAsync();
+
+            return model;
         }
 
         public async Task<DetailsProductViewModel?> GetProductDetailsAsync(string? userId, string productId)
@@ -90,7 +91,7 @@ namespace PCShop.Services.Core
                         ProductType = p.ProductType.Name,
                         ImageUrl = p.ImageUrl,
                         Price = p.Price,
-                        CreatedOn = p.CreatedOn.ToString(CreatedOnFormat, CultureInfo.InvariantCulture)
+                        CreatedOn = p.CreatedOn.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
                     })
                     .SingleOrDefaultAsync();
             }
