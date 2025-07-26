@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Services.Core.Admin.Interfaces;
@@ -183,14 +184,6 @@ namespace PCShop.Services.Core.Admin
             IdentityResult result = await this._userManager.DeleteAsync(user);
 
             return result.Succeeded;
-        }
-
-        public virtual async Task<ApplicationUser?> FindUserIncludingDeletedAsync(string userId)
-        {
-            return await this._userManager
-                .Users
-                .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
         }
     }
 }

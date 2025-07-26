@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PCShop.Data.Models;
 using PCShop.Services.Core.Admin;
-using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.UserManagement;
-using System.Linq.Expressions;
 
 namespace PCShop.Services.Core.Tests.Admin
 {

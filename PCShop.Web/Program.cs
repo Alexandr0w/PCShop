@@ -61,7 +61,8 @@ namespace PCShop.Web
             builder.Services.AddTransient<IIdentityDbSeeder, IdentityDbSeeder>();
 
             // Configuring email sender service 
-            builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Configuring Stripe (payment with credit card)
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));

@@ -330,6 +330,7 @@ namespace PCShop.Services.Core
             sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong>.</p>");
             sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong>.</p>");
             sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong>.</p>");
+            sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string>.</p>");
             sb.AppendLine("<p>We will notify you once your order is shipped.</p>");
             sb.AppendLine("<br><p>Best regards,<br>PCShop Team</p>");
 
@@ -422,6 +423,10 @@ namespace PCShop.Services.Core
 
                 sb.AppendLine($"<p>Hello <strong>{order.ApplicationUser.FullName}</strong>,</p>");
                 sb.AppendLine($"<p>Your order <strong>#{order.Id}</strong> has been <span style='color:green;'>approved</span> and will be shipped soon.</p>");
+                sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong>.</p>");
+                sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong>.</p>");
+                sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong>.</p>");
+                sb.AppendLine($"<p>Comment: <strong>{order.Comment ?? "None"}</string>.</p>");
                 sb.AppendLine("<p>Thank you for shopping with us!</p>");
                 sb.AppendLine("<hr/>");
                 sb.AppendLine("<p>Best regards,<br/>PCShop Team</p>");
