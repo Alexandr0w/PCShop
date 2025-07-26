@@ -26,7 +26,7 @@ PCShop is a feature-rich e-commerce web application built with **ASP.NET Core**,
 ![Shopping Cart](screenshots/cart.png)
 
 ### 🔹 Admin Panel – Home page  
-![Admin Panel](screenshots/admin-home.png)
+![Admin Panel](screenshots/admin-dashboard.png)
 
 ---
 
