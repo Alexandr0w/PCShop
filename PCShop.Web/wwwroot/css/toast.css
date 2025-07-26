@@ -1,0 +1,26 @@
+﻿/* Toast Notification Styles */
+.toast-body {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    max-width: 100% !important;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.toast.slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

@@ -3,126 +3,130 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    ApplicationUser? user = await UserManager.GetUserAsync(User);
-    string fullName = user?.FullName ?? "User";
+	ApplicationUser? user = await UserManager.GetUserAsync(User);
+	string fullName = user?.FullName ?? "User";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] - PC Shop</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>@ViewData["Title"] - PC Shop</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+	<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/toast.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav id="adminSidebar" class="sidebar p-3">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <span class="fs-4" id="adminTitleFull">Admin Panel</span>
-                <i class="fas fa-tools fs-4 d-none" id="adminTitleIcon"></i>
-            </div>
+	<div class="wrapper d-flex">
+		<!-- Sidebar -->
+		<nav id="adminSidebar" class="sidebar p-3">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<span class="fs-4" id="adminTitleFull">Admin Panel</span>
+				<i class="fas fa-tools fs-4 d-none" id="adminTitleIcon"></i>
+			</div>
 
-            <ul class="nav nav-pills flex-column">
+			<ul class="nav nav-pills flex-column">
 
-                <!-- Dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-controller="Home" asp-action="Index">
-                        <i class="fas fa-home me-2"></i> <span>Dashboard</span>
-                    </a>
-                </li>
+				<!-- Dashboard -->
+				<li class="nav-item">
+					<a class="nav-link text-white" asp-area="Admin" asp-controller="Home" asp-action="Index">
+						<i class="fas fa-home me-2"></i> <span>Dashboard</span>
+					</a>
+				</li>
 
-                <!-- Manage Products -->
-                <li class="nav-item">
-                    <a href="#"
-                       class="nav-link text-white main-menu-link"
-                       data-target="#productSubMenu"
-                       data-direct-url="@Url.Action("Manage", "ProductManagement", new { area = "Admin" })">
-                        <i class="fas fa-box-open me-2"></i> <span>Manage Products</span>
-                        <i class="fas fa-chevron-down float-end"></i>
-                    </a>
-                    <div class="collapse ps-3" id="productSubMenu">
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Add">
-                            <i class="fas fa-plus me-2"></i> Add Product
-                        </a>
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Manage">
-                            <i class="fas fa-box-open me-2"></i> Manage Products
-                        </a>
-                    </div>
-                </li>
+				<!-- Manage Products -->
+				<li class="nav-item">
+					<a href="#"
+					   class="nav-link text-white main-menu-link"
+					   data-target="#productSubMenu"
+					   data-direct-url="@Url.Action("Manage", "ProductManagement", new { area = "Admin" })">
+						<i class="fas fa-box-open me-2"></i> <span>Manage Products</span>
+						<i class="fas fa-chevron-down float-end"></i>
+					</a>
+					<div class="collapse ps-3" id="productSubMenu">
+						<a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Add">
+							<i class="fas fa-plus me-2"></i> Add Product
+						</a>
+						<a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ProductManagement" asp-action="Manage">
+							<i class="fas fa-box-open me-2"></i> Manage Products
+						</a>
+					</div>
+				</li>
 
-                <!-- Manage Computers -->
-                <li class="nav-item">
-                    <a href="#"
-                       class="nav-link text-white main-menu-link"
-                       data-target="#computerSubMenu"
-                       data-direct-url="@Url.Action("Manage", "ComputerManagement", new { area = "Admin" })">
-                        <i class="fas fa-desktop me-2"></i> <span>Manage Computers</span>
-                        <i class="fas fa-chevron-down float-end"></i>
-                    </a>
-                    <div class="collapse ps-3" id="computerSubMenu">
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Add">
-                            <i class="fas fa-plus me-2"></i> Add Computer
-                        </a>
-                        <a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Manage">
-                            <i class="fas fa-desktop me-2"></i> Manage Computers
-                        </a>
-                    </div>
-                </li>
+				<!-- Manage Computers -->
+				<li class="nav-item">
+					<a href="#"
+					   class="nav-link text-white main-menu-link"
+					   data-target="#computerSubMenu"
+					   data-direct-url="@Url.Action("Manage", "ComputerManagement", new { area = "Admin" })">
+						<i class="fas fa-desktop me-2"></i> <span>Manage Computers</span>
+						<i class="fas fa-chevron-down float-end"></i>
+					</a>
+					<div class="collapse ps-3" id="computerSubMenu">
+						<a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Add">
+							<i class="fas fa-plus me-2"></i> Add Computer
+						</a>
+						<a class="sidebar-submenu-link text-white small" asp-area="Admin" asp-controller="ComputerManagement" asp-action="Manage">
+							<i class="fas fa-desktop me-2"></i> Manage Computers
+						</a>
+					</div>
+				</li>
 
-                <!-- Manage Users -->
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-controller="UserManagement" asp-action="Index">
-                        <i class="fas fa-users-slash me-2"></i> <span>Manage Users</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+				<!-- Manage Users -->
+				<li class="nav-item">
+					<a class="nav-link text-white" asp-area="Admin" asp-controller="UserManagement" asp-action="Index">
+						<i class="fas fa-users-slash me-2"></i> <span>Manage Users</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
 
-        <!-- Overlay for mobile menu -->
-        <div id="sidebarOverlay" onclick="toggleSidebar()" style="display: none;"></div>
+		<!-- Overlay for mobile menu -->
+		<div id="sidebarOverlay" onclick="toggleSidebar()" style="display: none;"></div>
 
-        <!-- Content -->
-        <div class="content-area flex-grow-1">
-            <header class="bg-light border-bottom py-2 px-3 d-flex justify-content-between align-items-center">
-                <button class="toggle-btn" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
+		<!-- Content -->
+		<div class="content-area flex-grow-1 p-1">
+			<header class="bg-light border-bottom py-2 px-3 d-flex justify-content-between align-items-center">
+				<button class="toggle-btn" onclick="toggleSidebar()">
+					<i class="fas fa-bars"></i>
+				</button>
 
-                <div class="fs-5 d-flex align-items-center gap-2">
-                    <i class="fas fa-user-circle fs-4 text-secondary"></i>
-                    <span>@fullName</span>
-                </div>
-                <div class="d-flex gap-2">
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-dark">
-                        <i class="fas fa-globe"></i> Go to Site
-                    </a>
-                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-sm btn-outline-secondary">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </header>
+				<div class="fs-5 d-flex align-items-center gap-1">
+					<i class="fas fa-user-circle fs-4 text-secondary"></i>
+					<span>@fullName</span>
+				</div>
+				<div class="d-flex gap-1 flex-wrap">
+					<a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-dark" title="Go to Site">
+						<i class="fas fa-home"></i>
+						<span class="d-none d-sm-inline">Go to Site</span>
+					</a>
+					<a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-sm btn-outline-secondary" title="Settings">
+						<i class="fas fa-cog"></i>
+						<span class="d-none d-sm-inline">Settings</span>
+					</a>
+					<form method="post" asp-area="Identity" asp-page="/Account/Logout" class="d-inline" title="Logout">
+						<button type="submit" class="btn btn-sm btn-outline-danger">
+							<i class="fas fa-sign-out-alt"></i>
+							<span class="d-none d-sm-inline">Logout</span>
+						</button>
+					</form>
+				</div>
+			</header>
 
-            <partial name="_TempDataMessages" />
+			<partial name="_TempDataMessages" />
 
-            <main class="p-4">
-                @RenderBody()
-            </main>
-        </div>
-    </div>
+			<main class="p-4">
+				@RenderBody()
+			</main>
+		</div>
+	</div>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/adminPanel.js" asp-append-version="true"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/adminPanel.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

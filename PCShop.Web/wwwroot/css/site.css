@@ -1,4 +1,4 @@
-/* Search bar */
+﻿/* Search Bar Styles */
 .search-wrapper {
     position: relative;
     display: flex;
@@ -8,24 +8,36 @@
 #searchDropdown {
     position: absolute !important;
     top: 50%;
-    right: 100%; 
+    right: 100%;
     transform: translateY(-50%);
     margin-top: 0;
     border-radius: 0.5rem;
     z-index: 1050;
     min-width: 280px;
-    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.15);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
     background-color: white;
 }
 
-/* Footer */
-footer.footer {
-    padding: 1rem 0;
-    background-color: #f8f9fa;
-    font-size: 0.9rem;
-    color: #6c757d;
+/* Responsive Search Dropdown */
+@media (max-width: 991.98px) {
+    #searchDropdown {
+        position: static !important;
+        transform: none !important;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+        #searchDropdown form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        #searchDropdown input {
+            margin-bottom: 0.5rem;
+        }
 }
-/* Cart */
+
+/* Cart Styles */
 .cart-badge {
     font-size: 0.75rem;
     min-width: 1.5em;
@@ -46,7 +58,7 @@ footer.footer {
 }
 
     .cart-icon:hover {
-        color: #ffc107; 
+        color: #ffc107;
         text-shadow: 0 0 8px #ffc107;
         cursor: pointer;
     }
@@ -55,34 +67,7 @@ footer.footer {
             box-shadow: 0 0 8px 2px #ffc107;
         }
 
-/* Toast Notifications */
-.toast-body {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
-    max-width: 100% !important;
-    text-align: center;
-    word-break: break-word;
-    line-height: 1.5;
-}
-
-.toast.slide-in {
-    animation: slideIn 0.5s ease-out forwards;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Notification Icon */
+/* Notification Icon Hover Effect */
 #notificationIcon .nav-link {
     color: white;
     display: inline-block;
@@ -95,21 +80,39 @@ footer.footer {
         cursor: pointer;
     }
 
-/* Responsive */
-@media (max-width: 991.98px) {
-    #searchDropdown {
-        position: static !important;
-        transform: none !important;
-        margin-top: 0.5rem;
-        width: 100%;
-    }
+/* Footer */
+footer.footer {
+    padding: 1rem 0;
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
 
-        #searchDropdown form {
-            flex-direction: column;
-            align-items: stretch;
-        }
+/* Sticky-Footer */
+html, body {
+    height: 100%;
+}
 
-        #searchDropdown input {
-            margin-bottom: 0.5rem;
-        }
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+/* GitHub icon style */
+.github-link i {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.github-link:hover i {
+    color: #6f42c1;
+    transform: scale(1.2);
+    text-shadow: 0 0 6px rgba(111, 66, 193, 0.6);
 }
