@@ -36,7 +36,7 @@ else
     <div class="table-responsive">
         <table class="table table-bordered table-striped mt-3">
             <thead>
-                <tr>
+                <tr class="text-center">
                     <th>Order ID</th>
                     <th>Customer</th>
                     <th>Total Price</th>
@@ -50,7 +50,7 @@ else
             <tbody>
                 @foreach (var order in Model.Orders)
                 {
-                    <tr>
+                    <tr class="text-center">
                         <td>@order.Id</td>
                         <td>@order.CustomerName</td>
                         <td>@order.TotalPrice.ToString("F2") €</td>
@@ -71,7 +71,7 @@ else
                                 <span class="text-muted">—</span>
                             }
                         </td>
-                        <td>
+                        <td class="text-center">
                             @if (order.Status == "Completed")
                             {
                                 <form method="post" asp-area="Manager" asp-controller="OrderManagement" asp-action="Approve">
