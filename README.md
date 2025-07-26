@@ -50,7 +50,7 @@ PCShop is a feature-rich e-commerce web application built with **ASP.NET Core**,
 - Entity Framework Core + SQL Server
 - Bootstrap 5 + FontAwesome
 - Stripe API (payment)
-- Email integration with SendGrid API
+- Email integration with SMTP
 - Repository Pattern & Service Layer
 - TempData / Toast Messaging
 - Soft Deletes + Admin Restore Panel
