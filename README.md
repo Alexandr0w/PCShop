@@ -65,11 +65,11 @@ PCShop is a feature-rich e-commerce web application built with **ASP.NET Core**,
 - `PCShop.Data.Common` – Common validation constants for entities
 - `PCShop.Services.Core` – Core business logic and service interfaces/implementations
 - `PCShop.Services.Common` – Shared constants used across services
+- `PCShop.Services.Core.Tests` – Unit tests for the business logic
 - `PCShop.Web` – Presentation layer (MVC controllers, Razor views, and startup config)
-- `PCShop.Web.Infrastructure` – TagHelpers, middleware, extensions, and settings
+- `PCShop.Web.Infrastructure` – Common utilities for the Web project (extensions, custom middlewares)
 - `PCShop.Web.ViewModels` – ViewModels used for data transfer between views and controllers
 - `PCShop.GCommon` – Global constants, enums, and shared validation logic
-- `PCShop.Tests` – Unit tests using NUnit and Moq
 - `screenshots` - 📸 Screenshots used in README
 - `README.md` - project documentation
 
