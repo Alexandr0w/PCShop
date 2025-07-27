@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using static PCShop.GCommon.ApplicationConstants;
-using static PCShop.GCommon.ErrorMessages.Common;
 
 namespace PCShop.Web.Infrastructure.Middlewares
 {
     public class GlobalExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
+        private const string InternalServerError500Path = "/Home/Error?statusCode=500";
 
-        public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)
+        public GlobalExceptionHandlingMiddleware(RequestDelegate next)
         {
             this._next = next;
-            this._logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -22,10 +19,8 @@ namespace PCShop.Web.Infrastructure.Middlewares
             {
                 await this._next(context);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                this._logger.LogError(ex, ExceptionOccurred);
-
                 if (!context.Response.HasStarted)
                 {
                     context.Response.Redirect(InternalServerError500Path);
