@@ -38,7 +38,8 @@ namespace PCShop.Web
                     options.ConfigureFromConfiguration(builder.Configuration);
                 })
                 .AddRoles<IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<PCShopDbContext>();
+                .AddEntityFrameworkStores<PCShopDbContext>()
+                .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

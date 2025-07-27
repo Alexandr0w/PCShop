@@ -19,7 +19,7 @@ namespace PCShop.Web.Infrastructure.Emailing
         {
             MailMessage mail = new MailMessage
             {
-                From = new MailAddress(this._settings.SenderEmail, this._settings.SenderName),
+                From = new MailAddress(this._settings.Username, this._settings.SenderName),
                 Subject = subject,
                 Body = htmlMessage,
                 IsBodyHtml = true
