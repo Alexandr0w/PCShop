@@ -4,6 +4,7 @@ using PCShop.Data.Models;
 using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Admin.UserManagement;
+using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Admin
 {
@@ -70,61 +71,73 @@ namespace PCShop.Services.Core.Admin
 
         public async Task<bool> AssignUserToRoleAsync(string userId, string roleName)
         {
-            ApplicationUser? user = await this._userManager
-                .FindByIdAsync(userId.ToString());
+            ApplicationUser? user = await this._userManager.FindByIdAsync(userId);
 
-            bool roleExists = await this._roleManager.RoleExistsAsync(roleName);
-
-            if (user == null || !roleExists)
+            if (user == null || !await this._roleManager.RoleExistsAsync(roleName))
             {
                 return false;
             }
 
-            bool alreadyInRole = await this._userManager.IsInRoleAsync(user, roleName);
-
-            if (!alreadyInRole)
+            if (await this._userManager.IsInRoleAsync(user, roleName))
             {
-                IdentityResult? result = await this._userManager
-                    .AddToRoleAsync(user, roleName);
-
-                string roleMessage = $"Your role has been updated to '{roleName}'.";
-                await this._notificationService.CreateAsync(user.Id.ToString(), roleMessage);
-
-                if (!result.Succeeded)
-                {
-                    return false;
-                }
+                return false;
             }
 
-            return true;
+            if ((roleName == AdminRoleName || roleName == ManagerRoleName) && await this._userManager.IsInRoleAsync(user, UserRoleName))
+            {
+                await this._userManager.RemoveFromRoleAsync(user, "User");
+            }
+
+            if (roleName == UserRoleName && (await this._userManager.IsInRoleAsync(user, AdminRoleName) 
+                || await this._userManager.IsInRoleAsync(user, ManagerRoleName)))
+            {
+                return false;
+            }
+
+            IdentityResult result = await this._userManager
+                .AddToRoleAsync(user, roleName);
+
+            if (result.Succeeded)
+            {
+                string roleMessage = $"Your role has been updated to '{roleName}'.";
+                await this._notificationService.CreateAsync(user.Id.ToString(), roleMessage);
+            }
+
+            return result.Succeeded;
         }
 
         public async Task<bool> RemoveUserRoleAsync(string userId, string roleName)
         {
             ApplicationUser? user = await this._userManager
-                            .FindByIdAsync(userId.ToString());
+                .FindByIdAsync(userId);
 
-            bool roleExists = await this._roleManager.RoleExistsAsync(roleName);
-
-            if (user == null || !roleExists)
+            if (user == null || !await this._roleManager.RoleExistsAsync(roleName))
+            {
+                return false;
+            }
+            if (roleName == "User")
             {
                 return false;
             }
 
-            bool alreadyInRole = await this._userManager.IsInRoleAsync(user, roleName);
-
-            if (alreadyInRole)
+            if (!await this._userManager.IsInRoleAsync(user, roleName))
             {
-                IdentityResult? result = await this._userManager
-                    .RemoveFromRoleAsync(user, roleName);
+                return false;
+            }
 
-                string roleMessage = $"Your role '{roleName}' has been removed.";
-                await this._notificationService.CreateAsync(user.Id.ToString(), roleMessage);
+            IdentityResult result = await this._userManager.RemoveFromRoleAsync(user, roleName);
 
-                if (!result.Succeeded)
-                {
-                    return false;
-                }
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            ICollection<string> remainingRoles = await this._userManager.GetRolesAsync(user);
+
+            if (remainingRoles == null || !remainingRoles.Any())
+            {
+                await this._userManager.AddToRoleAsync(user, "User");
+                await this._notificationService.CreateAsync(user.Id.ToString(), "Your role has been reset to 'User'.");
             }
 
             return true;
