@@ -282,7 +282,7 @@ namespace PCShop.Services.Core
 
                 order.DeliveryMethod = model.DeliveryMethod;
                 order.Comment = model.Comment;
-                order.DeliveryAddress = $"{model.City}, {model.PostalCode}, {model.Address}";
+                order.DeliveryAddress = $"{model.City}, {model.PostalCode}, {model.Address}, {model.PhoneNumber}";
                 order.DeliveryFee = CalculateDeliveryFee(model.DeliveryMethod);
                 order.TotalPrice = totalPrice + order.DeliveryFee;
                 order.OrderDate = DateTime.UtcNow;
@@ -327,6 +327,7 @@ namespace PCShop.Services.Core
 
             sb.AppendLine($"<p>Hello {order.ApplicationUser?.FullName ?? "Customer"},</p>");
             sb.AppendLine($"<p>Thank you for your order <strong>#{order.Id}</strong>.</p>");
+            sb.AppendLine($"<p>Delivery address: <strong>{order.DeliveryAddress}</strong></p>");
             sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong></p>");
             sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong></p>");
             sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong></p>");
@@ -423,6 +424,7 @@ namespace PCShop.Services.Core
 
                 sb.AppendLine($"<p>Hello <strong>{order.ApplicationUser.FullName}</strong>,</p>");
                 sb.AppendLine($"<p>Your order <strong>#{order.Id}</strong> has been <span style='color:green;'>approved</span> and will be shipped soon.</p>");
+                sb.AppendLine($"<p>Delivery address: <strong>{order.DeliveryAddress}</strong></p>");
                 sb.AppendLine($"<p>Total amount: <strong>{order.TotalPrice:F2} €</strong></p>");
                 sb.AppendLine($"<p>Delivery method: <strong>{order.DeliveryMethod}</strong></p>");
                 sb.AppendLine($"<p>Payment method: <strong>{order.PaymentMethod}</strong></p>");
