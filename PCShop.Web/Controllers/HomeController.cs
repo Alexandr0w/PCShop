@@ -13,6 +13,13 @@ namespace PCShop.Web.Controllers
             return this.View();
         }
 
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return this.RedirectToAction("Error", "Home", new { statusCode = 403 });
+        }
+
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int? statusCode)
         {
@@ -24,7 +31,11 @@ namespace PCShop.Web.Controllers
                 case 404:
                     return this.View("NotFoundError");
                 default:
-                    return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                    ErrorViewModel model = new ErrorViewModel
+                    {
+                        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                    };
+                    return this.View(model);
             }
         }
     }

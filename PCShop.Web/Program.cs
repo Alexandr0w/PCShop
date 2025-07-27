@@ -40,12 +40,10 @@ namespace PCShop.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<PCShopDbContext>();
 
-            // Configuring Identity options from appsettings.json
-            builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityConfig"));
-
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Home/AccessDenied";
                 options.LogoutPath = "/Identity/Account/Logout";
 
                 options.Cookie.HttpOnly = true;
@@ -98,23 +96,20 @@ namespace PCShop.Web
             }
             else
             {
+                app.UseGlobalExceptionHandling();
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // Using custom global exception handling middleware
-            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             // Added custom Error pages
             app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // Using session for storing cart items
             app.UseSession();
@@ -128,7 +123,6 @@ namespace PCShop.Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
-
             app.Run();
         }
     }
