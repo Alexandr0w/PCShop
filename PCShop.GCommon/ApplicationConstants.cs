@@ -22,7 +22,5 @@
 
         public const string DefaultUserName = "user@pcshop.com";
         public const string DefaultUserPassword = "User123!";
-
-        public const string InternalServerError500Path = "/Home/Error?statusCode=500";
     }
 }
