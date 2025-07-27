@@ -51,7 +51,7 @@ else
 				{
 					<tr class="text-center @(computer.IsDeleted ? "table-danger" : "")">
 						<td>@computer.Name</td>
-						<td>@computer.Price.ToString("C")</td>
+						<td>@computer.Price €</td>
 						<td>@computer.CreatedOn.ToString(DateAndTimeDisplayFormat)</td>
 
 						@if (anyDeleted)
