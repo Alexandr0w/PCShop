@@ -97,7 +97,7 @@
         public static class Search
         {
             public const int SearchCurrentPage = 1;
-            public const int SearchProductsPerPage = 10;
+            public const int SearchItemsPerPage = 10;
         }
     }
 }

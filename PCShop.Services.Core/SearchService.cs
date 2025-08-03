@@ -16,7 +16,7 @@ namespace PCShop.Services.Core
             this._dbContext = dbContext;
         }
 
-        public async Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchProductsPerPage)
+        public async Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchItemsPerPage)
         {
             if (query == null)
             {
@@ -25,7 +25,7 @@ namespace PCShop.Services.Core
 
             if (itemsPerPage <= 0)
             {
-                itemsPerPage = SearchProductsPerPage;
+                itemsPerPage = SearchItemsPerPage;
             }
 
             if (currentPage <= 0)
@@ -35,7 +35,7 @@ namespace PCShop.Services.Core
 
             IQueryable<SearchResultItemViewModel> productQuery = this._dbContext
                 .Products
-                .Where(p => !p.IsDeleted && EF.Functions.Like(p.Name, $"%{query}%"))
+                .Where(p => p.Name.ToLower().Contains(query.ToLower()))
                 .Select(p => new SearchResultItemViewModel
                 {
                     Id = p.Id.ToString(),
@@ -46,7 +46,7 @@ namespace PCShop.Services.Core
 
             IQueryable<SearchResultItemViewModel> computerQuery = this._dbContext
                 .Computers
-                .Where(c => !c.IsDeleted && EF.Functions.Like(c.Name, $"%{query}%"))
+                .Where(c => c.Name.ToLower().Contains(query.ToLower()))
                 .Select(c => new SearchResultItemViewModel
                 {
                     Id = c.Id.ToString(),

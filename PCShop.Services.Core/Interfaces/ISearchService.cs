@@ -5,6 +5,6 @@ namespace PCShop.Services.Core.Interfaces
 {
     public interface ISearchService
     {
-        Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchProductsPerPage);
+        Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchItemsPerPage);
     }
 }

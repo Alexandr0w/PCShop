@@ -8,7 +8,7 @@ namespace PCShop.Web.ViewModels.Search
 
         public int CurrentPage { get; set; } = SearchCurrentPage;
 
-        public int ItemsPerPage { get; set; } = SearchProductsPerPage;
+        public int ItemsPerPage { get; set; } = SearchItemsPerPage;
 
         public int TotalResults { get; set; }
 
