@@ -263,6 +263,19 @@ namespace PCShop.Services.Core
                 return false;
             }
 
+            if (!Enum.IsDefined(typeof(DeliveryMethod), model.DeliveryMethod) ||
+                !Enum.IsDefined(typeof(OrderPaymentMethod), model.PaymentMethod))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.City) ||
+                string.IsNullOrWhiteSpace(model.PostalCode) ||
+                string.IsNullOrWhiteSpace(model.Address))
+            {
+                return false;
+            }
+
             ApplicationUser? user = await this._userManager
                 .FindByIdAsync(userId);
 

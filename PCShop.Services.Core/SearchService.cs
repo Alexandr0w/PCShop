@@ -3,6 +3,7 @@ using PCShop.Data;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
 using static PCShop.Data.Common.EntityConstants.Search;
+using static PCShop.GCommon.ExceptionMessages;
 
 namespace PCShop.Services.Core
 {
@@ -17,9 +18,24 @@ namespace PCShop.Services.Core
 
         public async Task<SearchResultsViewModel> SearchAsync(string query, int currentPage = SearchCurrentPage, int itemsPerPage = SearchProductsPerPage)
         {
+            if (query == null)
+            {
+                throw new InvalidOperationException(SearchQueryCannotBeNullMessage);
+            }
+
+            if (itemsPerPage <= 0)
+            {
+                itemsPerPage = SearchProductsPerPage;
+            }
+
+            if (currentPage <= 0)
+            {
+                currentPage = SearchCurrentPage;
+            }
+
             IQueryable<SearchResultItemViewModel> productQuery = this._dbContext
                 .Products
-                .Where(p => p.Name.ToLower().Contains(query.ToLower()))
+                .Where(p => !p.IsDeleted && EF.Functions.Like(p.Name, $"%{query}%"))
                 .Select(p => new SearchResultItemViewModel
                 {
                     Id = p.Id.ToString(),
@@ -30,7 +46,7 @@ namespace PCShop.Services.Core
 
             IQueryable<SearchResultItemViewModel> computerQuery = this._dbContext
                 .Computers
-                .Where(c => c.Name.ToLower().Contains(query.ToLower()))
+                .Where(c => !c.IsDeleted && EF.Functions.Like(c.Name, $"%{query}%"))
                 .Select(c => new SearchResultItemViewModel
                 {
                     Id = c.Id.ToString(),
@@ -41,7 +57,8 @@ namespace PCShop.Services.Core
 
             IQueryable<SearchResultItemViewModel> combinedQuery = productQuery
                 .Concat(computerQuery)
-                .OrderBy(r => r.Price);
+                .OrderBy(r => r.Price)
+                .ThenBy(r => r.Name);
 
             int totalResults = await combinedQuery.CountAsync();
 

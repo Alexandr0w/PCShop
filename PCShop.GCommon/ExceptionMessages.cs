@@ -24,5 +24,7 @@
         public const string InvalidOrUnsafeImageUrlMessage = "Invalid or unsafe image URL.";
 
         public const string UnknownDeliveryMethodMessage = "Unknown delivery method.";
+
+        public const string SearchQueryCannotBeNullMessage = "Search query cannot be null.";
     }
 }
