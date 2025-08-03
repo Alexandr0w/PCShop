@@ -2,8 +2,9 @@
 using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
-using PCShop.Web.ViewModels.Product;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
+using PCShop.Web.ViewModels.Product;
 
 namespace PCShop.Services.Core.Tests
 {
@@ -11,13 +12,13 @@ namespace PCShop.Services.Core.Tests
     public class ProductServiceTests
     {
         private Mock<IProductRepository> _mockProductRepo = null!;
-        private ProductService _productService = null!;
+        private IProductService _productService = null!;
 
         [SetUp]
         public void SetUp()
         {
             this._mockProductRepo = new Mock<IProductRepository>();
-            this._productService = new ProductService(_mockProductRepo.Object);
+            this._productService = new ProductService(this._mockProductRepo.Object);
         }
 
         [Test]

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using PCShop.Data.Models;
 using PCShop.Services.Core.Admin;
+using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.UserManagement;
@@ -15,7 +16,7 @@ namespace PCShop.Services.Core.Tests.Admin
         private Mock<UserManager<ApplicationUser>> _mockUserManager;
         private Mock<RoleManager<IdentityRole<Guid>>> _mockRoleManager;
         private Mock<INotificationService> _mockNotificationService;
-        private UserManagementService _userManagementService;
+        private IUserManagementService _userManagementService;
 
         [SetUp]
         public void Setup()
@@ -123,6 +124,23 @@ namespace PCShop.Services.Core.Tests.Admin
         }
 
         [Test]
+        public async Task AssignUserToRoleAsync_AlreadyInRole_ReturnsFalse()
+        {
+            var userId = Guid.NewGuid().ToString();
+            var roleName = "Admin";
+            var user = CreateTestUser();
+
+            this._mockUserManager.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+            this._mockRoleManager.Setup(x => x.RoleExistsAsync(roleName)).ReturnsAsync(true);
+            this._mockUserManager.Setup(x => x.IsInRoleAsync(user, roleName)).ReturnsAsync(true);
+
+            var result = await this._userManagementService.AssignUserToRoleAsync(userId, roleName);
+
+            Assert.IsFalse(result);
+            this._mockUserManager.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
         public async Task RemoveUserRoleAsync_ValidInput_RemovesRole()
         {
             // Arrange
@@ -215,6 +233,18 @@ namespace PCShop.Services.Core.Tests.Admin
             // Assert
             Assert.IsTrue(result);
             this._mockUserManager.Verify(x => x.DeleteAsync(user), Times.Once);
+        }
+
+        [Test]
+        public async Task DeleteUserAsync_NonExistingUser_ReturnsFalse()
+        {
+            var userId = Guid.NewGuid().ToString();
+
+            this._mockUserManager.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync((ApplicationUser?)null);
+
+            var result = await this._userManagementService.DeleteUserAsync(userId);
+
+            Assert.IsFalse(result);
         }
 
         private Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class

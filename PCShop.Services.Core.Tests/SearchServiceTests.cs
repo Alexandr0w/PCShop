@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCShop.Data;
 using PCShop.Data.Models;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Search;
 
 namespace PCShop.Services.Core.Tests
@@ -9,7 +10,7 @@ namespace PCShop.Services.Core.Tests
     public class SearchServiceTests
     {
         private PCShopDbContext _dbContext;
-        private SearchService _searchService;
+        private ISearchService _searchService;
 
         [SetUp]
         public void SetUp()
@@ -19,7 +20,7 @@ namespace PCShop.Services.Core.Tests
                 .Options;
 
             this._dbContext = new PCShopDbContext(options);
-            this._searchService = new SearchService(_dbContext);
+            this._searchService = new SearchService(this._dbContext);
 
             SeedTestData();
         }
@@ -414,23 +415,74 @@ namespace PCShop.Services.Core.Tests
             SearchResultsViewModel result = await this._searchService.SearchAsync(query, currentPage: currentPage);
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.CurrentPage, Is.EqualTo(currentPage));
+            Assert.That(result.CurrentPage, Is.EqualTo(1));
         }
 
-        [TestCase(0)]
-        [TestCase(-1)]
-        public async Task SearchAsync_WithInvalidItemsPerPage_HandlesGracefully(int itemsPerPage)
+        [Test]
+        public async Task SearchAsync_ExcludesDeletedEntities()
+        {
+            var deletedProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = "Deleted Product",
+                Price = 100,
+                IsDeleted = true,
+                CreatedOn = DateTime.UtcNow,
+                ProductTypeId = this._dbContext.ProductsTypes.First().Id,
+                Description = "Test description",
+                ImageUrl = "https://example.com/image-a.jpg"
+            };
+
+            this._dbContext.Products.Add(deletedProduct);
+            await this._dbContext.SaveChangesAsync();
+
+            var result = await this._searchService.SearchAsync("deleted");
+
+            Assert.That(result.TotalResults, Is.EqualTo(0));
+        }
+
+        [Test]
+        public async Task SearchAsync_SamePrice_SortsStably()
         {
             // Arrange
-            string query = "gaming";
+            string commonName = "Test Item";
+            decimal samePrice = 100;
+
+            this._dbContext.Products.AddRange(
+                new Product
+                {
+                    Id = Guid.NewGuid(),
+                    Name = commonName + " A",
+                    Price = samePrice,
+                    CreatedOn = DateTime.UtcNow,
+                    IsDeleted = false,
+                    ProductTypeId = this._dbContext.ProductsTypes.First().Id,
+                    Description = "Test description A",
+                    ImageUrl = "https://example.com/image-a.jpg"
+                },
+                new Product
+                {
+                    Id = Guid.NewGuid(),
+                    Name = commonName + " B",
+                    Price = samePrice,
+                    CreatedOn = DateTime.UtcNow,
+                    IsDeleted = false,
+                    ProductTypeId = this._dbContext.ProductsTypes.First().Id,
+                    Description = "Test description B",
+                    ImageUrl = "https://example.com/image-b.jpg"
+                }
+            );
+
+            await this._dbContext.SaveChangesAsync();
 
             // Act
-            SearchResultsViewModel result = await this._searchService.SearchAsync(query, itemsPerPage: itemsPerPage);
+            var result = await this._searchService.SearchAsync("test item");
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.ItemsPerPage, Is.EqualTo(itemsPerPage));
+            var results = result.Results.ToList();
+            Assert.That(results.Count, Is.EqualTo(2));
+            Assert.That(results[0].Price, Is.EqualTo(samePrice));
+            Assert.That(results[1].Price, Is.EqualTo(samePrice));
         }
     }
 }

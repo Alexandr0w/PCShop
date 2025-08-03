@@ -1,5 +1,6 @@
 ﻿using Moq;
 using PCShop.Data.Repository.Interfaces;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Admin.ProductManagement;
 
 namespace PCShop.Services.Core.Tests
@@ -8,7 +9,7 @@ namespace PCShop.Services.Core.Tests
     public class ProductTypeServiceTests
     {
         private Mock<IProductTypeRepository> _mockProductTypeRepository;
-        private ProductTypeService _productTypeService;
+        private IProductTypeService _productTypeService;
 
         [SetUp]
         public void SetUp()
@@ -163,7 +164,6 @@ namespace PCShop.Services.Core.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
 
-            // Enumerate multiple times to ensure it's a proper collection
             var firstEnumeration = result.ToList();
             var secondEnumeration = result.ToList();
 

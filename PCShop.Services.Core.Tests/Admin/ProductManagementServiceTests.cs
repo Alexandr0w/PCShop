@@ -5,9 +5,11 @@ using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Admin;
+using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.ProductManagement;
 using System.Globalization;
+using System.Text;
 using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Tests.Admin
@@ -18,7 +20,7 @@ namespace PCShop.Services.Core.Tests.Admin
         private Mock<IProductRepository> _mockProductRepo;
         private Mock<IProductTypeRepository> _mockProductTypeRepo;
         private Mock<UserManager<ApplicationUser>> _mockUserManager;
-        private ProductManagementService _productManagementService;
+        private IProductManagementService _productManagementService;
         private const string TestRootFolder = "wwwroot";
         private const string TestImagesFolder = "images";
         private const string TestProductsFolder = "products";
@@ -251,15 +253,16 @@ namespace PCShop.Services.Core.Tests.Admin
             var userId = Guid.NewGuid().ToString();
             var productId = Guid.NewGuid();
             var productTypeId = Guid.NewGuid();
+
             var inputModel = new ProductManagementFormInputModel
             {
                 Id = productId.ToString(),
                 Name = "Updated Product",
                 Description = "Updated Description",
                 Price = 2000,
-                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture), 
                 ProductTypeId = productTypeId.ToString(),
-                ImageUrl = "updated.jpg"
+                ImageUrl = "/images/products/updated.jpg" 
             };
 
             var existingProduct = CreateTestProduct(productId);
@@ -267,8 +270,10 @@ namespace PCShop.Services.Core.Tests.Admin
 
             this._mockUserManager.Setup(m => m.FindByIdAsync(userId))
                 .ReturnsAsync(CreateTestUser(userId));
+
             this._mockProductRepo.Setup(r => r.GetByIdAsync(productId))
                 .ReturnsAsync(existingProduct);
+
             this._mockProductTypeRepo.Setup(r => r.GetByIdAsync(productTypeId))
                 .ReturnsAsync(productType);
 
@@ -354,21 +359,32 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "Test Product",
                 Description = "Test Description",
                 Price = 1000,
-                CreatedOn = DateTime.UtcNow.ToString("MM/dd/yyyy HH:mm"),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ImageUrl = "old.jpg"
             };
 
+            var fileName = "test.jpg";
+            var content = "fake image content";
+            var fileExtension = ".jpg";
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
             var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns("test.jpg");
-            mockFile.Setup(f => f.Length).Returns(1024);
+            mockFile.Setup(f => f.FileName).Returns(fileName);
+            mockFile.Setup(f => f.Length).Returns(stream.Length);
             mockFile.Setup(f => f.ContentType).Returns("image/jpeg");
+            mockFile.Setup(f => f.OpenReadStream()).Returns(stream);
+            mockFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns<Stream, CancellationToken>((target, token) => stream.CopyToAsync(target, token));
 
             // Act
             var result = await this._productManagementService.UploadImageAsync(inputModel, mockFile.Object);
 
             // Assert
             Assert.That(result, Does.StartWith($"/{TestImagesFolder}/{TestProductsFolder}/"));
-            Assert.That(result, Does.EndWith(".jpg"));
+            Assert.That(result, Does.EndWith(fileExtension));
+
+            var fullPath = Path.Combine(TestRootFolder, result.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+            Assert.That(File.Exists(fullPath), Is.True);
         }
 
         [Test]

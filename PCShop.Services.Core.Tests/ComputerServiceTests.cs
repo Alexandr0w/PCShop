@@ -2,6 +2,7 @@
 using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Computer;
 using System.Globalization;
@@ -13,13 +14,13 @@ namespace PCShop.Services.Core.Tests
     public class ComputerServiceTests
     {
         private Mock<IComputerRepository> _mockComputerRepo;
-        private ComputerService _computerService;
+        private IComputerService _computerService;
 
         [SetUp]
         public void Setup()
         {
             this._mockComputerRepo = new Mock<IComputerRepository>();
-            this._computerService = new ComputerService(_mockComputerRepo.Object);
+            this._computerService = new ComputerService(this._mockComputerRepo.Object);
         }
 
         [Test]

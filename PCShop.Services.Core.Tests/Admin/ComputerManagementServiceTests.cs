@@ -5,9 +5,11 @@ using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
 using PCShop.Services.Core.Admin;
+using PCShop.Services.Core.Admin.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 using PCShop.Web.ViewModels.Admin.ComputerManagement;
 using System.Globalization;
+using System.Text;
 using static PCShop.GCommon.ApplicationConstants;
 
 namespace PCShop.Services.Core.Tests.Admin
@@ -17,7 +19,7 @@ namespace PCShop.Services.Core.Tests.Admin
     {
         private Mock<IComputerRepository> _mockComputerRepo;
         private Mock<UserManager<ApplicationUser>> _mockUserManager;
-        private ComputerManagementService _computerManagementService;
+        private IComputerManagementService _computerManagementService;
         private const string TestRootFolder = "wwwroot";
         private const string TestImagesFolder = "images";
         private const string TestComputersFolder = "computers";
@@ -230,14 +232,11 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "Updated Computer",
                 Description = "Updated Description",
                 Price = 2000,
-                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
-                ImageUrl = "updated.jpg"
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
+                ImageUrl = "/images/computers/updated.jpg" 
             };
 
-            var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns("new.jpg");
-            mockFile.Setup(f => f.Length).Returns(1024);
-            mockFile.Setup(f => f.ContentType).Returns("image/jpeg");
+            var mockFile = (IFormFile?)null; 
 
             var existingComputer = CreateTestComputer(computerId);
 
@@ -247,7 +246,7 @@ namespace PCShop.Services.Core.Tests.Admin
                 .ReturnsAsync(existingComputer);
 
             // Act
-            var result = await this._computerManagementService.EditComputerAsync(userId, inputModel, mockFile.Object);
+            var result = await this._computerManagementService.EditComputerAsync(userId, inputModel, mockFile);
 
             // Assert
             Assert.IsTrue(result);
@@ -255,6 +254,26 @@ namespace PCShop.Services.Core.Tests.Admin
             Assert.That(existingComputer.Description, Is.EqualTo(inputModel.Description));
             Assert.That(existingComputer.Price, Is.EqualTo(inputModel.Price));
             this._mockComputerRepo.Verify(r => r.UpdateAsync(existingComputer), Times.Once);
+        }
+
+        [Test]
+        public async Task EditComputerAsync_InvalidId_ReturnsFalse()
+        {
+            // Arrange
+            var inputModel = new ComputerManagementFormInputModel
+            {
+                Id = Guid.NewGuid().ToString(),
+                ImageUrl = "test-image.jpg"
+            };
+
+            this._mockComputerRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((Computer?)null);
+
+            // Act
+            var result = await this._computerManagementService.EditComputerAsync(Guid.NewGuid().ToString(), inputModel, null);
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         [Test]
@@ -333,21 +352,33 @@ namespace PCShop.Services.Core.Tests.Admin
                 Name = "Test Computer",
                 Description = "Test Description",
                 Price = 1000,
-                CreatedOn = DateTime.UtcNow.ToString("MM/dd/yyyy HH:mm"),
+                CreatedOn = DateTime.UtcNow.ToString(DateAndTimeInputFormat, CultureInfo.InvariantCulture),
                 ImageUrl = "old.jpg"
             };
 
+            var fileName = "test.jpg";
+            var fileExtension = ".jpg";
+            var content = "fake image content for testing";
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
             var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns("test.jpg");
-            mockFile.Setup(f => f.Length).Returns(1024);
+            mockFile.Setup(f => f.FileName).Returns(fileName);
+            mockFile.Setup(f => f.Length).Returns(stream.Length);
             mockFile.Setup(f => f.ContentType).Returns("image/jpeg");
+            mockFile.Setup(f => f.OpenReadStream()).Returns(stream);
+            mockFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns<Stream, CancellationToken>((target, token) => stream.CopyToAsync(target, token));
 
             // Act
-            var result = await this._computerManagementService.UploadImageAsync(inputModel, mockFile.Object);
+            var result = await _computerManagementService.UploadImageAsync(inputModel, mockFile.Object);
 
             // Assert
             Assert.That(result, Does.StartWith($"/{TestImagesFolder}/{TestComputersFolder}/"));
-            Assert.That(result, Does.EndWith(".jpg"));
+            Assert.That(result, Does.EndWith(fileExtension));
+
+            // Check if the image was actually saved
+            var fullPath = Path.Combine(TestRootFolder, result.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString()));
+            Assert.That(File.Exists(fullPath), Is.True);
         }
 
         [Test]

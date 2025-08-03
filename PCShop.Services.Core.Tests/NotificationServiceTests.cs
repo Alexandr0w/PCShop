@@ -1,6 +1,7 @@
 ﻿using Moq;
 using PCShop.Data.Models;
 using PCShop.Data.Repository.Interfaces;
+using PCShop.Services.Core.Interfaces;
 using PCShop.Services.Core.Tests.Helpers;
 
 namespace PCShop.Services.Core.Tests
@@ -9,7 +10,7 @@ namespace PCShop.Services.Core.Tests
     public class NotificationServiceTests
     {
         private Mock<INotificationRepository> _mockNotificationRepository;
-        private NotificationService _notificationService;
+        private INotificationService _notificationService;
         private readonly Guid _testUserId = Guid.NewGuid();
         private readonly Guid _testNotificationId = Guid.NewGuid();
 
@@ -17,7 +18,7 @@ namespace PCShop.Services.Core.Tests
         public void SetUp()
         {
             this._mockNotificationRepository = new Mock<INotificationRepository>();
-            this._notificationService = new NotificationService(_mockNotificationRepository.Object);
+            this._notificationService = new NotificationService(this._mockNotificationRepository.Object);
         }
 
         [Test]
@@ -36,7 +37,7 @@ namespace PCShop.Services.Core.Tests
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Notifications.Count, Is.EqualTo(2)); // Only notifications for test user
+            Assert.That(result.Notifications.Count, Is.EqualTo(2)); 
             Assert.That(result.CurrentPage, Is.EqualTo(1));
             Assert.That(result.NotificationsPerPage, Is.EqualTo(10));
             Assert.That(result.TotalNotifications, Is.EqualTo(2));
