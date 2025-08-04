@@ -309,6 +309,8 @@ namespace PCShop.Services.Core
                 {
                     await this.SendOrderConfirmationEmailAsync(user.Email, order);
                 }
+
+                await this._notificationService.CreateAsync(order.ApplicationUserId.ToString(), "Your order has been confirmed. Check your email address.");
             }
 
             return isFinalized;
