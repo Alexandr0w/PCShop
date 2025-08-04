@@ -115,12 +115,13 @@ namespace PCShop.GCommon
 
         public static class NotificationMessages
         {
-            public const string MarkedAsReadSuccessfully = "Notification marked as read successfully.";
-            public const string MarkedAsReadFailed = "Failed to mark notification as read. Please try again.";
+            public const string InvalidBulkAction = "Invalid bulk action.";
+            public const string BulkActionError = "Bulk action failed.";
+            public const string NoNotificationsSelected = "No notifications selected.";
 
-            public const string MarkedAllAsReadSuccessfully = "All notifications marked as read successfully.";
-            public const string MarkedAllAsReadFailed = "Failed to mark all notifications as read. Please try again.";
-            
+            public const string NotificationsMarkedAsRead = "{0} notifications marked as read.";
+            public const string NotificationsDeleted = "{0} notifications deleted.";
+
             public const string NotificationDeletedSuccessfully = "Notification deleted successfully.";
             public const string NotificationDeleteFailed = "Failed to delete notification. Please try again.";
         }

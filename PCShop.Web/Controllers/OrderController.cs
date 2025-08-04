@@ -288,31 +288,31 @@ namespace PCShop.Web.Controllers
                 {
                     PaymentMethodTypes = new List<string> { "card" },
                     LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions
+                        new SessionLineItemOptions
                         {
-                            UnitAmountDecimal = model.Amount * 100,
-                            Currency = "eur",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            PriceData = new SessionLineItemPriceDataOptions
                             {
-                                Name = "PCShop Order",
+                                UnitAmountDecimal = model.Amount * 100,
+                                Currency = "eur",
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                                {
+                                    Name = "PCShop Order",
+                                },
                             },
-                        },
-                        Quantity = 1,
-                    }
-                },
+                            Quantity = 1,
+                        }
+                    },
                     Mode = "payment",
                     SuccessUrl = Url.Action("Success", "Order", null, Request.Scheme)!,
                     CancelUrl = Url.Action("Cancel", "Order", null, Request.Scheme)!,
                     CustomerEmail = model.Email,
 
                     Metadata = new Dictionary<string, string>
-                {
-                    {"orderId", Guid.NewGuid().ToString()},
-                    {"userId", this.GetUserId() ?? ""}
-                }
+                    {
+                        {"orderId", Guid.NewGuid().ToString()},
+                        {"userId", this.GetUserId() ?? ""}
+                    }
                 };
 
                 SessionService service = new SessionService();
@@ -412,7 +412,7 @@ namespace PCShop.Web.Controllers
             }
             catch (Exception ex)
             {
-                this._logger.LogError(string.Format("Error in cart count get method", ex.Message));
+                this._logger.LogError(string.Format(Order.CartCountError, ex.Message));
                 return this.RedirectToAction(nameof(Index));
             }
         }

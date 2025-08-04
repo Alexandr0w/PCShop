@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCShop.Services.Core.Interfaces;
 using PCShop.Web.ViewModels.Notification;
 using static PCShop.GCommon.ErrorMessages;
+using static PCShop.Services.Common.ServiceConstants;
 using static PCShop.GCommon.MessageConstants.NotificationMessages;
 
 namespace PCShop.Web.Controllers
@@ -33,70 +34,13 @@ namespace PCShop.Web.Controllers
                 bool hasUnread = await this._notificationService.HasUnreadNotificationsAsync(userId);
                 ViewBag.HasUnreadNotifications = hasUnread;
 
-                NotificationListViewModel model = await this._notificationService.GetUserNotificationsAsync(userId, currentPage, 10);
+                NotificationListViewModel model = await this._notificationService.GetUserNotificationsAsync(userId, currentPage, NotificationsPageSize);
                 return this.View(model);
             }
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(Notification.LoadIndexError, ex.Message));
                 return this.RedirectToAction("Index", "Home");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> MarkAsRead(string id)
-        {
-            try
-            {
-                bool isMarked = await this._notificationService.MarkAsReadAsync(id);
-
-                if (isMarked)
-                {
-                    TempData["SuccessMessage"] = MarkedAsReadSuccessfully;
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = MarkedAsReadFailed;
-                }
-
-                return this.RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(string.Format(Notification.MarkAsReadError, ex.Message));
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> MarkAllAsRead()
-        {
-            try
-            {
-                string? userId = GetUserId();
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return this.Unauthorized();
-                }
-
-                bool allMarked = await this._notificationService.MarkAllAsReadAsync(userId);
-
-                if (allMarked)
-                {
-                    TempData["SuccessMessage"] = MarkedAllAsReadSuccessfully;
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = MarkedAllAsReadFailed;
-                }
-
-                return this.RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(string.Format(Notification.MarkAllAsReadError, ex.Message));
-                return this.RedirectToAction(nameof(Index));
             }
         }
 
@@ -144,6 +88,45 @@ namespace PCShop.Web.Controllers
             catch (Exception ex)
             {
                 this._logger.LogError(string.Format(Notification.DeleteNotificationError, ex.Message));
+                TempData["ErrorMessage"] = NotificationDeleteFailed;
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BulkAction(string[] selectedIds, string action)
+        {
+            try
+            {
+                if (selectedIds == null || selectedIds.Length == 0)
+                {
+                    TempData["ErrorMessage"] = NoNotificationsSelected;
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                if (action == "markAsRead")
+                {
+                    int markedCount = await this._notificationService.MarkMultipleAsReadAsync(selectedIds);
+                    TempData["SuccessMessage"] = string.Format(NotificationsMarkedAsRead, markedCount);
+                }
+                else if (action == "delete")
+                {
+                    int deletedCount = await this._notificationService.DeleteMultipleAsync(selectedIds);
+                    TempData["SuccessMessage"] = string.Format(NotificationsDeleted, deletedCount);
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = InvalidBulkAction;
+                }
+
+                return this.RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(Notification.BulkActionError, ex.Message));
+                TempData["ErrorMessage"] = BulkActionError;
+
                 return this.RedirectToAction(nameof(Index));
             }
         }

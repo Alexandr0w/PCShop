@@ -11,12 +11,12 @@ namespace PCShop.Services.Core.Interfaces
 
         Task CreateAsync(string userId, string message);
 
-        Task<bool> MarkAsReadAsync(string notificationId);
-
-        Task<bool> MarkAllAsReadAsync(string userId);
-
         Task<bool> DeleteNotificationAsync(string notificationId);
 
         Task<bool> HasUnreadNotificationsAsync(string userId);
+
+        Task<int> MarkMultipleAsReadAsync(string[] notificationIds);
+
+        Task<int> DeleteMultipleAsync(string[] notificationIds);
     }
 }

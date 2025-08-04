@@ -66,6 +66,8 @@ namespace PCShop.GCommon
             public const string SuccessPaymentError = "Error processing successful payment: {0}.";
             public const string FailedPaymentError = "Error processing failed payment: {0}.";
             public const string PaymentCanceledError = "Payment was canceled by the user: {0}.";
+
+            public const string CartCountError = "Error in cart count get method {0}.";
         }
 
         public static class UserManagement
@@ -88,10 +90,9 @@ namespace PCShop.GCommon
         public static class Notification
         {
             public const string LoadIndexError = "An error occurred while loading user notifications: {0}.";
-            public const string MarkAsReadError = "An error occurred while marking notification as read: {0}.";
-            public const string MarkAllAsReadError = "An error occurred while marking all notifications as read: {0}.";
             public const string GetUnreadCountError = "An error occurred while getting unread notifications count: {0}.";
             public const string DeleteNotificationError = "An error occurred while deleting notification: {0}.";
+            public const string BulkActionError = "Bulk action failed: {0}.";
         }
     }
 }
