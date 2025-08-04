@@ -106,11 +106,17 @@ namespace PCShop.GCommon
 
         public static class ManagerDashboard
         {
+            public const string InvalidOrderId = "Invalid order ID.";
             public const string OrderApprovedSuccessfully = "Order approved successfully.";
             public const string OrderApproveFailed = "Failed to approve order. Please try again.";
 
             public const string DeleteOrderSuccessfully = "Order deleted successfully.";
             public const string DeleteOrderFailed = "Failed to delete order. Please try again.";
+
+            public const string NoOrdersSelected = "No orders were selected for archiving.";
+            public const string ArchiveOrdersSuccessfully = "{0} order(s) archived successfully.";
+            public const string ArchiveOrdersFailed = "Failed to archive the selected orders.";
+
         }
 
         public static class NotificationMessages
@@ -119,8 +125,8 @@ namespace PCShop.GCommon
             public const string BulkActionError = "Bulk action failed.";
             public const string NoNotificationsSelected = "No notifications selected.";
 
-            public const string NotificationsMarkedAsRead = "{0} notifications marked as read.";
-            public const string NotificationsDeleted = "{0} notifications deleted.";
+            public const string NotificationsMarkedAsRead = "{0} notification(s) marked as read.";
+            public const string NotificationsDeleted = "{0} notification(s) deleted.";
 
             public const string NotificationDeletedSuccessfully = "Notification deleted successfully.";
             public const string NotificationDeleteFailed = "Failed to delete notification. Please try again.";

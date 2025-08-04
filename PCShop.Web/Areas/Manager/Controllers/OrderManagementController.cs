@@ -35,13 +35,11 @@ namespace PCShop.Web.Areas.Manager.Controllers
 
                 if (!string.IsNullOrWhiteSpace(statusFilter) && Enum.TryParse(statusFilter, out OrderStatus statusEnum))
                 {
-                    model = await this._orderService.GetOrdersByStatusPagedAsync(statusEnum, currentPage, pageSize);
-                    model.CurrentStatusFilter = statusFilter;
+                    model = await this._orderService.GetOrdersPagedAsync(statusEnum, currentPage, pageSize);
                 }
                 else
                 {
-                    model = await this._orderService.GetAllOrdersPagedAsync(currentPage, pageSize);
-                    model.CurrentStatusFilter = null;
+                    model = await this._orderService.GetOrdersPagedAsync(null, currentPage, pageSize);
                 }
 
                 return this.View(model);
@@ -58,6 +56,14 @@ namespace PCShop.Web.Areas.Manager.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(orderId))
+                {
+                    this._logger.LogWarning(InvalidOrderId);
+                    TempData["ErrorMessage"] = InvalidOrderId;
+
+                    return this.RedirectToAction(nameof(Index));
+                }
+
                 bool isApproved = await this._orderService.ApproveOrderAsync(orderId);
 
                 if (isApproved)
@@ -107,5 +113,30 @@ namespace PCShop.Web.Areas.Manager.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ArchiveSelected(List<string> selectedOrderIds)
+        {
+            try
+            {
+                if (selectedOrderIds == null || !selectedOrderIds.Any())
+                {
+                    TempData["ErrorMessage"] = NoOrdersSelected;
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                int archivedCount = await this._orderService.ArchiveOrdersAsync(selectedOrderIds);
+                TempData["SuccessMessage"] = string.Format(ArchiveOrdersSuccessfully, archivedCount);
+
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            catch (Exception ex)
+            {
+                this._logger.LogError(string.Format(ManagerDashboard.ArchiveOrdersError, ex.Message));
+                TempData["ErrorMessage"] = ArchiveOrdersFailed;
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

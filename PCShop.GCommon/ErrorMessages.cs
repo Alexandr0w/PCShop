@@ -85,6 +85,7 @@ namespace PCShop.GCommon
             public const string LoadOrdersError = "An error occurred while loading orders: {0}.";
             public const string ApproveOrderError = "An error occurred while approving the order '{0}': {1}.";
             public const string DeleteOrderError = "An error occurred while deleting the order '{0}': {1}.";
+            public const string ArchiveOrdersError = "An error occurred while archiving orders: {0}";
         }
 
         public static class Notification

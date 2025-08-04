@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using PCShop.Data.Models;
 using PCShop.Data.Models.Enum;
 using PCShop.Data.Repository.Interfaces;
@@ -357,48 +358,25 @@ namespace PCShop.Services.Core
             await this._emailSender.SendEmailAsync(userEmail, subject, message);
         }
 
-        public async Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = OrderManagerPageSize)
+        public async Task<ManagerOrdersPageViewModel> GetOrdersPagedAsync(OrderStatus? status, int currentPage, int pageSize = OrderManagerPageSize)
         {
-            ICollection<Order> allOrders = (await this._orderRepository.GetAllOrdersWithItemsAsync())
-                .Where(o => o.Status == status)
-                .OrderByDescending(o => o.OrderDate)
-                .ToList();
+            IQueryable<Order> allOrders = (await this._orderRepository
+                .GetAllOrdersWithItemsAsync())
+                .AsQueryable();
 
-            int totalOrders = allOrders.Count;
-            int totalPages = (int)Math.Ceiling(totalOrders / (double)pageSize);
-
-            IEnumerable<ManagerOrderViewModel> pagedOrders = allOrders
-                .Skip((currentPage - 1) * pageSize)
-                .Take(pageSize)
-                .Select(o => new ManagerOrderViewModel
-                {
-                    Id = o.Id.ToString(),
-                    CustomerName = o.ApplicationUser.FullName,
-                    TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
-                    DeliveryMethod = o.DeliveryMethod.ToString(),
-                    Status = o.Status.ToString(),
-                    SendDate = o.Status == OrderStatus.Sent ? o.SendDate?.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture) : null
-                });
-
-            return new ManagerOrdersPageViewModel
+            if (status.HasValue)
             {
-                Orders = pagedOrders,
-                CurrentPage = currentPage,
-                TotalPages = totalPages
-            };
-        }
+                allOrders = allOrders.Where(o => o.Status == status.Value);
+            }
 
-        public async Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = OrderManagerPageSize)
-        {
-            IEnumerable<Order> allOrders = await this._orderRepository
-                .GetAllOrdersWithItemsAsync();
+            ICollection<Order> orderedList = allOrders
+                .OrderByDescending(o => o.OrderDate)
+                .ToList(); 
 
-            int totalOrders = allOrders.Count();
+            int totalOrders = orderedList.Count;
             int totalPages = (int)Math.Ceiling(totalOrders / (double)pageSize);
 
-            IEnumerable<ManagerOrderViewModel> pagedOrders = allOrders
-                .OrderByDescending(o => o.OrderDate)
+            ICollection<ManagerOrderViewModel> pagedOrders = orderedList
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)
                 .Select(o => new ManagerOrderViewModel
@@ -409,15 +387,16 @@ namespace PCShop.Services.Core
                     OrderDate = o.OrderDate.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.SendDate?.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
-                });
+                    SendDate = o.SendDate.HasValue ? o.SendDate.Value.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture) : null
+                })
+                .ToList();
 
             return new ManagerOrdersPageViewModel
             {
                 Orders = pagedOrders,
                 CurrentPage = currentPage,
                 TotalPages = totalPages,
-                CurrentStatusFilter = null
+                CurrentStatusFilter = status?.ToString()
             };
         }
 
@@ -483,7 +462,29 @@ namespace PCShop.Services.Core
             return true;
         }
 
-        public decimal CalculateDeliveryFee(DeliveryMethod method)
+        public async Task<int> ArchiveOrdersAsync(IEnumerable<string> orderIds)
+        {
+            List<Guid> guidIds = orderIds
+                .Select(id => Guid.TryParse(id, out Guid guid) ? guid : Guid.Empty)
+                .Where(g => g != Guid.Empty)
+                .ToList();
+
+            List<Order> ordersToArchive = await this._orderRepository
+                .GetAllAttached()
+                .Where(o => guidIds.Contains(o.Id) && o.Status != OrderStatus.Archived)
+                .ToListAsync();
+
+            foreach (Order order in ordersToArchive)
+            {
+                order.Status = OrderStatus.Archived;
+            }
+
+            await this._orderRepository.SaveChangesAsync();
+
+            return ordersToArchive.Count;
+        }
+
+        private decimal CalculateDeliveryFee(DeliveryMethod method)
         {
             return method switch
             {

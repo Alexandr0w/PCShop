@@ -4,6 +4,7 @@
     {
         Pending = 0,
         Completed = 1,
-        Sent = 2
+        Sent = 2,
+        Archived = 3
     }
 }

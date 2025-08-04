@@ -23,13 +23,10 @@ namespace PCShop.Services.Core.Interfaces
 
         Task SendOrderConfirmationEmailAsync(string userEmail, Order order);
 
-        Task<ManagerOrdersPageViewModel> GetOrdersByStatusPagedAsync(OrderStatus status, int currentPage, int pageSize = OrderManagerPageSize);
-        Task<ManagerOrdersPageViewModel> GetAllOrdersPagedAsync(int currentPage, int pageSize = OrderManagerPageSize);
-
+        Task<ManagerOrdersPageViewModel> GetOrdersPagedAsync(OrderStatus? status, int currentPage, int pageSize = OrderManagerPageSize);
         Task<bool> ApproveOrderAsync(string orderId);
         Task<bool> DeleteOrderAsync(string orderId);
-
-        decimal CalculateDeliveryFee(DeliveryMethod method);
+        Task<int> ArchiveOrdersAsync(IEnumerable<string> orderIds);
     }
 }
 
