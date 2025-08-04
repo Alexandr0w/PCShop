@@ -116,12 +116,12 @@ namespace PCShop.Services.Core
 
         public async Task<int> MarkMultipleAsReadAsync(string[] notificationIds)
         {
-            List<Guid> guidIds = notificationIds
+            ICollection<Guid> guidIds = notificationIds
                 .Select(id => Guid.TryParse(id, out Guid guid) ? guid : Guid.Empty)
                 .Where(g => g != Guid.Empty)
                 .ToList();
 
-            List<Notification> notifications = await this._notificationRepository
+            ICollection<Notification> notifications = await this._notificationRepository
                 .GetAllAttached()
                 .Where(n => guidIds.Contains(n.Id) && !n.IsRead)
                 .ToListAsync();
@@ -137,12 +137,12 @@ namespace PCShop.Services.Core
 
         public async Task<int> DeleteMultipleAsync(string[] notificationIds)
         {
-            List<Guid> guidIds = notificationIds
+            ICollection<Guid> guidIds = notificationIds
                 .Select(id => Guid.TryParse(id, out Guid guid) ? guid : Guid.Empty)
                 .Where(g => g != Guid.Empty)
                 .ToList();
 
-            List<Notification> notifications = await this._notificationRepository
+            ICollection<Notification> notifications = await this._notificationRepository
                 .GetAllAttached()
                 .Where(n => guidIds.Contains(n.Id))
                 .ToListAsync();
