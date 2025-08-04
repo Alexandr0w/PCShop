@@ -44,22 +44,6 @@ else
                         <strong>@notification.Message</strong><br />
                         <small class="text-muted">@notification.CreatedOn</small>
                     </div>
-
-                    <div class="d-flex gap-2">
-                        @if (!notification.IsRead)
-                        {
-                            <form asp-controller="Notification" method="post" asp-action="MarkAsRead" asp-route-id="@notification.Id">
-                                <button class="btn btn-sm btn-outline-secondary">Mark as Read</button>
-                            </form>
-                        }
-
-                        <form asp-controller="Notification" method="post" asp-action="Delete" asp-route-id="@notification.Id">
-                            <button class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Delete this notification?');">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
                 </li>
             }
         </ul>
