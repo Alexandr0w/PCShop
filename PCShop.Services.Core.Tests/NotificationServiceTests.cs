@@ -28,12 +28,12 @@ namespace PCShop.Services.Core.Tests
             var notifications = CreateTestNotifications();
             var mockQueryable = CreateMockQueryable(notifications);
 
-            _mockNotificationRepository
+            this._mockNotificationRepository
                 .Setup(r => r.GetAllAttached())
                 .Returns(mockQueryable.Object);
 
             // Act
-            var result = await this._notificationService.GetUserNotificationsAsync(_testUserId.ToString());
+            var result = await this._notificationService.GetUserNotificationsAsync(this._testUserId.ToString());
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -59,7 +59,7 @@ namespace PCShop.Services.Core.Tests
                 .Returns(mockQueryable.Object);
 
             // Act
-            var result = await this._notificationService.GetUserNotificationsAsync(_testUserId.ToString(), page: 2, pageSize: 5);
+            var result = await this._notificationService.GetUserNotificationsAsync(this._testUserId.ToString(), page: 2, pageSize: 5);
 
             // Assert
             Assert.That(result.CurrentPage, Is.EqualTo(2));
@@ -110,12 +110,12 @@ namespace PCShop.Services.Core.Tests
                 .Returns(Task.CompletedTask);
 
             // Act
-            await this._notificationService.CreateAsync(_testUserId.ToString(), message);
+            await this._notificationService.CreateAsync(this._testUserId.ToString(), message);
 
             // Assert
             this._mockNotificationRepository.Verify(r => r.AddAsync(It.IsAny<Notification>()), Times.Once);
             Assert.That(capturedNotification, Is.Not.Null);
-            Assert.That(capturedNotification.ApplicationUserId, Is.EqualTo(_testUserId));
+            Assert.That(capturedNotification.ApplicationUserId, Is.EqualTo(this._testUserId));
             Assert.That(capturedNotification.Message, Is.EqualTo(message));
             Assert.That(capturedNotification.IsRead, Is.False);
         }
@@ -145,154 +145,20 @@ namespace PCShop.Services.Core.Tests
         }
 
         [Test]
-        public async Task MarkAsReadAsync_WithValidNotificationId_MarksAsReadAndReturnsTrue()
-        {
-            // Arrange
-            var notification = new Notification
-            {
-                Id = _testNotificationId,
-                ApplicationUserId = _testUserId,
-                Message = "Test notification",
-                CreatedOn = DateTime.UtcNow,
-                IsRead = false
-            };
-
-            this._mockNotificationRepository
-                .Setup(r => r.GetByIdAsync(_testNotificationId))
-                .ReturnsAsync(notification);
-
-            this._mockNotificationRepository
-                .Setup(r => r.SaveChangesAsync())
-                .Returns(Task.CompletedTask);
-
-            // Act
-            var result = await this._notificationService.MarkAsReadAsync(_testNotificationId.ToString());
-
-            // Assert
-            Assert.That(result, Is.True);
-            Assert.That(notification.IsRead, Is.True);
-            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
-        }
-
-        [Test]
-        public async Task MarkAsReadAsync_WithInvalidNotificationId_ReturnsFalse()
-        {
-            // Arrange
-            string invalidId = "invalid-guid";
-
-            // Act
-            var result = await this._notificationService.MarkAsReadAsync(invalidId);
-
-            // Assert
-            Assert.That(result, Is.False);
-            this._mockNotificationRepository.Verify(r => r.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
-            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Never);
-        }
-
-        [Test]
-        public async Task MarkAsReadAsync_WithNonExistentNotification_ReturnsFalse()
-        {
-            // Arrange
-            this._mockNotificationRepository
-                .Setup(r => r.GetByIdAsync(_testNotificationId))
-                .ReturnsAsync((Notification)null!);
-
-            // Act
-            var result = await this._notificationService.MarkAsReadAsync(_testNotificationId.ToString());
-
-            // Assert
-            Assert.That(result, Is.False);
-            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Never);
-        }
-
-        [Test]
-        public async Task MarkAllAsReadAsync_WithUnreadNotifications_MarksAllAsReadAndReturnsTrue()
-        {
-            // Arrange
-            var unreadNotifications = new List<Notification>
-            {
-                new Notification
-                {
-                    Id = Guid.NewGuid(),
-                    ApplicationUserId = _testUserId,
-                    Message = "Unread 1",
-                    CreatedOn = DateTime.UtcNow,
-                    IsRead = false
-                },
-                new Notification
-                {
-                    Id = Guid.NewGuid(),
-                    ApplicationUserId = _testUserId,
-                    Message = "Unread 2",
-                    CreatedOn = DateTime.UtcNow,
-                    IsRead = false
-                }
-            };
-
-            var mockQueryable = CreateMockQueryable(unreadNotifications);
-
-            this._mockNotificationRepository
-                .Setup(r => r.GetAllAttached())
-                .Returns(mockQueryable.Object);
-
-            this._mockNotificationRepository
-                .Setup(r => r.SaveChangesAsync())
-                .Returns(Task.CompletedTask);
-
-            // Act
-            var result = await this._notificationService.MarkAllAsReadAsync(_testUserId.ToString());
-
-            // Assert
-            Assert.That(result, Is.True);
-            Assert.That(unreadNotifications.All(n => n.IsRead), Is.True);
-            _mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
-        }
-
-        [Test]
-        public async Task MarkAllAsReadAsync_WithNoUnreadNotifications_ReturnsFalse()
-        {
-            // Arrange
-            var emptyList = new List<Notification>();
-            var mockQueryable = CreateMockQueryable(emptyList);
-
-            this._mockNotificationRepository
-                .Setup(r => r.GetAllAttached())
-                .Returns(mockQueryable.Object);
-
-            // Act
-            var result = await this._notificationService.MarkAllAsReadAsync(_testUserId.ToString());
-
-            // Assert
-            Assert.That(result, Is.False);
-            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Never);
-        }
-
-        [Test]
-        public async Task MarkAllAsReadAsync_WithInvalidUserId_ReturnsFalse()
-        {
-            // Act
-            var result = await this._notificationService.MarkAllAsReadAsync("invalid-guid");
-
-            // Assert
-            Assert.That(result, Is.False);
-            this._mockNotificationRepository.Verify(r => r.GetAllAttached(), Times.Never);
-        }
-
-        [Test]
         public async Task DeleteNotificationAsync_WithValidNotificationId_DeletesAndReturnsTrue()
         {
             // Arrange
             var notification = new Notification
             {
-                Id = _testNotificationId,
-                ApplicationUserId = _testUserId,
+                Id = this._testNotificationId,
+                ApplicationUserId = this._testUserId,
                 Message = "Test notification",
                 CreatedOn = DateTime.UtcNow,
                 IsRead = false
             };
 
             this._mockNotificationRepository
-                .Setup(r => r.GetByIdAsync(_testNotificationId))
+                .Setup(r => r.GetByIdAsync(this._testNotificationId))
                 .ReturnsAsync(notification);
 
             this._mockNotificationRepository
@@ -304,7 +170,7 @@ namespace PCShop.Services.Core.Tests
                 .Returns(Task.CompletedTask);
 
             // Act
-            var result = await this._notificationService.DeleteNotificationAsync(_testNotificationId.ToString());
+            var result = await this._notificationService.DeleteNotificationAsync(this._testNotificationId.ToString());
 
             // Assert
             Assert.That(result, Is.True);
@@ -329,11 +195,11 @@ namespace PCShop.Services.Core.Tests
         {
             // Arrange
             this._mockNotificationRepository
-                .Setup(r => r.GetByIdAsync(_testNotificationId))
+                .Setup(r => r.GetByIdAsync(this._testNotificationId))
                 .ReturnsAsync((Notification)null!);
 
             // Act
-            var result = await this._notificationService.DeleteNotificationAsync(_testNotificationId.ToString());
+            var result = await this._notificationService.DeleteNotificationAsync(this._testNotificationId.ToString());
 
             // Assert
             Assert.That(result, Is.False);
@@ -353,7 +219,7 @@ namespace PCShop.Services.Core.Tests
                 .Returns(mockQueryable.Object);
 
             // Act
-            var result = await this._notificationService.GetUnreadCountAsync(_testUserId.ToString());
+            var result = await this._notificationService.GetUnreadCountAsync(this._testUserId.ToString());
 
             // Assert
             Assert.That(result, Is.EqualTo(1));
@@ -382,7 +248,7 @@ namespace PCShop.Services.Core.Tests
                 .Returns(mockQueryable.Object);
 
             // Act
-            var result = await this._notificationService.HasUnreadNotificationsAsync(_testUserId.ToString());
+            var result = await this._notificationService.HasUnreadNotificationsAsync(this._testUserId.ToString());
 
             // Assert
             Assert.That(result, Is.True);
@@ -397,7 +263,7 @@ namespace PCShop.Services.Core.Tests
                 new Notification
                 {
                     Id = Guid.NewGuid(),
-                    ApplicationUserId = _testUserId,
+                    ApplicationUserId = this._testUserId,
                     Message = "Read notification",
                     CreatedOn = DateTime.UtcNow,
                     IsRead = true
@@ -411,7 +277,7 @@ namespace PCShop.Services.Core.Tests
                 .Returns(mockQueryable.Object);
 
             // Act
-            var result = await this._notificationService.HasUnreadNotificationsAsync(_testUserId.ToString());
+            var result = await this._notificationService.HasUnreadNotificationsAsync(this._testUserId.ToString());
 
             // Assert
             Assert.That(result, Is.False);
@@ -421,7 +287,7 @@ namespace PCShop.Services.Core.Tests
         public async Task HasUnreadNotificationsAsync_WithInvalidUserId_ReturnsFalse()
         {
             // Act
-            var result = await _notificationService.HasUnreadNotificationsAsync("invalid-guid");
+            var result = await this._notificationService.HasUnreadNotificationsAsync("invalid-guid");
 
             // Assert
             Assert.That(result, Is.False);
@@ -470,7 +336,7 @@ namespace PCShop.Services.Core.Tests
                 notifications.Add(new Notification
                 {
                     Id = Guid.NewGuid(),
-                    ApplicationUserId = _testUserId,
+                    ApplicationUserId = this._testUserId,
                     Message = $"Test notification {i}",
                     CreatedOn = DateTime.UtcNow.AddHours(-i),
                     IsRead = i % 3 == 0
@@ -478,6 +344,98 @@ namespace PCShop.Services.Core.Tests
             }
 
             return notifications.OrderByDescending(n => n.CreatedOn).ToList();
+        }
+
+        [Test]
+        public async Task MarkMultipleAsReadAsync_WithValidUnreadNotifications_MarksAsRead()
+        {
+            // Arrange
+            var unread1 = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, IsRead = false, Message = "Test message" };
+            var unread2 = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, IsRead = false, Message = "Test message" };
+            var alreadyRead = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, IsRead = true, Message = "Test message" };
+
+            var notifications = new List<Notification> { unread1, unread2, alreadyRead };
+            var mockQueryable = CreateMockQueryable(notifications);
+
+            this._mockNotificationRepository.Setup(r => r.GetAllAttached()).Returns(mockQueryable.Object);
+            this._mockNotificationRepository.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            string[] ids = { unread1.Id.ToString(), unread2.Id.ToString(), alreadyRead.Id.ToString() };
+
+            // Act
+            int result = await this._notificationService.MarkMultipleAsReadAsync(ids);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(2));
+            Assert.That(unread1.IsRead, Is.True);
+            Assert.That(unread2.IsRead, Is.True);
+            Assert.That(alreadyRead.IsRead, Is.True); 
+        }
+
+        [Test]
+        public async Task MarkMultipleAsReadAsync_WithInvalidGuids_IgnoresThem()
+        {
+            // Arrange
+            var notification = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, IsRead = false, Message = "Test message" };
+            var mockQueryable = CreateMockQueryable(new List<Notification> { notification });
+
+            this._mockNotificationRepository.Setup(r => r.GetAllAttached()).Returns(mockQueryable.Object);
+            this._mockNotificationRepository.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            string[] ids = { "invalid-guid", notification.Id.ToString() };
+
+            // Act
+            int result = await this._notificationService.MarkMultipleAsReadAsync(ids);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(1));
+            Assert.That(notification.IsRead, Is.True);
+        }
+
+        [Test]
+        public async Task DeleteMultipleAsync_WithValidNotificationIds_DeletesCorrectly()
+        {
+            // Arrange
+            var n1 = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, Message = "Test message" };
+            var n2 = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, Message = "Test message" };
+            var notifications = new List<Notification> { n1, n2 };
+
+            var mockQueryable = CreateMockQueryable(notifications);
+
+            this._mockNotificationRepository.Setup(r => r.GetAllAttached()).Returns(mockQueryable.Object);
+            this._mockNotificationRepository.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            string[] ids = { n1.Id.ToString(), n2.Id.ToString() };
+
+            // Act
+            int result = await this._notificationService.DeleteMultipleAsync(ids);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(2));
+            this._mockNotificationRepository.Verify(r => r.HardDelete(n1), Times.Once);
+            this._mockNotificationRepository.Verify(r => r.HardDelete(n2), Times.Once);
+            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task DeleteMultipleAsync_WithSomeInvalidGuids_DeletesOnlyValidOnes()
+        {
+            // Arrange
+            var validNotification = new Notification { Id = Guid.NewGuid(), ApplicationUserId = this._testUserId, Message = "Test message" };
+            var mockQueryable = CreateMockQueryable(new List<Notification> { validNotification });
+
+            this._mockNotificationRepository.Setup(r => r.GetAllAttached()).Returns(mockQueryable.Object);
+            this._mockNotificationRepository.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            string[] ids = { "invalid-guid", validNotification.Id.ToString() };
+
+            // Act
+            int result = await this._notificationService.DeleteMultipleAsync(ids);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(1));
+            this._mockNotificationRepository.Verify(r => r.HardDelete(validNotification), Times.Once);
+            this._mockNotificationRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
         }
 
         private Mock<IQueryable<Notification>> CreateMockQueryable(List<Notification> notifications)
