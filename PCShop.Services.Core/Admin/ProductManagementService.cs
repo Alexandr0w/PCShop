@@ -204,7 +204,7 @@ namespace PCShop.Services.Core.Admin
                 if (product != null)
                 {
                     product.IsDeleted = true;
-                    product.DeletedOn = DateTime.UtcNow;
+                    product.DeletedOn = DateTime.UtcNow.ToLocalTime();
 
                     await this._productRepository.UpdateAsync(product);
                     isAlreadyDeleted = true;

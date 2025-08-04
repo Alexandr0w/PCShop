@@ -169,7 +169,7 @@ namespace PCShop.Services.Core.Admin
                 if (computer != null)
                 {
                     computer.IsDeleted = true;
-                    computer.DeletedOn = DateTime.UtcNow;
+                    computer.DeletedOn = DateTime.UtcNow.ToLocalTime();
 
                     await this._computerRepository.UpdateAsync(computer);
                     isAlreadyDeleted = true;

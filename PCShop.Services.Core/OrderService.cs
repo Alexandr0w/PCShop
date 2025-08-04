@@ -157,7 +157,7 @@ namespace PCShop.Services.Core
 
         public async Task<int> GetCartCountAsync(string userId)
         {
-            Order? order = await _orderRepository.GetPendingOrderAsync(userId);
+            Order? order = await this._orderRepository.GetPendingOrderAsync(userId);
 
             if (order == null)
             {
@@ -298,7 +298,7 @@ namespace PCShop.Services.Core
                 order.DeliveryAddress = $"{model.City}, {model.PostalCode}, {model.Address}, {model.PhoneNumber}";
                 order.DeliveryFee = CalculateDeliveryFee(model.DeliveryMethod);
                 order.TotalPrice = totalPrice + order.DeliveryFee;
-                order.OrderDate = DateTime.UtcNow;
+                order.OrderDate = DateTime.UtcNow.ToLocalTime();
                 order.PaymentMethod = model.PaymentMethod;
                 order.Status = OrderStatus.Completed;
 
@@ -404,10 +404,10 @@ namespace PCShop.Services.Core
                     Id = o.Id.ToString(),
                     CustomerName = o.ApplicationUser.FullName,
                     TotalPrice = o.TotalPrice,
-                    OrderDate = o.OrderDate.ToLocalTime().ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
+                    OrderDate = o.OrderDate.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture),
                     DeliveryMethod = o.DeliveryMethod.ToString(),
                     Status = o.Status.ToString(),
-                    SendDate = o.SendDate?.ToLocalTime().ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
+                    SendDate = o.SendDate?.ToString(DateAndTimeDisplayFormat, CultureInfo.InvariantCulture)
                 });
 
             return new ManagerOrdersPageViewModel
@@ -427,7 +427,7 @@ namespace PCShop.Services.Core
                 return false;
 
             order.Status = OrderStatus.Sent;
-            order.SendDate = DateTime.UtcNow;
+            order.SendDate = DateTime.UtcNow.ToLocalTime();
 
             await this._orderRepository.UpdateAsync(order);
 
